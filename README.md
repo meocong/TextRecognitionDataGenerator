@@ -2,6 +2,10 @@
 
 A synthetic data generator for text recognition
 
+## Download additional files 
+- Background pictures: https://drive.google.com/file/d/1Ck62gjFVuQtidoVd9I8vbQzkI0N4WIdS/view?usp=sharing
+- Fonts: https://drive.google.com/file/d/1oYlY_DLk4W4PZA5CLxRlNczBpQMTa6bu/view?usp=sharing
+
 ## What is it for?
 Generating text image samples to train an OCR software. Now supporting non-latin text!
 
