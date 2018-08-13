@@ -3,8 +3,9 @@ import math
 import os
 import random
 import numpy as np
-
+import glob
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
+
 
 class BackgroundGenerator(object):
     @classmethod
@@ -38,9 +39,9 @@ class BackgroundGenerator(object):
         image = Image.new("L", (width, height))
         pixels = image.load()
 
-        frequency = random.random() * 30 + 20 # frequency
-        phase = random.random() * 2 * math.pi # phase
-        rotation_count = random.randint(10, 20) # of rotations
+        frequency = random.random() * 30 + 20  # frequency
+        phase = random.random() * 2 * math.pi  # phase
+        rotation_count = random.randint(10, 20)  # of rotations
 
         for kw in range(width):
             y = float(kw) / (width - 1) * 4 * math.pi - 2 * math.pi
@@ -52,7 +53,7 @@ class BackgroundGenerator(object):
                     a = math.atan2(y, x) + i * math.pi * 2.0 / rotation_count
                     z += math.cos(r * math.sin(a) * frequency + phase)
                 c = int(255 - round(255 * z / rotation_count))
-                pixels[kw, kh] = c # grayscale
+                pixels[kw, kh] = c  # grayscale
         return image
 
     @classmethod
@@ -60,17 +61,19 @@ class BackgroundGenerator(object):
         """
             Create a background with a picture
         """
-
-        pictures = os.listdir('./pictures')
-
+        pictures = glob.glob(os.path.join("./pictures", '*.png')) + \
+                   glob.glob(os.path.join("./pictures", '*.jpg')) + \
+                   glob.glob(os.path.join("./pictures", '*.jpeg')) + \
+                   glob.glob(os.path.join("./pictures", '*.tif'))
+        # pictures = os.listdir('./pictures/*.png')
         if len(pictures) > 0:
-            picture = Image.open('./pictures/' + pictures[random.randint(0, len(pictures) - 1)])
+            picture = Image.open(pictures[random.randint(0, len(pictures) - 1)])
 
             if picture.size[0] < width:
                 picture = picture.resize([width, int(picture.size[1] * (width / picture.size[0]))], Image.ANTIALIAS)
-            elif picture.size[1] < height:
-                picture.thumbnail([int(picture.size[0] * (height / picture.size[1])), height], Image.ANTIALIAS)
-            
+            if picture.size[1] < height:
+                picture = picture.resize([int(picture.size[0] * (height / picture.size[1])), height], Image.ANTIALIAS)
+
             if (picture.size[0] == width):
                 x = 0
             else:
@@ -79,7 +82,7 @@ class BackgroundGenerator(object):
                 y = 0
             else:
                 y = random.randint(0, picture.size[1] - height)
-                
+
             return picture.crop(
                 (
                     x,
