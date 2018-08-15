@@ -285,11 +285,12 @@ def create_strings_from_dict(length, allow_variable, count, lang_dict):
         strings.append(current_string[:-1])
     return strings
 
-def create_strings_from_wikipedia(minimum_length, count, lang):
+def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8):
     """
         Create all string by randomly picking Wikipedia articles and taking sentences from them.
     """
     sentences = []
+    print("Generating strings from wiki...")
 
     while len(sentences) < count:
         # We fetch a random page
@@ -303,18 +304,23 @@ def create_strings_from_wikipedia(minimum_length, count, lang):
         # Only take a certain length
         lines = list(filter(
             lambda s:
-                len(s.split(' ')) > minimum_length
+                len(s.replace(' ', '')) > minimum_length
                 and not "Wikipedia" in s
-                and not "wikipedia" in s,
+                and not "wikipedia" in s
+                and not "Jump to " in s
+                and not "Cookie" in s,
             [
-                ' '.join(re.findall(r"[\w']+", s.strip()))[0:80] for s in soup.get_text().splitlines()
+                ' '.join(re.findall(r"[\w']+", s.strip()))[0:40] for s in soup.get_text().splitlines()
             ]
         ))
 
+        random.shuffle(lines)
+
         # Remove the last lines that talks about contributing
-        sentences.extend(lines[0:max([1, len(lines) - 5])])
+        sentences.extend(lines[0:min(max([1, len(lines) - 5]), max_lines_per_page)])
 
     return sentences[0:count]
+
 def create_strings_from_fonts(fonts):
     strings = []
     font_dicts = {}
@@ -403,8 +409,7 @@ def random_latin(fonts):
         strings.append(generated)
 
     return fonts, strings
-def random_sequences_sjnk(fonts):
-    strings = []
+def generate_char_map_from_font(fonts):
 
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
     special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()]
@@ -412,14 +417,6 @@ def random_sequences_sjnk(fonts):
     full_chars = latin_chars + special_chars + japan_chars
     font_dicts = {}
     max_length = 60
-    print("full chars", len(full_chars))
-    print(math.ceil(len(full_chars)*1.0 / max_length))
-    # fonts = ['fonts/sjnk/Arial-Unicode-Regular.ttf'] * int(math.ceil(len(full_chars)*1.0 / max_length)) + fonts
-    # for i in range(int(math.ceil(len(full_chars)*1.0 / max_length))):
-    #     start_idx = max_length * i
-    #     end_idx = min(max_length * (i+1), len(full_chars))
-    #     strings.append("".join(full_chars[start_idx:end_idx]))
-    #     # print("".join(full_chars[start_idx:end_idx]), len("".join(full_chars[start_idx:end_idx])))
 
     for font in fonts:
         if (font not in font_dicts):
@@ -427,64 +424,75 @@ def random_sequences_sjnk(fonts):
 
             chars = set([u'{0}'.format(chr(x[0])) for x in
                      list(chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in ttf["cmap"].tables))])
-            japan_chars_in_font = [x for x in japan_chars if check_character_in_font(x, ttf) and check_character_in_fontc1(x, font) and x in chars]
-            latin_chars_in_font = [x for x in latin_chars if check_character_in_font(x, ttf) and check_character_in_fontc1(x, font) and x in chars]
-            special_chars_in_font = [x for x in special_chars if check_character_in_font(x, ttf) and check_character_in_fontc1(x, font) and x in chars] + [" " for x in range(1,5)]
+            japan_chars_in_font = [x for x in japan_chars if check_character_in_font(x, ttf)
+                                   # and check_character_in_fontc1(x, font)
+                                   and x in chars]
+            latin_chars_in_font = [x for x in latin_chars if check_character_in_font(x, ttf)
+                                   # and check_character_in_fontc1(x, font)
+                                   and x in chars]
+            special_chars_in_font = [x for x in special_chars if check_character_in_font(x, ttf)
+                                     # and check_character_in_fontc1(x, font)
+                                     and x in chars] + [" " for x in range(1,5)]
 
-            font_dicts[font] = (japan_chars_in_font, latin_chars_in_font, special_chars_in_font)
-        else:
-            japan_chars_in_font, latin_chars_in_font, special_chars_in_font = font_dicts[font]
+            font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
 
-        generated = ""
-        if (random.randint(0, 30) < 1):
-            # Only space
-            n_gen = random.randint(1, 60)
-            for i in range(n_gen):
-                generated += " "
-        else:
-            # if (random.randint(0, 20) < 3):
-            #     # Add space to front
-            #     n_gen = random.randint(0, 10)
-            #     for i in range(n_gen):
-            #         generated += " "
+    return font_dicts
 
-            # Random length of string
-            length = random.randint(1, max_length)
-
-            while len(generated) < length:
-                # Looping to add string
-                # if (random.randint(0,20) < 1):
-                #     Add only space
-                    # n_gen = min(length - len(generated), random.randint(0, 10))
-                    # for i in range(n_gen):
-                    #     generated += " "
-                # else:
-                if (random.randint(0, 10) < 3):
-                    # Add random latin chars
-                    n_gen = min(length - len(generated), random.randint(0, 5))
-                    generated += ''.join(random.choice(latin_chars_in_font) for i in range(n_gen))
-                else:
-                    # Add random japanese chars
-                    n_gen = min(length - len(generated), random.randint(0, 10))
-                    generated += ''.join(random.choice(japan_chars_in_font) for i in range(n_gen))
-
-                # Add a special char
-                if (n_gen > 0 and len(generated) < length):
-
-                    generated += random.choice(special_chars_in_font)
-
-            if (length > len(generated) and random.randint(0, 20) < 3):
-                # Add space to last
-                n_gen = random.randint(0, length - len(generated))
-                for i in range(n_gen):
-                    generated += " "
-        if (len(generated) == 0):
-            n_gen = random.randint(1,10)
-            generated += ''.join(random.choice(japan_chars_in_font) for i in range(n_gen))
-        # if (len(generated) > 0 and generated[-1] == " "):
-        #     generated = generated[:-1]
-        strings.append(generated)
-    return fonts, strings
+def random_sequences_sjnk(fonts):
+    return []
+#     strings = []
+#
+#
+#         generated = ""
+#         if (random.randint(0, 30) < 1):
+#             # Only space
+#             n_gen = random.randint(1, 60)
+#             for i in range(n_gen):
+#                 generated += " "
+#         else:
+#             # if (random.randint(0, 20) < 3):
+#             #     # Add space to front
+#             #     n_gen = random.randint(0, 10)
+#             #     for i in range(n_gen):
+#             #         generated += " "
+#
+#             # Random length of string
+#             length = random.randint(1, max_length)
+#
+#             while len(generated) < length:
+#                 # Looping to add string
+#                 # if (random.randint(0,20) < 1):
+#                 #     Add only space
+#                     # n_gen = min(length - len(generated), random.randint(0, 10))
+#                     # for i in range(n_gen):
+#                     #     generated += " "
+#                 # else:
+#                 if (random.randint(0, 10) < 3):
+#                     # Add random latin chars
+#                     n_gen = min(length - len(generated), random.randint(0, 5))
+#                     generated += ''.join(random.choice(latin_chars_in_font) for i in range(n_gen))
+#                 else:
+#                     # Add random japanese chars
+#                     n_gen = min(length - len(generated), random.randint(0, 10))
+#                     generated += ''.join(random.choice(japan_chars_in_font) for i in range(n_gen))
+#
+#                 # Add a special char
+#                 if (n_gen > 0 and len(generated) < length):
+#
+#                     generated += random.choice(special_chars_in_font)
+#
+#             if (length > len(generated) and random.randint(0, 20) < 3):
+#                 # Add space to last
+#                 n_gen = random.randint(0, length - len(generated))
+#                 for i in range(n_gen):
+#                     generated += " "
+#         if (len(generated) == 0):
+#             n_gen = random.randint(1,10)
+#             generated += ''.join(random.choice(japan_chars_in_font) for i in range(n_gen))
+#         # if (len(generated) > 0 and generated[-1] == " "):
+#         #     generated = generated[:-1]
+#         strings.append(generated)
+#     return fonts, strings
 
 def create_strings_randomly(length, allow_variable, count, let, num, sym, lang):
     """
@@ -553,6 +561,13 @@ def main():
     strings = []
 
     fonts_arr = [fonts[random.randrange(0, len(fonts))] for _ in range(0, args.count)]
+    # fonts_dict = generate_char_map_from_font(fonts)
+    import pickle
+    # pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+    fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+    # print(fonts_dict)
+    font_charsets = [fonts_dict[font] for font in fonts_arr]
+
 
     if args.use_wikipedia:
         strings = create_strings_from_wikipedia(args.length, args.count, args.language)
@@ -573,11 +588,16 @@ def main():
     else:
         strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
 
+    strings = [''.join([c for c in text if c in charset]) for text, charset in zip(strings, font_charsets)]
+    strings = [s.strip() for s in strings if len(s.strip()) > 1]
 
     string_count = len(strings)
     print("String count", string_count)
     print_text("src-train.txt", ['{}_{}.{}\n'.format(args.prefix, str(index), args.extension) for index in range(string_count)])
     print_text("tgt-train.txt", ['{}\n'.format(x) for x in strings])
+
+
+    # exit()
 
     p = Pool(args.thread_count)
     p.starmap(
@@ -587,8 +607,8 @@ def main():
             strings,
             fonts_arr,
             [args.output_dir] * string_count,
-            # [args.format] * string_count,
-            [random.randint(args.format, args.format + 40) for x in range(string_count)],
+            [args.format] * string_count,
+            # [random.randint(args.format, args.format + 40) for x in range(string_count)],
             [args.extension] * string_count,
             [args.skew_angle] * string_count,
             [args.random_skew] * string_count,

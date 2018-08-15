@@ -20,6 +20,7 @@ class DistorsionGenerator(object):
         
         img_arr = np.array(rgb_image)
 
+        # print(img_arr.shape)
         vertical_offsets = [func(i) for i in range(img_arr.shape[1])]
         horizontal_offsets = [
             func(i)
@@ -30,11 +31,11 @@ class DistorsionGenerator(object):
             )
         ]
 
-        new_img_arr = np.zeros((
+        new_img_arr = np.ones((
                           img_arr.shape[0] + (2 * max_offset if vertical else 0),
                           img_arr.shape[1] + (2 * max_offset if horizontal else 0),
                           3
-                      ))
+                      )) * 255
 
         new_img_arr_copy = np.copy(new_img_arr)
         
