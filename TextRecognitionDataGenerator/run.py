@@ -262,11 +262,7 @@ def create_strings_from_file(filename, count):
         lines = [l.strip()[0:200] for l in f.readlines()]
         if len(lines) == 0:
             raise Exception("No lines could be read in file")
-        while len(strings) < count:
-            if len(lines) > count - len(strings):
-                strings.extend(lines[0:count - len(strings)])
-            else:
-                strings.extend(lines)
+        strings = random.sample(lines, count)
 
     return strings
 
