@@ -557,10 +557,10 @@ def main():
     strings = []
 
     fonts_arr = [fonts[random.randrange(0, len(fonts))] for _ in range(0, args.count)]
-    fonts_dict = generate_char_map_from_font(fonts)
+    # fonts_dict = generate_char_map_from_font(fonts)
     import pickle
-    pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
-    # fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+    # pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+    fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
     # print(fonts_dict)
     font_charsets = [fonts_dict[font] for font in fonts_arr]
 
