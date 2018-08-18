@@ -421,13 +421,13 @@ def generate_char_map_from_font(fonts):
             chars = set([u'{0}'.format(chr(x[0])) for x in
                      list(chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in ttf["cmap"].tables))])
             japan_chars_in_font = [x for x in japan_chars if check_character_in_font(x, ttf)
-                                   # and check_character_in_fontc1(x, font)
+                                   and check_character_in_fontc1(x, font)
                                    and x in chars]
             latin_chars_in_font = [x for x in latin_chars if check_character_in_font(x, ttf)
-                                   # and check_character_in_fontc1(x, font)
+                                   and check_character_in_fontc1(x, font)
                                    and x in chars]
             special_chars_in_font = [x for x in special_chars if check_character_in_font(x, ttf)
-                                     # and check_character_in_fontc1(x, font)
+                                     and check_character_in_fontc1(x, font)
                                      and x in chars] + [" " for x in range(1,5)]
 
             font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
