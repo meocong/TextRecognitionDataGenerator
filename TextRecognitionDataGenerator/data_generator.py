@@ -95,8 +95,8 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                height_inc = decision(0.04)
-                tight_text = decision(0.2)
+                height_inc = decision(0.15)
+                tight_text = decision(0.33)
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -208,9 +208,9 @@ class FakeTextDataGenerator(object):
                 # Generate background image #
                 #############################
                 if (distorsion_type == 0):
-                    background_type = random.randint(0, 3)
+                    background_type = random.randint(0, 5)
                 else:
-                    background_type = random.randint(0, 3)
+                    background_type = random.randint(0, 5)
                 # background_type = 1
 
                 if background_type == 0:
@@ -251,7 +251,7 @@ class FakeTextDataGenerator(object):
                 final_image = background.convert('L')
 
                 # blur distortion
-                blur_type = random.randint(0,4)
+                blur_type = random.randint(0,3)
 
                 if blur_type == 1:
                     final_image = RandomizedBlur(final_image)
@@ -280,7 +280,7 @@ class FakeTextDataGenerator(object):
                 # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
                 ## random binary if background is white
-                if background_type == 1 and blur_type == 2 and decision(0.7) :
+                if background_type == 1 and blur_type == 2 and decision(0.8) :
                     final_image = Image.fromarray(sauvola_bin(final_image))
 
                 # if (random.randint(0,10) < 3):
