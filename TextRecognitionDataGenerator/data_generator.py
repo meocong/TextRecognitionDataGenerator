@@ -193,7 +193,7 @@ class FakeTextDataGenerator(object):
                         horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2)
                     )
 
-                affine_type = random.randint(0,5)
+                affine_type = random.randint(0,3)
                 if affine_type == 1:
                     distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
                 else:
