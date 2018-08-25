@@ -95,8 +95,8 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                height_inc = 0 #decision(0.15)
-                tight_text = 0 #decision(0.33)
+                height_inc = decision(0.05)
+                tight_text = decision(0.2)
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
