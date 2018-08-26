@@ -363,6 +363,41 @@ def check_character_in_fontc1(char, font, height = 32):
     # txt_img = cv2.cvtColor(txt_img, cv2.COLOR_RGB2GRAY)
     return len(np.nonzero(np.array(txt_img) != 255)[0]) > 0
 
+
+def check_character_in_fontc2(char, font, height = 32):
+    if (char in ["ロ"]):
+        return True
+
+    image_font = ImageFont.truetype(font=font, size=height)
+    text_width, text_height = image_font.getsize(char)
+
+    txt_img = Image.new('L', (text_width, text_height), 255)
+
+    txt_draw = ImageDraw.Draw(txt_img)
+
+    txt_draw.text((0, 0), u'{0}'.format(char), fill=0, font=image_font)
+
+    txt_img = np.array(txt_img)
+    gray = txt_img
+    thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)[1]
+    contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+                            cv2.CHAIN_APPROX_SIMPLE)[1]
+
+    if (len(contours) < 4):
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.01 * cv2.arcLength(cnt, True), True)
+
+            if (len(approx)==4):
+                (x, y, w, h) = cv2.boundingRect(approx)
+                ar = w / float(h)
+                if ar >= 0.8 and ar <= 1.2:
+                    return False
+    else:
+        pass
+
+    return True
+
+
 def random_latin(fonts):
     strings = []
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
@@ -405,7 +440,7 @@ def random_latin(fonts):
         strings.append(generated)
 
     return fonts, strings
-def generate_char_map_from_font(fonts, pre_font_dics):
+def generate_char_map_from_font(fonts, pre_font_dics={}):
 
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
     special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()]
@@ -422,12 +457,15 @@ def generate_char_map_from_font(fonts, pre_font_dics):
                      list(chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in ttf["cmap"].tables))])
             japan_chars_in_font = [x for x in japan_chars if check_character_in_font(x, ttf)
                                    and check_character_in_fontc1(x, font)
+                                   and check_character_in_fontc2(x, font)
                                    and x in chars]
             latin_chars_in_font = [x for x in latin_chars if check_character_in_font(x, ttf)
                                    and check_character_in_fontc1(x, font)
+                                   and check_character_in_fontc2(x, font)
                                    and x in chars]
             special_chars_in_font = [x for x in special_chars if check_character_in_font(x, ttf)
                                      and check_character_in_fontc1(x, font)
+                                     and check_character_in_fontc2(x, font)
                                      and x in chars] + [" " for x in range(1,5)]
 
             font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
@@ -564,7 +602,7 @@ def main():
 
     import pickle
     fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
-    fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
+    fonts_dict = generate_char_map_from_font(fonts, {})
     pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
 
     # print(fonts_dict)
