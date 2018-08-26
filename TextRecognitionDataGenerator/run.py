@@ -405,7 +405,7 @@ def random_latin(fonts):
         strings.append(generated)
 
     return fonts, strings
-def generate_char_map_from_font(fonts):
+def generate_char_map_from_font(fonts, pre_font_dics):
 
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
     special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()]
@@ -415,7 +415,7 @@ def generate_char_map_from_font(fonts):
     max_length = 60
 
     for font in fonts:
-        if (font not in font_dicts):
+        if (font not in font_dicts and font not in pre_font_dics):
             ttf = TTFont(font, fontNumber=0)
 
             chars = set([u'{0}'.format(chr(x[0])) for x in
@@ -431,6 +431,10 @@ def generate_char_map_from_font(fonts):
                                      and x in chars] + [" " for x in range(1,5)]
 
             font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
+        elif font in font_dicts:
+            pass
+        elif font in pre_font_dics:
+            font_dicts[font] = pre_font_dics[font]
 
     return font_dicts
 
@@ -557,10 +561,12 @@ def main():
     strings = []
 
     fonts_arr = [fonts[random.randrange(0, len(fonts))] for _ in range(0, args.count)]
-    # fonts_dict = generate_char_map_from_font(fonts)
+
     import pickle
-    # pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
     fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+    fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
+    pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+
     # print(fonts_dict)
     font_charsets = [fonts_dict[font] for font in fonts_arr]
 
