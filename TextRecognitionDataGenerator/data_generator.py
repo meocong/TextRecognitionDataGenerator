@@ -316,7 +316,6 @@ class FakeTextDataGenerator(object):
                 #
                 # final_image = Image.fromarray(cv2.erode(np.array(final_image), kernel, iterations=1))
 
-                index += 1
                 #####################################
                 # Generate name for resulting image #
                 #####################################
