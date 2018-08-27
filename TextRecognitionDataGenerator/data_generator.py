@@ -135,9 +135,10 @@ class FakeTextDataGenerator(object):
 
                 if decision(0.8):
                     ## random erode with random pixel sampling
-                    x = random.randint(1, 2)
+                    x = random.randint(0, 2)
                     kernel = np.ones((x, x), np.uint8)
-                    erode = cv2.erode(np.array(rotated_img), kernel, iterations=1)
+                    im_arr = np.array(rotated_img)
+                    erode = cv2.erode(im_arr, kernel, iterations=1)
                     prob = np.random.choice([0.1, 0.2, 0.3], p=[0.5, 0.4, 0.1])
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
