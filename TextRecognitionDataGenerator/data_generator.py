@@ -132,6 +132,8 @@ class FakeTextDataGenerator(object):
                             im_arr[:,start_x:end_x] = cv2.erode(im_arr[:,start_x:end_x], kernel, iterations=1)
 
                     rotated_img = Image.fromarray(im_arr)
+                else:
+                    im_arr = np.array(rotated_img)
 
                 if decision(0.8):
                     ## random erode with random pixel sampling
@@ -315,7 +317,6 @@ class FakeTextDataGenerator(object):
                 #
                 # final_image = Image.fromarray(cv2.erode(np.array(final_image), kernel, iterations=1))
 
-                index += 1
                 #####################################
                 # Generate name for resulting image #
                 #####################################

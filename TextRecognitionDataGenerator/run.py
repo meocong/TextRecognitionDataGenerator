@@ -306,7 +306,7 @@ def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_pag
                 and not "Jump to " in s
                 and not "Cookie" in s,
             [
-                ' '.join(re.findall(r"[\w']+", s.strip()))[0:40] for s in soup.get_text().splitlines()
+                ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】ー・くぐ〇〜ゝゞヽヾ一]+", s.strip()))[0:70] for s in soup.get_text().splitlines()
             ]
         ))
 
@@ -363,6 +363,41 @@ def check_character_in_fontc1(char, font, height = 32):
     # txt_img = cv2.cvtColor(txt_img, cv2.COLOR_RGB2GRAY)
     return len(np.nonzero(np.array(txt_img) != 255)[0]) > 0
 
+
+def check_character_in_fontc2(char, font, height = 32):
+    if (char in ["ロ"]):
+        return True
+
+    image_font = ImageFont.truetype(font=font, size=height)
+    text_width, text_height = image_font.getsize(char)
+
+    txt_img = Image.new('L', (text_width, text_height), 255)
+
+    txt_draw = ImageDraw.Draw(txt_img)
+
+    txt_draw.text((0, 0), u'{0}'.format(char), fill=0, font=image_font)
+
+    txt_img = np.array(txt_img)
+    gray = txt_img
+    thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)[1]
+    contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+                            cv2.CHAIN_APPROX_SIMPLE)[1]
+
+    if (len(contours) < 4):
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.01 * cv2.arcLength(cnt, True), True)
+
+            if (len(approx)==4):
+                (x, y, w, h) = cv2.boundingRect(approx)
+                ar = w / float(h)
+                if ar >= 0.8 and ar <= 1.2:
+                    return False
+    else:
+        pass
+
+    return True
+
+
 def random_latin(fonts):
     strings = []
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
@@ -405,7 +440,7 @@ def random_latin(fonts):
         strings.append(generated)
 
     return fonts, strings
-def generate_char_map_from_font(fonts):
+def generate_char_map_from_font(fonts, pre_font_dics={}):
 
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
     special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()]
@@ -415,27 +450,57 @@ def generate_char_map_from_font(fonts):
     max_length = 60
 
     for font in fonts:
-        if (font not in font_dicts):
+        if (font not in font_dicts and font not in pre_font_dics):
             ttf = TTFont(font, fontNumber=0)
 
             chars = set([u'{0}'.format(chr(x[0])) for x in
                      list(chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in ttf["cmap"].tables))])
             japan_chars_in_font = [x for x in japan_chars if check_character_in_font(x, ttf)
                                    and check_character_in_fontc1(x, font)
+                                   and check_character_in_fontc2(x, font)
                                    and x in chars]
             latin_chars_in_font = [x for x in latin_chars if check_character_in_font(x, ttf)
                                    and check_character_in_fontc1(x, font)
+                                   and check_character_in_fontc2(x, font)
                                    and x in chars]
             special_chars_in_font = [x for x in special_chars if check_character_in_font(x, ttf)
                                      and check_character_in_fontc1(x, font)
+                                     and check_character_in_fontc2(x, font)
                                      and x in chars] + [" " for x in range(1,5)]
 
             font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
+        elif font in font_dicts:
+            pass
+        elif font in pre_font_dics:
+            font_dicts[font] = pre_font_dics[font]
 
     return font_dicts
 
 def random_sequences_sjnk(fonts):
-    return []
+    generated_list = []
+
+    for font in fonts:
+        font = list(font)
+        generated = ""
+
+        if random.randint(1,10) < 6:
+            for i in range(random.randint(30,70)):
+                generated += " "
+        else:
+            for i in range(random.randint(0,15)):
+                generated += " "
+
+            for i in range(random.randint(1,5)):
+                generated += random.choice(font)
+
+            for i in range(random.randint(10,40)):
+                generated += " "
+
+            for i in range(random.randint(1,5)):
+                generated += random.choice(font)
+        generated_list.append(generated)
+
+    return generated_list
 #     strings = []
 #
 #
@@ -557,10 +622,15 @@ def main():
     strings = []
 
     fonts_arr = [fonts[random.randrange(0, len(fonts))] for _ in range(0, args.count)]
-    # fonts_dict = generate_char_map_from_font(fonts)
+
     import pickle
-    # pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
-    fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+    try:
+        fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+    except:
+        fonts_dict = {}
+    fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
+    pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+
     # print(fonts_dict)
     font_charsets = [fonts_dict[font] for font in fonts_arr]
 
@@ -578,14 +648,14 @@ def main():
     elif args.random_sequences_from_font:
         strings = create_strings_from_fonts(fonts_arr)
     elif args.random_sequences_sjnk:
-        fonts_arr, strings = random_sequences_sjnk(fonts_arr)
+        strings = random_sequences_sjnk(font_charsets)
     elif args.random_latin_sjnk:
         fonts_arr, strings = random_latin(fonts_arr)
     else:
         strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
 
     strings = [''.join([c for c in text if c in charset]) for text, charset in zip(strings, font_charsets)]
-    strings = [s.strip() for s in strings if len(s.strip()) > 1]
+    # strings = [s.strip() for s in strings if len(s.strip()) > 1]
 
     string_count = len(strings)
     print("String count", string_count)
