@@ -491,13 +491,13 @@ def random_sequences_sjnk(fonts):
             for i in range(random.randint(0,15)):
                 generated += " "
 
-            for i in range(random.randint(5)):
+            for i in range(random.randint(1,5)):
                 generated += random.choice(font)
 
             for i in range(random.randint(10,40)):
                 generated += " "
 
-            for i in range(random.randint(5)):
+            for i in range(random.randint(1,5)):
                 generated += random.choice(font)
         generated_list.append(generated)
 
