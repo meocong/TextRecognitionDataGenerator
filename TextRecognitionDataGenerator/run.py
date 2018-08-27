@@ -483,21 +483,21 @@ def random_sequences_sjnk(fonts):
         font = list(font)
         generated = ""
 
-        # if random.randint(1,10) < 6:
-        for i in range(random.randint(30,70)):
-            generated += " "
-        # else:
-        #     for i in range(random.randint(0,15)):
-        #         generated += " "
-        #
-        #     for i in range(random.randint(1,5)):
-        #         generated += random.choice(font)
-        #
-        #     for i in range(random.randint(10,40)):
-        #         generated += " "
-        #
-        #     for i in range(random.randint(1,5)):
-        #         generated += random.choice(font)
+        if random.randint(1,10) < 6:
+            for i in range(random.randint(30,70)):
+                generated += " "
+        else:
+            for i in range(random.randint(0,15)):
+                generated += " "
+
+            for i in range(random.randint(1,5)):
+                generated += random.choice(font)
+
+            for i in range(random.randint(10,40)):
+                generated += " "
+
+            for i in range(random.randint(1,5)):
+                generated += random.choice(font)
         generated_list.append(generated)
 
     return generated_list
@@ -655,7 +655,7 @@ def main():
         strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
 
     strings = [''.join([c for c in text if c in charset]) for text, charset in zip(strings, font_charsets)]
-    strings = [s.strip() for s in strings if len(s.strip()) > 1]
+    # strings = [s.strip() for s in strings if len(s.strip()) > 1]
 
     string_count = len(strings)
     print("String count", string_count)
