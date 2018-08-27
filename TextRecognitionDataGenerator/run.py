@@ -477,7 +477,31 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
     return font_dicts
 
 def random_sequences_sjnk(fonts):
-    return []
+    generated_list = []
+
+    for font in fonts:
+        font = list(font)
+
+        generated = ""
+
+        if random.randint(1,10) < 6:
+            for i in range(random.randint(30,70)):
+                generated += " "
+        else:
+            for i in range(random.randint(0,15)):
+                generated += " "
+
+            for i in range(random.randint(5)):
+                generated += random.choice(font)
+
+            for i in range(random.randint(10,40)):
+                generated += " "
+
+            for i in range(random.randint(5)):
+                generated += random.choice(font)
+        generated_list.append(generated)
+
+    return generated_list
 #     strings = []
 #
 #
@@ -625,7 +649,7 @@ def main():
     elif args.random_sequences_from_font:
         strings = create_strings_from_fonts(fonts_arr)
     elif args.random_sequences_sjnk:
-        fonts_arr, strings = random_sequences_sjnk(fonts_arr)
+        strings = random_sequences_sjnk(fonts_arr)
     elif args.random_latin_sjnk:
         fonts_arr, strings = random_latin(fonts_arr)
     else:
