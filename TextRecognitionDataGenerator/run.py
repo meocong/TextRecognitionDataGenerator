@@ -480,8 +480,9 @@ def random_sequences_sjnk(fonts):
     generated_list = []
 
     for font in fonts:
-        font = list(font)
         print(font)
+
+        font = list(font)
         generated = ""
 
         if random.randint(1,10) < 6:
