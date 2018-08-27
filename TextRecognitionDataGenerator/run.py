@@ -480,8 +480,6 @@ def random_sequences_sjnk(fonts):
     generated_list = []
 
     for font in fonts:
-        print(font)
-
         font = list(font)
         generated = ""
 
@@ -650,7 +648,7 @@ def main():
     elif args.random_sequences_from_font:
         strings = create_strings_from_fonts(fonts_arr)
     elif args.random_sequences_sjnk:
-        strings = random_sequences_sjnk(fonts_arr)
+        strings = random_sequences_sjnk(font_charsets)
     elif args.random_latin_sjnk:
         fonts_arr, strings = random_latin(fonts_arr)
     else:
