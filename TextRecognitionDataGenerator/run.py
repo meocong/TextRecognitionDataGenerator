@@ -483,21 +483,21 @@ def random_sequences_sjnk(fonts):
         font = list(font)
         generated = ""
 
-        if random.randint(1,10) < 6:
-            for i in range(random.randint(30,70)):
-                generated += " "
-        else:
-            for i in range(random.randint(0,15)):
-                generated += " "
-
-            for i in range(random.randint(1,5)):
-                generated += random.choice(font)
-
-            for i in range(random.randint(10,40)):
-                generated += " "
-
-            for i in range(random.randint(1,5)):
-                generated += random.choice(font)
+        # if random.randint(1,10) < 6:
+        for i in range(random.randint(30,70)):
+            generated += " "
+        # else:
+        #     for i in range(random.randint(0,15)):
+        #         generated += " "
+        #
+        #     for i in range(random.randint(1,5)):
+        #         generated += random.choice(font)
+        #
+        #     for i in range(random.randint(10,40)):
+        #         generated += " "
+        #
+        #     for i in range(random.randint(1,5)):
+        #         generated += random.choice(font)
         generated_list.append(generated)
 
     return generated_list
