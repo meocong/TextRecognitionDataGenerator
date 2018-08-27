@@ -9,9 +9,14 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 # from fontTools.unicode import Unicode
 from itertools import chain
 
+SECOND_HALF_BIG_TEXT = 1
+RANDOM_BIG_TEXT = 3
+NORMAL_TEXT = 0
+TIGHT_TEXT = 2
+
 class ComputerTextGenerator(object):
     @classmethod
-    def generate(cls, text, font, text_color, height, random_height_inc = True, tight_text = False):
+    def generate(cls, text, font, text_color, height, text_mode):
         # print(text, font, text_color)
         # image_font = ImageFont.truetype(font="/Library/Fonts/Arial Unicode.ttf", size=32)
 
@@ -22,12 +27,13 @@ class ComputerTextGenerator(object):
         image_font = ImageFont.truetype(font=font, size=height)
         image_font_big = ImageFont.truetype(font=font, size=int(height * 1.5))
 
-        if random_height_inc:
+        if text_mode in [SECOND_HALF_BIG_TEXT, RANDOM_BIG_TEXT]:  ## second half with bigger font
             text_width_1, text_height_1 = image_font.getsize(first_half)
             text_width_2, text_height_2 = image_font_big.getsize(second_half)
             text_width = text_width_1 + text_width_2
             text_height = text_height_2
-
+            if text_mode == RANDOM_BIG_TEXT:
+                text_width = int(text_width * 1.05)
         else:
             text_width, text_height = image_font.getsize(text)
 
@@ -36,25 +42,40 @@ class ComputerTextGenerator(object):
 
         txt_draw = ImageDraw.Draw(txt_img)
 
-        if not tight_text:
-            ## normal text print
-            if random_height_inc:
-                text_width, text_height = image_font.getsize(first_half)
-                txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
-                              font=image_font)
-                txt_draw.text((text_width, 0), u'{0}'.format(second_half),
-                              fill=random.randint(1, 80) if text_color < 0 else text_color,
-                              font=image_font_big)
-            else:
-                txt_draw.text((0, 0), u'{0}'.format(text), fill=random.randint(1, 80) if text_color < 0 else text_color,
-                              font=image_font)
-        else:
+        if text_mode == TIGHT_TEXT:
             ## draw letter by letter for tight text generation
             offset_x = 0
             for c in text:
                 char_w, char_h = image_font.getsize(c)
-                txt_draw.text((offset_x, 0), u'{0}'.format(c), fill=random.randint(1, 80) if text_color < 0 else text_color,
+                txt_draw.text((offset_x, 0), u'{0}'.format(c),
+                              fill=random.randint(1, 80) if text_color < 0 else text_color,
                               font=image_font)
                 offset_x += 0.9 * char_w
+
+        elif text_mode == SECOND_HALF_BIG_TEXT:
+            text_width, text_height = image_font.getsize(first_half)
+            txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
+                          font=image_font)
+            txt_draw.text((text_width, 0), u'{0}'.format(second_half),
+                          fill=random.randint(1, 80) if text_color < 0 else text_color,
+                          font=image_font_big)
+
+        elif text_mode == RANDOM_BIG_TEXT:
+            ## random letter font increase
+            offset_x = 0
+            is_bigger = np.random.choice([0,1], (len(text),), p=[0.7, 0.3])
+            for i, c in enumerate(text):
+                font = image_font_big if is_bigger[i] else image_font
+                char_w, char_h = font.getsize(c)
+                txt_draw.text((offset_x, 0), u'{0}'.format(c),
+                              fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              font=font)
+                offset_x += char_w
+
+        elif text_mode == NORMAL_TEXT:
+            ## normal text print
+            txt_draw.text((0, 0), u'{0}'.format(text), fill=random.randint(1, 80) if text_color < 0 else text_color,
+                          font=image_font)
+
 
         return txt_img
