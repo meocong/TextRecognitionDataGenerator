@@ -478,26 +478,23 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
 
 def random_sequences_sjnk(fonts):
     generated_list = []
+    special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()]
+    japan_chars = [x[:-1] for x in open("dicts/japan.txt", encoding="utf-8").readlines()]
 
     for font in fonts:
-        font = list(font)
+        font = set(font)
         generated = ""
 
-        if random.randint(1,10) < 6:
-            for i in range(random.randint(30,70)):
-                generated += " "
-        else:
-            for i in range(random.randint(0,15)):
-                generated += " "
+        japan_chars_in_font = [x for x in japan_chars if x in font]
+        special_chars_in_font = [x for x in special_chars if x in font] + [" "]*5
 
-            for i in range(random.randint(1,5)):
-                generated += random.choice(font)
+        for i in range(3):
+            for x in random.randint(1,20):
+                generated += random.choice(japan_chars_in_font)
+            generated += random.choice(special_chars_in_font)
+        for x in random.randint(0,70-len(generated)):
+            generated += random.choice(japan_chars_in_font)
 
-            for i in range(random.randint(10,40)):
-                generated += " "
-
-            for i in range(random.randint(1,5)):
-                generated += random.choice(font)
         generated_list.append(generated)
 
     return generated_list
