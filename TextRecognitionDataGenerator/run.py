@@ -489,10 +489,10 @@ def random_sequences_sjnk(fonts):
         special_chars_in_font = [x for x in special_chars if x in font] + [" "]*5
 
         for i in range(3):
-            for x in random.randint(1,20):
+            for x in range(random.randint(1,20)):
                 generated += random.choice(japan_chars_in_font)
             generated += random.choice(special_chars_in_font)
-        for x in random.randint(0,70-len(generated)):
+        for x in range(random.randint(0,70-len(generated))):
             generated += random.choice(japan_chars_in_font)
 
         generated_list.append(generated)
