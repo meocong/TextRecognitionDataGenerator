@@ -306,7 +306,7 @@ def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_pag
                 and not "Jump to " in s
                 and not "Cookie" in s,
             [
-                ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】ー・くぐ〇〜ゝゞヽヾ一]+", s.strip()))[0:70] for s in soup.get_text().splitlines()
+                ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+", s.strip()))[0:70] for s in soup.get_text().splitlines()
             ]
         ))
 
