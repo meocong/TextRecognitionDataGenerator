@@ -95,7 +95,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(4, 1, p=[0.65, 0.15, 0.15, 0.05])[0]
+                text_mode = np.random.choice(4, 1, p=[0.8, 0.1, 0.1, 0.0])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -134,7 +134,9 @@ class FakeTextDataGenerator(object):
 
                 rotated_img = Image.fromarray(im_arr)
 
-                random_erode_pixel = decision(0.3)
+                random_erode_pixel = decision(0.12)
+                random_pixel_discard = decision(0.06) and not random_erode_pixel
+
                 if random_erode_pixel:
                     ## random erode with random pixel sampling
                     x = random.randint(0, 2)
@@ -145,17 +147,17 @@ class FakeTextDataGenerator(object):
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
-
-                random_pixel_discard = decision(0.1)
-                if random_pixel_discard:
-                    ## random pixel discard
-                    # print("lol")
-                    im_arr = np.array(rotated_img)
-                    prob = np.random.choice([0.1, 0.15, 0.25], p=[0.5, 0.35, 0.15])
-                    mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                    im_arr[mask > 0] = 255
-                    # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                    rotated_img = Image.fromarray(im_arr)
+                else:
+                    random_pixel_discard = decision(0.06)
+                    if random_pixel_discard:
+                        ## random pixel discard
+                        # print("lol")
+                        im_arr = np.array(rotated_img)
+                        prob = np.random.choice([0.1, 0.15, 0.25], p=[0.5, 0.35, 0.15])
+                        mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                        im_arr[mask > 0] = 255
+                        # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
+                        rotated_img = Image.fromarray(im_arr)
 
 
                 ######################################
@@ -186,12 +188,14 @@ class FakeTextDataGenerator(object):
                         horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2)
                     )
 
-                affine_type = random.randint(0,3)
+                affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0.15, 0.4])[0]
                 if not random_pixel_discard:
                     if affine_type == 0:
                         distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
                     elif affine_type == 1:
                         distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
+                    elif affine_type == 2:
+                        distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
 
                 new_text_width, new_text_height = distorted_img.size
 
@@ -201,12 +205,7 @@ class FakeTextDataGenerator(object):
                 #############################
                 # Generate background image #
                 #############################
-                if (distorsion_type == 0):
-                    background_type = random.randint(0, 5)
-                else:
-                    background_type = random.randint(0, 5)
-
-                # background_type = 3
+                background_type =  np.random.choice(4, 1, p=[0.3, 0.58, 0.02, 0.1])[0]
 
                 if background_type == 0:
                     background = BackgroundGenerator.gaussian_noise(new_text_height + x, new_text_width + y)
@@ -246,7 +245,7 @@ class FakeTextDataGenerator(object):
                 final_image = background.convert('L')
 
                 # blur distortion
-                blur_type = random.randint(0,3)
+                blur_type =  np.random.choice(3, 1, p=[0.05, 0.2, 0.75])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
@@ -276,17 +275,17 @@ class FakeTextDataGenerator(object):
                 # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
                 ## random binary if background is white
-                if blur_type in [1, 2] and decision(0.6) :
+                if blur_type in [1, 2] and background_type in [1,3] and decision(0.6) :
                     bin_thres = 0.3 if blur_type == 2 else 0.03
                     binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
                     if np.mean(binary_im) > 160:
                         final_image = binary_im
 
-                # if (random.randint(0,10) < 3):
-                # x = random.randint(0,1)
-                # kernel = np.ones((x, x), np.uint8)
-                #
-                # final_image = Image.fromarray(cv2.erode(np.array(final_image), kernel, iterations=1))
+                ## random invert
+                if decision(0.2):
+                    im_arr = np.array(final_image)
+                    im_arr = np.bitwise_not(im_arr)
+                    final_image = Image.fromarray(im_arr)
 
                 #####################################
                 # Generate name for resulting image #

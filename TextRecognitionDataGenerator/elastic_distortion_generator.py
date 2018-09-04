@@ -28,7 +28,7 @@ def pil_2_arr(pil_image):
 def arr_2_pil(img_arr):
     return Image.fromarray(np.uint8(img_arr)).convert('L')
 
-def affine_transform(image, affine_value = 0.005):
+def affine_transform(image, affine_value = 0.01):#0.005):
     shape = image.shape
     alpha_affine = min(shape[0], shape[1]) * affine_value
     random_state = np.random.RandomState(None)
@@ -83,6 +83,96 @@ def elastic_transform(image, elastic_value_x = 0.0004 ,elastic_value_y = 0.0004)
     image = map_coordinates(image, indices, order=1, cval=255.0).reshape(shape)
     return image
 
+import cv2
+
+def _create_matrices(shape, range):
+
+    h, w = shape[0:2]
+
+    points = -np.random.uniform(range[0], range[1], size=(4,2))
+    # points = np.mod(np.abs(points), 1)
+
+    # top left
+    points[0, 1] = 1.0 - points[0, 1]  # h = 1.0 - jitter
+
+    # top right
+    points[1, 0] = 1.0 - points[1, 0]  # w = 1.0 - jitter
+    points[1, 1] = 1.0 - points[1, 1]  # h = 1.0 - jitter
+
+    # bottom right
+    points[2, 0] = 1.0 - points[2, 0]  # h = 1.0 - jitter
+
+    # bottom left
+    # nothing
+
+    points[:, 0] = points[:, 0] * w
+    points[:, 1] = points[:, 1] * h
+
+    # obtain a consistent order of the points and unpack them
+    # individually
+    points = _order_points(points)
+    (tl, tr, br, bl) = points
+
+    # compute the width of the new image, which will be the
+    # maximum distance between bottom-right and bottom-left
+    # x-coordiates or the top-right and top-left x-coordinates
+    widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
+    widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
+    maxWidth = max(int(widthA), int(widthB))
+
+    # compute the height of the new image, which will be the
+    # maximum distance between the top-right and bottom-right
+    # y-coordinates or the top-left and bottom-left y-coordinates
+    heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
+    heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
+    maxHeight = max(int(heightA), int(heightB))
+
+    # now that we have the dimensions of the new image, construct
+    # the set of destination points to obtain a "birds eye view",
+    # (i.e. top-down view) of the image, again specifying points
+    # in the top-left, top-right, bottom-right, and bottom-left
+    # order
+    dst = np.array([
+        [0, 0],
+        [maxWidth - 1, 0],
+        [maxWidth - 1, maxHeight - 1],
+        [0, maxHeight - 1]
+    ], dtype="float32")
+
+    # compute the perspective transform matrix and then apply it
+    M = cv2.getPerspectiveTransform(points, dst)
+
+    return M, maxHeight, maxWidth
+
+def _order_points(pts):
+    # initialzie a list of coordinates that will be ordered
+    # such that the first entry in the list is the top-left,
+    # the second entry is the top-right, the third is the
+    # bottom-right, and the fourth is the bottom-left
+    pts_ordered = np.zeros((4, 2), dtype="float32")
+
+    # the top-left point will have the smallest sum, whereas
+    # the bottom-right point will have the largest sum
+    s = pts.sum(axis=1)
+    pts_ordered[0] = pts[np.argmin(s)]
+    pts_ordered[2] = pts[np.argmax(s)]
+
+    # now, compute the difference between the points, the
+    # top-right point will have the smallest difference,
+    # whereas the bottom-left will have the largest difference
+    diff = np.diff(pts, axis=1)
+    pts_ordered[1] = pts[np.argmin(diff)]
+    pts_ordered[3] = pts[np.argmax(diff)]
+
+    # return the ordered coordinates
+    return pts_ordered
+
+
+def perspective_transform(im, range=(0.01, 0.1)):
+    M, max_height, max_width = _create_matrices(im.shape, range)
+    warped = cv2.warpPerspective(im, M, (max_width, max_height), borderValue=(255,255,255))
+    return warped
+
 class ElasticDistortionGenerator(object):
     @classmethod
     def afffine_transform(cls, pil_im):
@@ -94,4 +184,10 @@ class ElasticDistortionGenerator(object):
     def elastic_transform(cls, pil_im):
         img_arr = pil_2_arr(pil_im)
         img_arr = elastic_transform(img_arr)
+        return arr_2_pil(img_arr)
+
+    @classmethod
+    def perspective_transform(cls, pil_im):
+        img_arr = pil_2_arr(pil_im)
+        img_arr = perspective_transform(img_arr)
         return arr_2_pil(img_arr)
