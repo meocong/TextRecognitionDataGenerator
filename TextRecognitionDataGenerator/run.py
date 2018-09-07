@@ -251,7 +251,7 @@ def load_fonts(lang):
     # else:
     #     return [os.path.join('fonts/latin', font) for font in os.listdir('fonts/latin')]
 
-def create_strings_from_file(filename, count):
+def create_strings_from_file(filename, count, max_length):
     """
         Create all strings by reading lines in specified files
     """
@@ -259,7 +259,7 @@ def create_strings_from_file(filename, count):
     strings = []
 
     with open(filename, 'r', encoding="utf8") as f:
-        lines = [l.strip()[0:200] for l in f.readlines()]
+        lines = [l.strip()[0:max_length] for l in f.readlines()]
         if len(lines) == 0:
             raise Exception("No lines could be read in file")
         strings = random.sample(lines, count)
@@ -281,39 +281,57 @@ def create_strings_from_dict(length, allow_variable, count, lang_dict):
         strings.append(current_string[:-1])
     return strings
 
-def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8):
+def query_wikipedia(args):
+    lang, min_length, max_lines = args
+    page = requests.get('https://{}.wikipedia.org/wiki/Special:Random'.format(lang))
+
+    soup = BeautifulSoup(page.text, 'html.parser')
+
+    for script in soup(["script", "style"]):
+        script.extract()
+
+    # Only take a certain length
+    lines = list(filter(
+        lambda s:
+        len(s.replace(' ', '')) > min_length * 0.6
+        and not "Wikipedia" in s and not "This page was" in s
+        and not "wikipedia" in s and not "Not logged in" in s and not "This article" in s
+        and not "Jump to " in s and not "PDF" in s and not "Book" in s
+        and not "Cookie" in s
+        and not "What links here" in s,
+        [
+            ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
+                                s.strip())) for s in soup.get_text().splitlines()
+            ]
+    ))
+
+    new_lines = []
+    for i, l in enumerate(lines):
+        for j in range(len(lines) // min_length + 1):
+            idx = random.randint(0, len(l) // 2)
+            llen = random.randint(6, min_length)
+            l = l.strip()[idx:idx + llen]
+            if len(l.strip()) > 2:
+                new_lines.append(l)
+
+    random.shuffle(new_lines)
+
+    # Remove the last lines that talks about contributing
+    return new_lines[0:min(max([1, len(lines) - 5]), max_lines)]
+
+import multiprocessing
+def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8, nb_workers = 8):
     """
         Create all string by randomly picking Wikipedia articles and taking sentences from them.
     """
     sentences = []
     print("Generating strings from wiki...")
-
-    while len(sentences) < count:
-        # We fetch a random page
-        page = requests.get('https://{}.wikipedia.org/wiki/Special:Random'.format(lang))
-
-        soup = BeautifulSoup(page.text, 'html.parser')
-
-        for script in soup(["script", "style"]):
-            script.extract()
-
-        # Only take a certain length
-        lines = list(filter(
-            lambda s:
-                len(s.replace(' ', '')) > minimum_length
-                and not "Wikipedia" in s
-                and not "wikipedia" in s
-                and not "Jump to " in s
-                and not "Cookie" in s,
-            [
-                ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+", s.strip()))[0:70] for s in soup.get_text().splitlines()
-            ]
-        ))
-
-        random.shuffle(lines)
-
-        # Remove the last lines that talks about contributing
-        sentences.extend(lines[0:min(max([1, len(lines) - 5]), max_lines_per_page)])
+    pool = multiprocessing.Pool(nb_workers)
+    files = [(lang , minimum_length, max_lines_per_page)] * int(count / max_lines_per_page * 2)
+    it = pool.imap_unordered(query_wikipedia, files)
+    for lines in it:
+        print(len(lines))
+        sentences += lines
 
     return sentences[0:count]
 
@@ -401,7 +419,7 @@ def check_character_in_fontc2(char, font, height = 32):
 def random_latin(fonts):
     strings = []
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
-    special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()][:-3]
+    special_chars = [] #[x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()][:-3]
     max_length = 60
 
     all_chars = latin_chars + special_chars
@@ -450,6 +468,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
     max_length = 60
 
     for font in fonts:
+        print(font)
         if (font not in font_dicts and font not in pre_font_dics):
             ttf = TTFont(font, fontNumber=0)
 
@@ -627,19 +646,21 @@ def main():
     import pickle
     try:
         fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+        font_charsets = [fonts_dict[font] for font in fonts_arr]
     except:
         fonts_dict = {}
-    fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
-    pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+        print("Generating font char maps...")
+        fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
+        pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+        font_charsets = [fonts_dict[font] for font in fonts_arr]
 
     # print(fonts_dict)
-    font_charsets = [fonts_dict[font] for font in fonts_arr]
 
 
     if args.use_wikipedia:
         strings = create_strings_from_wikipedia(args.length, args.count, args.language)
     elif args.input_file != '':
-        strings = create_strings_from_file(args.input_file, args.count)
+        strings = create_strings_from_file(args.input_file, args.count, args.length)
     elif args.random_sequences:
         strings = create_strings_randomly(args.length, args.random, args.count,
                                           args.include_letters, args.include_numbers, args.include_symbols, args.language)

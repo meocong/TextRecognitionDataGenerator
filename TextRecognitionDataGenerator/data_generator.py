@@ -95,7 +95,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(4, 1, p=[0.8, 0.1, 0.1, 0.0])[0]
+                text_mode = np.random.choice(4, 1, p=[0.92, 0.04, 0.04, 0.0])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -188,6 +188,8 @@ class FakeTextDataGenerator(object):
                         horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2)
                     )
 
+                new_text_width, new_text_height = distorted_img.size
+
                 affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0.15, 0.4])[0]
                 if not random_pixel_discard:
                     if affine_type == 0:
@@ -197,7 +199,8 @@ class FakeTextDataGenerator(object):
                     elif affine_type == 2:
                         distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
 
-                new_text_width, new_text_height = distorted_img.size
+                if np.min(np.array(distorted_img)) > 250:
+                    print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
 
                 x = random.randint(1, 10)
                 y = random.randint(1, 10)
@@ -282,10 +285,10 @@ class FakeTextDataGenerator(object):
                         final_image = binary_im
 
                 ## random invert
-                if decision(0.2):
-                    im_arr = np.array(final_image)
-                    im_arr = np.bitwise_not(im_arr)
-                    final_image = Image.fromarray(im_arr)
+                # if decision(0.2):
+                #     im_arr = np.array(final_image)
+                #     im_arr = np.bitwise_not(im_arr)
+                #     final_image = Image.fromarray(im_arr)
 
                 #####################################
                 # Generate name for resulting image #
@@ -304,6 +307,7 @@ class FakeTextDataGenerator(object):
 
                 print(image_name, font)
                 # Save the image
+
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             except:
                 pass

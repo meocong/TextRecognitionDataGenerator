@@ -171,6 +171,8 @@ def _order_points(pts):
 def perspective_transform(im, range=(0.01, 0.1)):
     M, max_height, max_width = _create_matrices(im.shape, range)
     warped = cv2.warpPerspective(im, M, (max_width, max_height), borderValue=(255,255,255))
+    if np.min(warped) > 250:
+        warped = im
     return warped
 
 class ElasticDistortionGenerator(object):
