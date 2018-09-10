@@ -268,7 +268,7 @@ def create_strings_from_file(filename, count, max_length):
 
 def create_strings_from_dict(length, allow_variable, count, lang_dict):
     """
-        Create all strings by picking X random word in the dictionnary
+        Create all strings by picking X random word in the dictionary
     """
 
     dict_len = len(lang_dict)
@@ -280,6 +280,41 @@ def create_strings_from_dict(length, allow_variable, count, lang_dict):
             current_string += ' '
         strings.append(current_string[:-1])
     return strings
+
+def decision(probability):
+    return random.random() < probability
+
+def random_insert_sym(word, pool):
+    word = list(word)
+    for i, c in enumerate(word):
+        if decision(0.33):
+            while decision(0.33):
+                word[i] += random.choice(pool)
+    return ''.join(word)
+
+def create_string_from_dict_with_random_chars(length, allow_variable, count, lang_dict, num = True, sym = False):
+    """
+        Create all strings by picking X random word in the dictionary
+    """
+    pool = ''
+    if num:
+        pool += "0123456789"
+    if sym:
+        pool += "!\"%'()+,-./:;\\_"
+
+    dict_len = len(lang_dict)
+    strings = []
+    for _ in range(0, count):
+        current_string = ""
+        for _ in range(0, random.randint(1, length) if allow_variable else length):
+            word = lang_dict[random.randrange(dict_len)][:-1]
+            if decision(0.2):
+                word = random_insert_sym(word, pool)
+            current_string += word
+            current_string += ' '
+        strings.append(current_string[:-1])
+    return strings
+
 
 def query_wikipedia(args):
     lang, min_length, max_lines = args
@@ -320,7 +355,7 @@ def query_wikipedia(args):
     return new_lines[0:min(max([1, len(lines) - 5]), max_lines)]
 
 import multiprocessing
-def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8, nb_workers = 8):
+def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8, nb_workers = 16):
     """
         Create all string by randomly picking Wikipedia articles and taking sentences from them.
     """
@@ -674,7 +709,7 @@ def main():
     elif args.random_latin_sjnk:
         fonts_arr, strings = random_latin(fonts_arr)
     else:
-        strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
+        strings = create_string_from_dict_with_random_chars(args.length, args.random, args.count, lang_dict)
 
     strings = [''.join([c for c in text if c in charset]) for text, charset in zip(strings, font_charsets)]
     # strings = [s.strip() for s in strings if len(s.strip()) > 1]
