@@ -417,45 +417,72 @@ def check_character_in_fontc2(char, font, height = 32):
 
 
 def random_latin(fonts):
-    strings = []
-    latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
-    special_chars = [] #[x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()][:-3]
-    max_length = 60
-
-    all_chars = latin_chars + special_chars
+    generated_list = []
+    latin_chars = [x[:-1] for x in
+                   open("dicts/latin.txt", encoding="utf-8").readlines()]
+    special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
+                                          encoding="utf-8").readlines()]
 
     for font in fonts:
+        font = set(font)
         generated = ""
-        if (random.randint(0, 30) < 1):
-            # Only space
-            n_gen = random.randint(1, 60)
-            for i in range(n_gen):
-                generated += " "
-        else:
-            # Random length of string
-            length = random.randint(1, max_length)
 
-            while len(generated) < length:
-                # Looping to add string
-                if (random.randint(0,20) < 1):
-                    # Add only space
-                    n_gen = min(length - len(generated), random.randint(1, 2))
-                    for i in range(n_gen):
-                        generated += " "
-                else:
-                    # Add random latin chars
-                    n_gen = min(length - len(generated), random.randint(0, 5))
-                    generated += ''.join(random.choice(all_chars) for i in range(n_gen))
+        latin_chars_in_font = [x for x in latin_chars if x in font]
+        special_chars_in_font = [x for x in special_chars if x in font] + [
+            " "] * 5
 
-                    generated += " "
+        for i in range(3):
+            for x in range(random.randint(1, 10)):
+                generated += random.choice(latin_chars_in_font)
 
-            if (length > len(generated) and random.randint(0, 20) < 3):
-                # Add space to last
-                n_gen = random.randint(0, length - len(generated))
-                for i in range(n_gen):
-                    generated += " "
+            generated += random.choice(special_chars_in_font)
 
-        strings.append(generated)
+        for x in range(random.randint(0, 30 - len(generated))):
+            generated += random.choice(latin_chars_in_font)
+
+        generated_list.append(generated)
+
+    return generated_list
+
+    # strings = []
+    # latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
+    # special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt", encoding="utf-8").readlines()]
+    # max_length = 30
+    #
+    # all_chars = latin_chars + special_chars
+    #
+    # for font in fonts:
+    #     generated = ""
+    #     if (random.randint(0, 30) < 1):
+    #         # Only space
+    #         n_gen = random.randint(1, 60)
+    #         for i in range(n_gen):
+    #             generated += " "
+    #     else:
+    #         # Random length of string
+    #         length = random.randint(1, max_length)
+    #
+    #         while len(generated) < length:
+    #             # Looping to add string
+    #             if (random.randint(0,20) < 1):
+    #                 # Add only space
+    #                 n_gen = min(length - len(generated), random.randint(1, 2))
+    #                 for i in range(n_gen):
+    #                     generated += " "
+    #             else:
+    #                 # Add random latin chars
+    #                 n_gen = min(length - len(generated), random.randint(0, 5))
+    #                 generated += ''.join(random.choice(all_chars) for i in range(n_gen))
+    #
+    #                 generated += " "
+    #
+    #         if (length > len(generated) and random.randint(0, 20) < 3):
+    #             # Add space to last
+    #             n_gen = random.randint(0, length - len(generated))
+    #             for i in range(n_gen):
+    #                 generated += " "
+    #
+    #     strings.append(generated)
 
     return fonts, strings
 def generate_char_map_from_font(fonts, pre_font_dics={}):
