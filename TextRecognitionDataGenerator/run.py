@@ -702,7 +702,7 @@ def main():
     elif args.random_sequences_sjnk:
         strings = random_sequences_sjnk(font_charsets)
     elif args.random_latin_sjnk:
-        fonts_arr, strings = random_latin(fonts_arr)
+        strings = random_latin(font_charsets)
     else:
         strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
 
