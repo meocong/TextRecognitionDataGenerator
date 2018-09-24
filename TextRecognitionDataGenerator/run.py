@@ -423,6 +423,7 @@ def random_latin(fonts):
     special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
                                           encoding="utf-8").readlines()]
 
+    max_len = 30
     for font in fonts:
         font = set(font)
         generated = ""
@@ -437,8 +438,10 @@ def random_latin(fonts):
 
             generated += random.choice(special_chars_in_font)
 
-        for x in range(random.randint(0, 30 - len(generated))):
-            generated += random.choice(latin_chars_in_font)
+
+        if (len(generated) < max_len):
+            for x in range(random.randint(0, max_len - len(generated))):
+                generated += random.choice(latin_chars_in_font)
 
         generated_list.append(generated)
 
