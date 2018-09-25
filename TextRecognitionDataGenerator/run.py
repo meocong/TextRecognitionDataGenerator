@@ -335,7 +335,7 @@ def query_wikipedia(args):
         and not "Cookie" in s
         and not "What links here" in s,
         [
-            ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
+            ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~€¢³ØðŸ¦±°‰¶§£¥§·—“”≪≫➡【】–ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
                                 s.strip())) for s in soup.get_text().splitlines()
             ]
     ))
