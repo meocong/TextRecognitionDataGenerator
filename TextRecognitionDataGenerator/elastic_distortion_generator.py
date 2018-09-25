@@ -89,8 +89,8 @@ def _create_matrices(shape, range):
 
     h, w = shape[0:2]
 
-    points = -np.random.uniform(range[0], range[1], size=(4,2))
-    # points = np.mod(np.abs(points), 1)
+    points = np.random.uniform(range[0], range[1], size=(4,2))
+    points = -np.mod(np.abs(points), 1)
 
     # top left
     points[0, 1] = 1.0 - points[0, 1]  # h = 1.0 - jitter
@@ -118,7 +118,7 @@ def _create_matrices(shape, range):
     # x-coordiates or the top-right and top-left x-coordinates
     widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
     widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
-    maxWidth = max(int(widthA), int(widthB))
+    maxWidth = int(max(int(widthA), int(widthB)) * 0.9)
 
     # compute the height of the new image, which will be the
     # maximum distance between the top-right and bottom-right
@@ -168,8 +168,9 @@ def _order_points(pts):
     return pts_ordered
 
 
-def perspective_transform(im, range=(0.01, 0.1)):
+def perspective_transform(im, range=(0.01, 0.08)):
     M, max_height, max_width = _create_matrices(im.shape, range)
+    #max_width = int(max_width * 2.5)
     warped = cv2.warpPerspective(im, M, (max_width, max_height), borderValue=(255,255,255))
     if np.min(warped) > 250:
         warped = im
