@@ -699,9 +699,6 @@ def main():
         if e.errno != errno.EEXIST:
             raise
 
-    # Creating word list
-    lang_dict = load_dict(args.language)
-
     # Create font (path) list
     fonts = load_fonts(args.language)
     # print(fonts)
@@ -741,6 +738,9 @@ def main():
     elif args.random_latin_sjnk:
         strings = random_latin(font_charsets)
     else:
+        # Creating word list
+        lang_dict = load_dict(args.language)
+
         strings = create_string_from_dict_with_random_chars(args.length, args.random, args.count, lang_dict)
 
     strings = [''.join([c for c in text if c in charset]) for text, charset in zip(strings, font_charsets)]
