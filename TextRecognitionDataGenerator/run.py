@@ -555,7 +555,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
                                      and x in chars] + [" " for x in range(1,5)]
 
             font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
-            print(font_dicts[font])
+            print(font_dicts)
         elif font in font_dicts:
             pass
         elif font in pre_font_dics:
