@@ -160,7 +160,7 @@ class FakeTextDataGenerator(object):
                 # Apply geometry distortion to image #
                 ######################################
 
-                distorsion_type = random.choice([0,1,2,3])
+                distorsion_type = np.random.choice(4, 1, p=[0.6, 0.15, 0.15, 0.1])[0]
                 if distorsion_type == 0:
                     distorted_img = rotated_img # Mind = blown
                 elif distorsion_type == 1:
