@@ -24,8 +24,8 @@ class ComputerTextGenerator(object):
         first_half = text[:N]
         second_half = text[N:]
 
-        image_font = ImageFont.truetype(font=font, size=height)
-        image_font_big = ImageFont.truetype(font=font, size=int(height * 1.5))
+        image_font = ImageFont.truetype(font=font, size=height * random.uniform(1.0, 1.1))
+        image_font_big = ImageFont.truetype(font=font, size=int(height * random.uniform(0.7, 1.3)))
 
         if text_mode in [SECOND_HALF_BIG_TEXT, RANDOM_BIG_TEXT]:  ## second half with bigger font
             text_width_1, text_height_1 = image_font.getsize(first_half)
