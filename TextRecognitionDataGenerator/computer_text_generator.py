@@ -30,15 +30,15 @@ class ComputerTextGenerator(object):
         if text_mode in [SECOND_HALF_BIG_TEXT, RANDOM_BIG_TEXT]:  ## second half with bigger font
             text_width_1, text_height_1 = image_font.getsize(first_half)
             text_width_2, text_height_2 = image_font_big.getsize(second_half)
-            text_width = text_width_1 + text_width_2
-            text_height = text_height_2
+            text_width = text_width_1 + text_width_2 + 10
+            text_height = max(text_height_1, text_height_2)
             if text_mode == RANDOM_BIG_TEXT:
                 text_width = int(text_width * 1.05)
         else:
             text_width, text_height = image_font.getsize(text)
 
         # text = u'日産コーポレート/個人ゴールドJBC123JAL'
-        txt_img = Image.new('L', (text_width, text_height), 255)
+        txt_img = Image.new('L', (text_width, int(text_height*1.05)), 255)
 
         txt_draw = ImageDraw.Draw(txt_img)
 
