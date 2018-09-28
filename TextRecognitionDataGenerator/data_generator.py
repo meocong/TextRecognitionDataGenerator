@@ -5,11 +5,7 @@ import random
 from PIL import Image, ImageFilter, ImageFont
 
 from computer_text_generator import ComputerTextGenerator
-# try:
 from handwritten_text_generator import HandwrittenTextGenerator
-# except ImportError as e:
-#     print('Missing modules for handwritten text generation.')
-
 from background_generator import BackgroundGenerator
 from distorsion_generator import DistorsionGenerator
 from elastic_distortion_generator import ElasticDistortionGenerator
@@ -84,7 +80,7 @@ def nick_binarize(img_list):
 class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = ""):
-            # try:
+            try:
                 image = None
 
                 ##########################
@@ -309,6 +305,6 @@ class FakeTextDataGenerator(object):
                 # Save the image
 
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
-            # except Exception as ex:
-            #     print(ex)
-            #     pass
+            except Exception as ex:
+                print(ex)
+                pass
