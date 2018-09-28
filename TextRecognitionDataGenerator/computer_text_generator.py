@@ -38,7 +38,7 @@ class ComputerTextGenerator(object):
             text_width, text_height = image_font.getsize(text)
 
         # text = u'日産コーポレート/個人ゴールドJBC123JAL'
-        txt_img = Image.new('L', (int(text_width*1.05), int(text_height*1.05)), 255)
+        txt_img = Image.new('L', (int(text_width*1.05), int(text_height*1.1)), 255)
 
         txt_draw = ImageDraw.Draw(txt_img)
 
