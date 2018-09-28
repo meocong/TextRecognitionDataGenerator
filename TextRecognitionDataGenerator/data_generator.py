@@ -204,7 +204,7 @@ class FakeTextDataGenerator(object):
                 #############################
                 # Generate background image #
                 #############################
-                background_type =  np.random.choice(4, 1, p=[0.3, 0.58, 0.02, 0.1])[0]
+                background_type =  np.random.choice(4, 1, p=[0.1, 0.3, 0.02, 0.58])[0]
 
                 if background_type == 0:
                     background = BackgroundGenerator.gaussian_noise(new_text_height + x, new_text_width + y)
@@ -274,7 +274,7 @@ class FakeTextDataGenerator(object):
                 # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
                 ## random binary if background is white
-                if blur_type in [1, 2] and background_type in [1,3] and decision(0.6) :
+                if blur_type in [1, 2] and background_type in [0, 1] and decision(0.6) and distorsion_type != 3:
                     bin_thres = 0.3 if blur_type == 2 else 0.03
                     binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
                     if np.mean(binary_im) > 160:
