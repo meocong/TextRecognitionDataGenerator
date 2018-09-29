@@ -508,7 +508,7 @@ def random_latin(fonts):
     special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
                                           encoding="utf-8").readlines()]
 
-    max_len = 75
+    max_len = 100
     for font in fonts:
         font = set(font)
         generated = ""
