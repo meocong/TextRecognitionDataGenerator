@@ -122,6 +122,13 @@ def parse_arguments():
         default=False
     )
     parser.add_argument(
+        "-rp",
+        "--random_space",
+        action="store_true",
+        help="Random Space",
+        default=False
+    )
+    parser.add_argument(
         "-f",
         "--format",
         type=int,
@@ -494,34 +501,16 @@ def check_character_in_fontc2(char, font, height = 32):
 #
 #     return fonts, strings
 
-def random_latin(fonts):
+def random_space(fonts):
     generated_list = []
-    latin_chars = [x[:-1] for x in
-                   open("dicts/latin.txt", encoding="utf-8").readlines()]
-    special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
-                                          encoding="utf-8").readlines()]
 
     max_len = 150
     for font in fonts:
-        font = set(font)
-        generated = ""
+        temp = ""
+        for x in random.randint(5, max_len):
+            temp += " "
 
-        latin_chars_in_font = [x for x in latin_chars if x in font]
-        special_chars_in_font = [x for x in special_chars if x in font] + [
-            " "] * 5
-
-        for i in range(3):
-            for x in range(random.randint(1, 10)):
-                generated += random.choice(latin_chars_in_font)
-
-            generated += random.choice(special_chars_in_font)
-
-
-        if (len(generated) < max_len):
-            for x in range(random.randint(0, max_len - len(generated))):
-                generated += random.choice(latin_chars_in_font)
-
-        generated_list.append(generated)
+        generated_list.append(temp)
 
     return generated_list
 
@@ -737,6 +726,8 @@ def main():
         strings = random_sequences_sjnk(font_charsets)
     elif args.random_latin_sjnk:
         strings = random_latin(font_charsets)
+    elif args.random_space:
+        strings = random_space(font_charsets)
     else:
         # Creating word list
         lang_dict = load_dict(args.language)
