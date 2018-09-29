@@ -183,6 +183,13 @@ def parse_arguments():
         default=False,
     )
     parser.add_argument(
+        "-ck",
+        "--check_font",
+        action="store_true",
+        help="Use Wikipedia as the source text for the generation, using this paremeter ignores -r, -n, -s",
+        default=False,
+    )
+    parser.add_argument(
         "-bl",
         "--blur",
         type=int,
@@ -532,6 +539,25 @@ def random_latin(fonts):
 
     return generated_list
 
+def gen_check_font(fonts):
+    generated_list = []
+    latin_chars = [x[:-1] for x in
+                   open("dicts/latin.txt", encoding="utf-8").readlines()]
+    special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
+                                          encoding="utf-8").readlines()]
+
+    max_len = 100
+    for font in fonts:
+        font = set(font)
+
+        latin_chars_in_font = [x for x in latin_chars if x in font]
+        special_chars_in_font = [x for x in special_chars if x in font] + [
+            " "] * 5
+
+        generated_list.append("".join(latin_chars_in_font + special_chars_in_font))
+
+    return generated_list
+
 def random_space(fonts):
     generated_list = []
 
@@ -725,7 +751,10 @@ def main():
     # Creating synthetic sentences (or word)
     strings = []
 
-    fonts_arr = [fonts[random.randrange(0, len(fonts))] for _ in range(0, args.count)]
+    if not args.check_font:
+        fonts_arr = [fonts[random.randrange(0, len(fonts))] for _ in range(0, args.count)]
+    else:
+        fonts_arr = fonts
 
     import pickle
     try:
@@ -759,6 +788,8 @@ def main():
         strings = random_latin(font_charsets)
     elif args.random_space:
         strings = random_space(font_charsets)
+    elif args.check_font:
+        strings = gen_check_font(font_charsets)
     else:
         # Creating word list
         lang_dict = load_dict(args.language)
