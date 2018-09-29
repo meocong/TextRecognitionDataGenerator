@@ -106,7 +106,7 @@ class FakeTextDataGenerator(object):
                 # Create picture of text #
                 ##########################
                 add_random_space = ' ' in text and decision(0.7)
-
+                text = "  " + text
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
@@ -307,10 +307,8 @@ class FakeTextDataGenerator(object):
                 #     final_image = Image.fromarray(im_arr)
 
 
-
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
-                print(image_name, "Done")
             except Exception as ex:
                 print(ex)
                 pass
