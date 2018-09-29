@@ -803,6 +803,7 @@ def main():
     print("String count", string_count)
     print_text("src-train.txt", ['{}_{}.{}\n'.format(args.prefix, str(index), args.extension) for index in range(string_count)])
     print_text("tgt-train.txt", ['{}\n'.format(x) for x in strings])
+    print_text("tgt-fonts.txt", ['{}\n'.format(x) for x in fonts_arr])
 
 
     # exit()
