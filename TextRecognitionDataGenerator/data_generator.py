@@ -81,6 +81,25 @@ class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = ""):
             try:
+                #####################################
+                # Generate name for resulting image #
+                #####################################
+                if name_format == 0:
+                    image_name = '{}_{}.{}'.format(text, str(index), extension)
+                elif name_format == 1:
+                    image_name = '{}_{}.{}'.format(str(index), text, extension)
+                elif name_format == 2:
+                    image_name = '{}.{}'.format(str(index), extension)
+                elif name_format == 3:
+                    image_name = '{}_{}.{}'.format(prefix, str(index),
+                                                   extension)
+                else:
+                    print(
+                        '{} is not a valid name format. Using default.'.format(
+                            name_format))
+                    image_name = '{}_{}.{}'.format(text, str(index), extension)
+                print(image_name, font)
+
                 image = None
 
                 ##########################
@@ -287,25 +306,11 @@ class FakeTextDataGenerator(object):
                 #     im_arr = np.bitwise_not(im_arr)
                 #     final_image = Image.fromarray(im_arr)
 
-                #####################################
-                # Generate name for resulting image #
-                #####################################
-                if name_format == 0:
-                    image_name = '{}_{}.{}'.format(text, str(index), extension)
-                elif name_format == 1:
-                    image_name = '{}_{}.{}'.format(str(index), text, extension)
-                elif name_format == 2:
-                    image_name = '{}.{}'.format(str(index),extension)
-                elif name_format == 3:
-                    image_name = '{}_{}.{}'.format(prefix, str(index), extension)
-                else:
-                    print('{} is not a valid name format. Using default.'.format(name_format))
-                    image_name = '{}_{}.{}'.format(text, str(index), extension)
 
-                print(image_name, font)
+
                 # Save the image
-
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
+                print(image_name, "Done")
             except Exception as ex:
                 print(ex)
                 pass
