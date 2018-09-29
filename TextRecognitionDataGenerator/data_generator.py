@@ -152,28 +152,27 @@ class FakeTextDataGenerator(object):
                 random_erode_pixel = decision(0.12)
                 random_pixel_discard = decision(0.06) and not random_erode_pixel
 
-                if (text_mode != 2):
-                    if random_erode_pixel:
-                        ## random erode with random pixel sampling
-                        x = random.randint(0, 2)
-                        kernel = np.ones((x, x), np.uint8)
+                if random_erode_pixel:
+                    ## random erode with random pixel sampling
+                    x = random.randint(0, 2)
+                    kernel = np.ones((x, x), np.uint8)
+                    im_arr = np.array(rotated_img)
+                    erode = cv2.erode(im_arr, kernel, iterations=1)
+                    prob = np.random.choice([0.1, 0.2, 0.3], p=[0.5, 0.4, 0.1])
+                    mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                    im_arr[mask > 0] = erode[mask > 0]
+                    rotated_img = Image.fromarray(im_arr)
+                else:
+                    random_pixel_discard = decision(0.06)
+                    if random_pixel_discard:
+                        ## random pixel discard
+                        # print("lol")
                         im_arr = np.array(rotated_img)
-                        erode = cv2.erode(im_arr, kernel, iterations=1)
-                        prob = np.random.choice([0.1, 0.2, 0.3], p=[0.5, 0.4, 0.1])
+                        prob = np.random.choice([0.1, 0.15, 0.25], p=[0.5, 0.35, 0.15])
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                        im_arr[mask > 0] = erode[mask > 0]
+                        im_arr[mask > 0] = 255
+                        # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
                         rotated_img = Image.fromarray(im_arr)
-                    else:
-                        random_pixel_discard = decision(0.06)
-                        if random_pixel_discard:
-                            ## random pixel discard
-                            # print("lol")
-                            im_arr = np.array(rotated_img)
-                            prob = np.random.choice([0.1, 0.15, 0.25], p=[0.5, 0.35, 0.15])
-                            mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                            im_arr[mask > 0] = 255
-                            # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                            rotated_img = Image.fromarray(im_arr)
 
 
                 ######################################
@@ -230,10 +229,13 @@ class FakeTextDataGenerator(object):
                     background = BackgroundGenerator.gaussian_noise(new_text_height + x, new_text_width + y)
                 elif background_type == 1:
                     background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
-                elif background_type == 2:
+                elif background_type == 2 and random_erode_pixel == False and random_pixel_discard == False:
                     background = BackgroundGenerator.quasicrystal(new_text_height + x, new_text_width + y)
-                else:
+                elif random_erode_pixel == False and random_pixel_discard == False:
                     background = BackgroundGenerator.picture(new_text_height + 10, new_text_width + 10)
+                else:
+                    background = BackgroundGenerator.gaussian_noise(
+                        new_text_height + x, new_text_width + y)
 
                 mask = distorted_img.point(lambda x: 0 if x == 255 or x == 0 else 255, '1')
 
