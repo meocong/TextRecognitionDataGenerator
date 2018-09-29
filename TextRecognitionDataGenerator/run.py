@@ -507,7 +507,7 @@ def random_space(fonts):
     max_len = 150
     for font in fonts:
         temp = ""
-        for x in random.randint(5, max_len):
+        for x in range(random.randint(5, max_len)):
             temp += " "
 
         generated_list.append(temp)
