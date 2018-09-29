@@ -270,7 +270,7 @@ class FakeTextDataGenerator(object):
                     if blur_type == 0:
                         final_image = RandomizedBlur(final_image)
                     elif blur_type == 1:
-                        final_image = PsfBlur(final_image, 5)
+                        final_image = PsfBlur(final_image, 3)
 
                 ## additional sharpening
                 if decision(0.7):
