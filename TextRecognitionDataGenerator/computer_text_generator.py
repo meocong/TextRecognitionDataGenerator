@@ -74,11 +74,11 @@ class ComputerTextGenerator(object):
                               fill=random.randint(1,
                                                   80) if text_color < 0 else text_color,
                               font=image_font_big)
-                txt_draw.text((image_font.getsize(text[:N1]), 3), u'{0}'.format(text[N1:N2]),
+                txt_draw.text((image_font.getsize(text[:N1])[0], 3), u'{0}'.format(text[N1:N2]),
                               fill=random.randint(1,
                                                   80) if text_color < 0 else text_color,
                               font=image_font)
-                txt_draw.text((image_font.getsize(text[:N2]), 3), u'{0}'.format(text[N2:]),
+                txt_draw.text((image_font.getsize(text[:N2])[0], 3), u'{0}'.format(text[N2:]),
                               fill=random.randint(1,
                                                   80) if text_color < 0 else text_color,
                               font=image_font_big)
