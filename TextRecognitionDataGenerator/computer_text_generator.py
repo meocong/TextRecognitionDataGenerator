@@ -9,10 +9,10 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 # from fontTools.unicode import Unicode
 from itertools import chain
 
-SECOND_HALF_BIG_TEXT = 1
-RANDOM_BIG_TEXT = 3
 NORMAL_TEXT = 0
+SECOND_HALF_BIG_TEXT = 1
 TIGHT_TEXT = 2
+RANDOM_BIG_TEXT = 3
 
 class ComputerTextGenerator(object):
     @classmethod
@@ -24,8 +24,8 @@ class ComputerTextGenerator(object):
         first_half = text[:N]
         second_half = text[N:]
 
-        image_font = ImageFont.truetype(font=font, size=int(height * random.uniform(1.0, 1.1)))
-        image_font_big = ImageFont.truetype(font=font, size=int(height * random.uniform(0.7, 1.3)))
+        image_font = ImageFont.truetype(font=font, size=int(height))
+        image_font_big = ImageFont.truetype(font=font, size=int(height * random.uniform(1.0, 1.5)))
 
         if text_mode in [SECOND_HALF_BIG_TEXT, RANDOM_BIG_TEXT]:  ## second half with bigger font
             text_width_1, text_height_1 = image_font.getsize(first_half)
@@ -33,12 +33,12 @@ class ComputerTextGenerator(object):
             text_width = text_width_1 + text_width_2 + 10
             text_height = max(text_height_1, text_height_2)
             if text_mode == RANDOM_BIG_TEXT:
-                text_width = int(text_width * 1.05)
+                text_width = int(text_width * 1.1)
         else:
             text_width, text_height = image_font.getsize(text)
 
         # text = u'日産コーポレート/個人ゴールドJBC123JAL'
-        txt_img = Image.new('L', (int(text_width*1.05), int(text_height*1.1)), 255)
+        txt_img = Image.new('L', (int(text_width*1.1), int(text_height*1.4)), 255)
 
         txt_draw = ImageDraw.Draw(txt_img)
 
@@ -54,14 +54,40 @@ class ComputerTextGenerator(object):
 
         elif text_mode == SECOND_HALF_BIG_TEXT:
             text_width, text_height = image_font.getsize(first_half)
-            txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
-                          font=image_font)
-            txt_draw.text((text_width, 0), u'{0}'.format(second_half),
-                          fill=random.randint(1, 80) if text_color < 0 else text_color,
-                          font=image_font_big)
+
+            if (random.randint(0,1) == 0):
+                temp = image_font
+                image_font = image_font_big
+                image_font_big = temp
+
+            if (random.randint(0,2) != 0 or len(text) < 6):
+                txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              font=image_font)
+                txt_draw.text((text_width, 0), u'{0}'.format(second_half),
+                              fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              font=image_font_big)
+            else:
+                N1 = random.randint(1,len(text) - 3)
+                N2 = random.randint(N1 + 1, len(text))
+
+                txt_draw.text((0, 0), u'{0}'.format(text[:N1]),
+                              fill=random.randint(1,
+                                                  80) if text_color < 0 else text_color,
+                              font=image_font_big)
+                txt_draw.text((text_width, 0), u'{0}'.format(text[N1:N2]),
+                              fill=random.randint(1,
+                                                  80) if text_color < 0 else text_color,
+                              font=image_font)
+                txt_draw.text((text_width, 0), u'{0}'.format(text[N2:]),
+                              fill=random.randint(1,
+                                                  80) if text_color < 0 else text_color,
+                              font=image_font_big)
 
         elif text_mode == RANDOM_BIG_TEXT:
             ## random letter font increase
+            image_font_big = ImageFont.truetype(font=font, size=int(
+                height * random.uniform(1.0, 1.1)))
+
             offset_x = 0
             is_bigger = np.random.choice([0,1], (len(text),), p=[0.7, 0.3])
             for i, c in enumerate(text):

@@ -91,7 +91,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(4, 1, p=[0.25, 0.15, 0.0, 0.6])[0]
+                text_mode = np.random.choice(4, 1, p=[0.3, 0.3, 0.1, 0.3])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -133,27 +133,28 @@ class FakeTextDataGenerator(object):
                 random_erode_pixel = decision(0.12)
                 random_pixel_discard = decision(0.06) and not random_erode_pixel
 
-                if random_erode_pixel:
-                    ## random erode with random pixel sampling
-                    x = random.randint(0, 2)
-                    kernel = np.ones((x, x), np.uint8)
-                    im_arr = np.array(rotated_img)
-                    erode = cv2.erode(im_arr, kernel, iterations=1)
-                    prob = np.random.choice([0.1, 0.2, 0.3], p=[0.5, 0.4, 0.1])
-                    mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                    im_arr[mask > 0] = erode[mask > 0]
-                    rotated_img = Image.fromarray(im_arr)
-                else:
-                    random_pixel_discard = decision(0.06)
-                    if random_pixel_discard:
-                        ## random pixel discard
-                        # print("lol")
+                if (text_mode != 2):
+                    if random_erode_pixel:
+                        ## random erode with random pixel sampling
+                        x = random.randint(0, 2)
+                        kernel = np.ones((x, x), np.uint8)
                         im_arr = np.array(rotated_img)
-                        prob = np.random.choice([0.1, 0.15, 0.25], p=[0.5, 0.35, 0.15])
+                        erode = cv2.erode(im_arr, kernel, iterations=1)
+                        prob = np.random.choice([0.1, 0.2, 0.3], p=[0.5, 0.4, 0.1])
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                        im_arr[mask > 0] = 255
-                        # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
+                        im_arr[mask > 0] = erode[mask > 0]
                         rotated_img = Image.fromarray(im_arr)
+                    else:
+                        random_pixel_discard = decision(0.06)
+                        if random_pixel_discard:
+                            ## random pixel discard
+                            # print("lol")
+                            im_arr = np.array(rotated_img)
+                            prob = np.random.choice([0.1, 0.15, 0.25], p=[0.5, 0.35, 0.15])
+                            mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                            im_arr[mask > 0] = 255
+                            # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
+                            rotated_img = Image.fromarray(im_arr)
 
 
                 ######################################
