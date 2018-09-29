@@ -110,7 +110,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(4, 1, p=[0.3, 0.3, 0.1, 0.3])[0]
+                text_mode = np.random.choice(4, 1, p=[0.37, 0.3, 0.03, 0.3])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
