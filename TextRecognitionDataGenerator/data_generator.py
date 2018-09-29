@@ -106,7 +106,7 @@ class FakeTextDataGenerator(object):
                 # Create picture of text #
                 ##########################
                 add_random_space = ' ' in text and decision(0.7)
-                # text = "  " + text
+                text = "  " + text
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
