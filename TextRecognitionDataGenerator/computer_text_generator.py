@@ -55,33 +55,33 @@ class ComputerTextGenerator(object):
         elif text_mode == SECOND_HALF_BIG_TEXT:
             text_width, text_height = image_font.getsize(first_half)
 
-            # if (random.randint(0,1) == 0):
-            #     temp = image_font
-            #     image_font = image_font_big
-            #     image_font_big = temp
-            #
-            # if (random.randint(0,2) != 0 or len(text) < 6):
-            #     txt_draw.text((0, 6), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
-            #                   font=image_font)
-            #     txt_draw.text((text_width, 6), u'{0}'.format(second_half),
-            #                   fill=random.randint(1, 80) if text_color < 0 else text_color,
-            #                   font=image_font_big)
-            # else:
-            N1 = random.randint(1,len(text) - 3)
-            N2 = random.randint(N1 + 1, len(text))
+            if (random.randint(0,1) == 0):
+                temp = image_font
+                image_font = image_font_big
+                image_font_big = temp
 
-            txt_draw.text((0, 6), u'{0}'.format(text[:N1]),
-                          fill=random.randint(1,
-                                              80) if text_color < 0 else text_color,
-                          font=image_font_big)
-            txt_draw.text((image_font.getsize(text[:N1])[0], 6), u'{0}'.format(text[N1:N2]),
-                          fill=random.randint(1,
-                                              80) if text_color < 0 else text_color,
-                          font=image_font)
-            txt_draw.text((image_font.getsize(text[:N2])[0], 6), u'{0}'.format(text[N2:]),
-                          fill=random.randint(1,
-                                              80) if text_color < 0 else text_color,
-                          font=image_font_big)
+            if (random.randint(0,2) != 0 or len(text) < 6):
+                txt_draw.text((0, 6), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              font=image_font)
+                txt_draw.text((text_width, 6), u'{0}'.format(second_half),
+                              fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              font=image_font_big)
+            else:
+                N1 = random.randint(1,len(text) - 3)
+                N2 = random.randint(N1 + 1, len(text))
+
+                txt_draw.text((0, 6), u'{0}'.format(text[:N1]),
+                              fill=random.randint(1,
+                                                  80) if text_color < 0 else text_color,
+                              font=image_font_big)
+                txt_draw.text((image_font_big.getsize(text[:N1])[0], 6), u'{0}'.format(text[N1:N2]),
+                              fill=random.randint(1,
+                                                  80) if text_color < 0 else text_color,
+                              font=image_font)
+                txt_draw.text((image_font_big.getsize(text[:N1])[0] + image_font.getsize(text[N1:N2])[0], 6), u'{0}'.format(text[N2:]),
+                              fill=random.randint(1,
+                                                  80) if text_color < 0 else text_color,
+                              font=image_font_big)
 
         elif text_mode == RANDOM_BIG_TEXT:
             ## random letter font increase
