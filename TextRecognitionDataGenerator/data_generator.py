@@ -303,10 +303,10 @@ class FakeTextDataGenerator(object):
                 #         final_image = binary_im
 
                 ## random invert
-                # if decision(0.2):
-                #     im_arr = np.array(final_image)
-                #     im_arr = np.bitwise_not(im_arr)
-                #     final_image = Image.fromarray(im_arr)
+                if decision(0.05):
+                    im_arr = np.array(final_image)
+                    im_arr = np.bitwise_not(im_arr)
+                    final_image = Image.fromarray(im_arr)
 
 
                 # Save the image
