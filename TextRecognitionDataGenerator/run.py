@@ -596,7 +596,7 @@ def gen_check_font(fonts):
 def random_space(fonts):
     generated_list = []
 
-    max_len = 150
+    max_len = 75
     for font in fonts:
         temp = ""
         for x in range(random.randint(5, max_len)):
