@@ -86,6 +86,13 @@ def parse_arguments():
         default=False
     )
     parser.add_argument(
+        "-rdlt",
+        "--random_latin_space",
+        action="store_true",
+        help="Generate data for sjnk project",
+        default=False
+    )
+    parser.add_argument(
         "-let",
         "--include_letters",
         action="store_true",
@@ -539,6 +546,34 @@ def random_latin(fonts):
 
     return generated_list
 
+def random_latin_space(fonts):
+    generated_list = []
+    latin_chars = [x[:-1] for x in
+                   open("dicts/latin.txt", encoding="utf-8").readlines()]
+    special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
+                                          encoding="utf-8").readlines()]
+
+    max_len = 100
+    for font in fonts:
+        font = set(font)
+        generated = ""
+
+        latin_chars_in_font = [x for x in latin_chars if x in font]
+        special_chars_in_font = [x for x in special_chars if x in font]
+
+        char_in_font = latin_chars_in_font + special_chars_in_font
+
+        for i in range(random.randint(2,5)):
+            for x in range(random.randint(1, 10)):
+                generated += random.choice(char_in_font)
+
+            for x in range(random.randint(2,10)):
+                generated += " "
+
+        generated_list.append(generated)
+
+    return generated_list
+
 def gen_check_font(fonts):
     generated_list = []
     latin_chars = [x[:-1] for x in
@@ -788,6 +823,8 @@ def main():
         strings = random_latin(font_charsets)
     elif args.random_space:
         strings = random_space(font_charsets)
+    elif args.random_latin_space:
+        strings = random_latin_space(font_charsets)
     elif args.check_font:
         strings = gen_check_font(font_charsets)
     else:
