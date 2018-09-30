@@ -63,7 +63,7 @@ class ComputerTextGenerator(object):
             if (random.randint(0,2) != 0 or len(text) < 6):
                 txt_draw.text((0, 6), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
                               font=image_font)
-                txt_draw.text((text_width, 6), u'{0}'.format(second_half),
+                txt_draw.text((image_font.getsize(first_half), 6), u'{0}'.format(second_half),
                               fill=random.randint(1, 80) if text_color < 0 else text_color,
                               font=image_font_big)
             else:
