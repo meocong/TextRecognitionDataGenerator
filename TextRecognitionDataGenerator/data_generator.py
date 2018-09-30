@@ -296,11 +296,11 @@ class FakeTextDataGenerator(object):
                 # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
                 ## random binary if background is white
-                if blur_type in [1, 2] and background_type in [0, 1] and decision(0.6) and distorsion_type != 3:
-                    bin_thres = 0.3 if blur_type == 2 else 0.03
-                    binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
-                    if np.mean(binary_im) > 160:
-                        final_image = binary_im
+                # if blur_type in [1, 2] and background_type in [0, 1] and decision(0.6) and distorsion_type != 3:
+                #     bin_thres = 0.3 if blur_type == 2 else 0.03
+                #     binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
+                #     if np.mean(binary_im) > 160:
+                #         final_image = binary_im
 
                 ## random invert
                 # if decision(0.2):
