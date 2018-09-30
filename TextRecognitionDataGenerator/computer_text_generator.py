@@ -53,7 +53,7 @@ class ComputerTextGenerator(object):
                 offset_x += 0.93 * char_w
 
         elif text_mode == SECOND_HALF_BIG_TEXT:
-            text_width, text_height = image_font.getsize(first_half)
+            # text_width, text_height = image_font.getsize(first_half)
 
             if (random.randint(0,1) == 0):
                 temp = image_font
@@ -63,7 +63,7 @@ class ComputerTextGenerator(object):
             if (random.randint(0,2) != 0 or len(text) < 6):
                 txt_draw.text((0, 6), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
                               font=image_font)
-                txt_draw.text((image_font.getsize(first_half), 6), u'{0}'.format(second_half),
+                txt_draw.text((image_font.getsize(first_half)[0], 6), u'{0}'.format(second_half),
                               fill=random.randint(1, 80) if text_color < 0 else text_color,
                               font=image_font_big)
             else:
