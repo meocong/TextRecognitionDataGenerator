@@ -72,6 +72,13 @@ def parse_arguments():
         default=False
     )
     parser.add_argument(
+        "-rdo",
+        "--random_one_character",
+        action="store_true",
+        help="Use random sequences by characters in random fonts as the source text for the generation.",
+        default=False
+    )
+    parser.add_argument(
         "-sjnk",
         "--random_sequences_sjnk",
         action="store_true",
@@ -765,6 +772,23 @@ def print_text(file, list_):
 
     f.writelines(list_)
 
+def gen_one_character(font_dicts:{}):
+    fonts_arr = []
+    strings = []
+
+    for font in font_dicts.keys():
+        for x in range(0,100):
+            font_chars = font_dicts[font]
+            generated = ""
+
+            for y in range(random.randint(1,5)):
+                generated += random.choice(font_chars)
+
+            fonts_arr.append(font)
+            strings.append(generated)
+
+    return fonts_arr, strings
+
 def main():
     """
         Description: Main function
@@ -827,6 +851,8 @@ def main():
         strings = random_latin_space(font_charsets)
     elif args.check_font:
         strings = gen_check_font(font_charsets)
+    elif args.random_one_character:
+        fonts_arr, strings = gen_one_character(fonts_dict)
     else:
         # Creating word list
         lang_dict = load_dict(args.language)
