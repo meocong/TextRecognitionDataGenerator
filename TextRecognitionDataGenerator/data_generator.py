@@ -318,7 +318,7 @@ class FakeTextDataGenerator(object):
 
                 ## random invert
                 if decision(0.2):
-                    if (background_type == 3 || distorsion_type):
+                    if (background_type == 3 | distorsion_type):
                         if (decision(0.05)):
                             im_arr = np.array(final_image)
                             im_arr = np.bitwise_not(im_arr)
