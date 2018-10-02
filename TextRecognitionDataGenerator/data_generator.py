@@ -106,7 +106,17 @@ class FakeTextDataGenerator(object):
                 # Create picture of text #
                 ##########################
                 add_random_space = ' ' in text and decision(0.7)
-                # text = "  " + text
+
+                text = "  " + text
+                if (random.randint(0,3) == 0):
+                    for x in range(random.randint(1,3)):
+                        text = " " + text
+
+                text = text + "  "
+                if (random.randint(0,3) == 0):
+                    for x in range(random.randint(1,4)):
+                        text = text + " "
+
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
@@ -160,7 +170,7 @@ class FakeTextDataGenerator(object):
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
                     # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                    prob = 0.9
+                    prob = 0.85
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
@@ -171,7 +181,7 @@ class FakeTextDataGenerator(object):
                         # print("lol")
                         im_arr = np.array(rotated_img)
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = 0.9
+                        prob = 0.85
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
