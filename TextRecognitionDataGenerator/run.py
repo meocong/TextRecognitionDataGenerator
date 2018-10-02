@@ -364,7 +364,7 @@ def query_wikipedia(args):
         and not "What links here" in s,
         [
             ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】–ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
-                                s.strip()))[0:random.randint(1, 135)] for s in soup.get_text().splitlines()
+                                s.strip()))[0:random.randint(1, 90)] for s in soup.get_text().splitlines()
             ]
     ))
 
