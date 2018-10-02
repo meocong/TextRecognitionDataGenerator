@@ -36,7 +36,7 @@ class ComputerTextGenerator(object):
         if text_mode == TIGHT_TEXT:
             ## draw letter by letter for tight text generation
             text_width, text_height = image_font.getsize(text)
-            txt_img = Image.new('L', (text_width*0.96, text_height), 255)
+            txt_img = Image.new('L', (int(text_width*0.96), text_height), 255)
             txt_draw = ImageDraw.Draw(txt_img)
 
             offset_x = 0
@@ -45,7 +45,7 @@ class ComputerTextGenerator(object):
                 txt_draw.text((offset_x, 0), u'{0}'.format(c),
                               fill=random.randint(1, 80) if text_color < 0 else text_color,
                               font=image_font)
-                offset_x += 0.95 * char_w
+                offset_x += int(0.95 * char_w)
 
         elif text_mode == SECOND_HALF_BIG_TEXT:
             # text_width, text_height = image_font.getsize(first_half)
