@@ -244,19 +244,19 @@ class FakeTextDataGenerator(object):
                         distorted_img.convert('L').save(os.path.join(out_dir,
                                                                      image_name.replace(
                                                                          ".jpg",
-                                                                         "_11.jpg")))
+                                                                         "_1_1.jpg")))
                     elif affine_type == 1:
                         distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
                         distorted_img.convert('L').save(os.path.join(out_dir,
                                                                      image_name.replace(
                                                                          ".jpg",
-                                                                         "_12.jpg")))
+                                                                         "_1_2.jpg")))
                     elif affine_type == 2:
                         distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
                         distorted_img.convert('L').save(os.path.join(out_dir,
                                                                      image_name.replace(
                                                                          ".jpg",
-                                                                         "_13.jpg")))
+                                                                         "_1_3.jpg")))
 
                 if np.min(np.array(distorted_img)) > 250:
                     print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
