@@ -171,7 +171,7 @@ class FakeTextDataGenerator(object):
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
                     # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                    prob = 0.85
+                    prob = 0.9
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
@@ -182,7 +182,7 @@ class FakeTextDataGenerator(object):
                         # print("lol")
                         im_arr = np.array(rotated_img)
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = 0.85
+                        prob = 0.9
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
@@ -245,7 +245,7 @@ class FakeTextDataGenerator(object):
                     background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
                 elif background_type == 2 and random_erode_pixel == False and random_pixel_discard == False:
                     background = BackgroundGenerator.quasicrystal(new_text_height + x, new_text_width + y)
-                elif random_erode_pixel == False and random_pixel_discard == False:
+                elif random_erode_pixel == False and random_pixel_discard == False and distorsion_type != 3:
                     background = BackgroundGenerator.picture(new_text_height + 10, new_text_width + 10)
                 else:
                     background = BackgroundGenerator.gaussian_noise(
@@ -318,9 +318,15 @@ class FakeTextDataGenerator(object):
 
                 ## random invert
                 if decision(0.2):
-                    im_arr = np.array(final_image)
-                    im_arr = np.bitwise_not(im_arr)
-                    final_image = Image.fromarray(im_arr)
+                    if (background_type == 3 || distorsion_type):
+                        if (decision(0.05)):
+                            im_arr = np.array(final_image)
+                            im_arr = np.bitwise_not(im_arr)
+                            final_image = Image.fromarray(im_arr)
+                    else:
+                        im_arr = np.array(final_image)
+                        im_arr = np.bitwise_not(im_arr)
+                        final_image = Image.fromarray(im_arr)
 
 
                 # Save the image
