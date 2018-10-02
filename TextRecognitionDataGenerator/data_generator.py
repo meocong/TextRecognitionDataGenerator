@@ -198,7 +198,7 @@ class FakeTextDataGenerator(object):
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
                         prob = random.uniform(0.97,1.0)
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                        im_arr[mask > 0] = 255
+                        im_arr[mask == 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
                         rotated_img = Image.fromarray(im_arr)
 
