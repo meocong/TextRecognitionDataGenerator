@@ -17,7 +17,7 @@ from fontTools.ttLib import TTFont
 from PIL import Image, ImageEnhance, ImageFilter
 from skimage.filters import threshold_sauvola, threshold_otsu
 from pyblur import *
-
+import scipy
 import random
 
 def decision(probability):
@@ -33,7 +33,7 @@ def add_random_space_to_string(s):
     s = list(s)
     for i in range(len(s) - 1):
         if s[i] == ' ':
-            while random.randrange(2):
+            while random.randrange(3):
                 s[i] = s[i] + ' '
     return ''.join(s)
 
@@ -119,11 +119,12 @@ class FakeTextDataGenerator(object):
 
                 random_angle = random.uniform(-skewing_angle, skewing_angle)
 
-                rotated_img = image.convert('RGBA')
-                rotated_img = rotated_img.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
-                white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
-                rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
-                rotated_img = rotated_img.convert('L')
+                # rotated_img = image.convert('RGBA')
+                # rotated_img = rotated_img.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
+                # white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
+                # rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
+                # rotated_img = rotated_img.convert('L')
+                rotated_img = scipy.ndimage.rotate(image, random_angle)
 
                 ###################################
                 # Random miscellaneous distortion #
@@ -158,7 +159,8 @@ class FakeTextDataGenerator(object):
                     kernel = np.ones((x, x), np.uint8)
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
-                    prob = np.random.choice([0.1, 0.2, 0.3], p=[0.6, 0.3, 0.1])
+                    # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
+                    prob = 0.9
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
@@ -168,7 +170,8 @@ class FakeTextDataGenerator(object):
                         ## random pixel discard
                         # print("lol")
                         im_arr = np.array(rotated_img)
-                        prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
+                        # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
+                        prob = 0.9
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
