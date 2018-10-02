@@ -239,7 +239,7 @@ class FakeTextDataGenerator(object):
 
                 affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0, 0.55])[0]
                 if not random_pixel_discard:
-                    if affine_type == 0:
+                    if affine_type == 0 and distorted_img.size[1] > 40:
                         distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
                         distorted_img.convert('L').save(os.path.join(out_dir,
                                                                      image_name.replace(
