@@ -19,7 +19,7 @@ from skimage.filters import threshold_sauvola, threshold_otsu
 from pyblur import *
 import scipy
 import random
-
+import imutils
 def decision(probability):
     return random.random() < probability
 
@@ -131,7 +131,12 @@ class FakeTextDataGenerator(object):
 
                 # rotated_img = image.convert('RGBA')
                 # rotated_img = rotated_img.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
-                rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
+
+                if decision(0.3):
+                    rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
+                else:
+                    rotated_img = Image.fromarray(imutils.rotate_bound(np.array(image), random_angle))
+
                 white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
                 rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
 
@@ -171,7 +176,7 @@ class FakeTextDataGenerator(object):
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
                     # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                    prob = 0.9
+                    prob = random.uniform(0.97,1.0)
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
@@ -182,7 +187,7 @@ class FakeTextDataGenerator(object):
                         # print("lol")
                         im_arr = np.array(rotated_img)
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = 0.9
+                        prob = random.uniform(0.97,1.0)
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
