@@ -176,7 +176,7 @@ class FakeTextDataGenerator(object):
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
                     # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                    prob = random.uniform(0.97,1.0)
+                    prob = random.uniform(0.0,0.1)
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
@@ -187,7 +187,7 @@ class FakeTextDataGenerator(object):
                         # print("lol")
                         im_arr = np.array(rotated_img)
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = random.uniform(0.97,1.0)
+                        prob = random.uniform(0.0,0.1)
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
