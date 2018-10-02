@@ -179,7 +179,7 @@ class FakeTextDataGenerator(object):
                     prob = random.uniform(0.97,1.0)
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
-                    # rotated_img = Image.fromarray(im_arr)
+                    rotated_img = Image.fromarray(im_arr)
                 else:
                     random_pixel_discard = decision(0.06)
                     if random_pixel_discard:
@@ -191,7 +191,7 @@ class FakeTextDataGenerator(object):
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                        # rotated_img = Image.fromarray(im_arr)
+                        rotated_img = Image.fromarray(im_arr)
 
 
                 ######################################
@@ -236,8 +236,8 @@ class FakeTextDataGenerator(object):
                 if np.min(np.array(distorted_img)) > 250:
                     print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
 
-                x = random.randint(1, 10)
-                y = random.randint(1, 10)
+                x = random.randint(1, 5)
+                y = random.randint(1, 5)
 
                 #############################
                 # Generate background image #
@@ -251,7 +251,7 @@ class FakeTextDataGenerator(object):
                 elif background_type == 2 and random_erode_pixel == False and random_pixel_discard == False:
                     background = BackgroundGenerator.quasicrystal(new_text_height + x, new_text_width + y)
                 elif random_erode_pixel == False and random_pixel_discard == False and distorsion_type != 3:
-                    background = BackgroundGenerator.picture(new_text_height + 10, new_text_width + 10)
+                    background = BackgroundGenerator.picture(new_text_height + x, new_text_width + y)
                 else:
                     background = BackgroundGenerator.gaussian_noise(
                         new_text_height + x, new_text_width + y)
