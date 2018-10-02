@@ -311,18 +311,29 @@ class FakeTextDataGenerator(object):
                 ##################################
                 final_image = background.convert('L')
 
+                final_image.save(
+                    os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                 # blur distortion
                 blur_type =  np.random.choice(3, 1, p=[0.1, 0.4, 0.5])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
                         final_image = RandomizedBlur(final_image)
+                        final_image.save(
+                            os.path.join(out_dir,
+                                         image_name.replace(".jpg", "_0_0.jpg")))
                     elif blur_type == 1:
-                        final_image = PsfBlur(final_image, 3)
+                        final_image = PsfBlur(final_image, 2)
+                        final_image.save(
+                            os.path.join(out_dir,
+                                         image_name.replace(".jpg", "_0_1.jpg")))
 
                 ## additional sharpening
                 if decision(0.7):
                     final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
+                    final_image.save(
+                        os.path.join(out_dir,
+                                     image_name.replace(".jpg", "_0_2.jpg")))
 
                 ##################################
                 # Random aspect ration change    #
