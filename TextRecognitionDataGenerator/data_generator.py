@@ -208,7 +208,7 @@ class FakeTextDataGenerator(object):
                 # Apply geometry distortion to image #
                 ######################################
 
-                distorsion_type = np.random.choice(4, 1, p=[0.6, 0.15, 0.15, 0.1])[0]
+                distorsion_type = np.random.choice(4, 1, p=[0.65, 0.15, 0.15, 0.05])[0]
                 if distorsion_type == 0:
                     distorted_img = rotated_img # Mind = blown
                 elif distorsion_type == 1:
@@ -241,10 +241,22 @@ class FakeTextDataGenerator(object):
                 if not random_pixel_discard:
                     if affine_type == 0:
                         distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
+                        distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                     image_name.replace(
+                                                                         ".jpg",
+                                                                         "_11.jpg")))
                     elif affine_type == 1:
                         distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
+                        distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                     image_name.replace(
+                                                                         ".jpg",
+                                                                         "_12.jpg")))
                     elif affine_type == 2:
                         distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
+                        distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                     image_name.replace(
+                                                                         ".jpg",
+                                                                         "_13.jpg")))
 
                 if np.min(np.array(distorted_img)) > 250:
                     print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
