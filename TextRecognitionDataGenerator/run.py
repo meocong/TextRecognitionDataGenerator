@@ -384,7 +384,7 @@ def query_wikipedia(args):
     return lines[0:max([1, len(lines) - 5])]
 
 import multiprocessing
-def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8, nb_workers = 16):
+def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8, nb_workers = 8):
     """
         Create all string by randomly picking Wikipedia articles and taking sentences from them.
     """
