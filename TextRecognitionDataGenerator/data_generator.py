@@ -312,7 +312,7 @@ class FakeTextDataGenerator(object):
                 final_image = background.convert('L')
 
                 # blur distortion
-                blur_type =  np.random.choice(3, 1, p=[0.05, 0.2, 0.75])[0]
+                blur_type =  np.random.choice(3, 1, p=[0.1, 0.4, 0.5])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:

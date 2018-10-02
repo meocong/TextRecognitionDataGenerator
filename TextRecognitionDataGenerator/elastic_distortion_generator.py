@@ -28,7 +28,7 @@ def pil_2_arr(pil_image):
 def arr_2_pil(img_arr):
     return Image.fromarray(np.uint8(img_arr)).convert('L')
 
-def affine_transform(image, affine_value = 0.003):#0.005):
+def affine_transform(image, affine_value = 0.006):#0.005):
     shape = image.shape
     alpha_affine = min(shape[0], shape[1]) * affine_value
     random_state = np.random.RandomState(None)
