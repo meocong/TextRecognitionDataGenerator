@@ -131,10 +131,11 @@ class FakeTextDataGenerator(object):
 
                 # rotated_img = image.convert('RGBA')
                 # rotated_img = rotated_img.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
-                # white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
-                # rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
+                rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
+                white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
+                rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
+
                 # rotated_img = rotated_img.convert('L')
-                rotated_img = scipy.ndimage.rotate(image, random_angle)
 
                 ###################################
                 # Random miscellaneous distortion #
@@ -160,7 +161,7 @@ class FakeTextDataGenerator(object):
 
                 rotated_img = Image.fromarray(im_arr)
 
-                random_erode_pixel = decision(0.12)
+                random_erode_pixel = decision(0.1)
                 random_pixel_discard = decision(0.06) and not random_erode_pixel
 
                 if random_erode_pixel:
