@@ -256,6 +256,7 @@ class FakeTextDataGenerator(object):
                     background = BackgroundGenerator.gaussian_noise(
                         new_text_height + x, new_text_width + y)
 
+                distorted_img = distorted_img.convert('L')
                 mask = distorted_img.point(lambda x: 0 if x == 255 or x == 0 else 255, '1')
 
                 apply_background = False
