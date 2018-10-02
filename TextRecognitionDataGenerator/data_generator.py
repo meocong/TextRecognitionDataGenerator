@@ -106,7 +106,7 @@ class FakeTextDataGenerator(object):
                 # Create picture of text #
                 ##########################
                 add_random_space = ' ' in text and decision(0.7)
-                text = "  " + text
+                # text = "  " + text
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
@@ -158,7 +158,7 @@ class FakeTextDataGenerator(object):
                     kernel = np.ones((x, x), np.uint8)
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
-                    prob = np.random.choice([0.1, 0.2, 0.3], p=[0.8, 0.19, 0.01])
+                    prob = np.random.choice([0.1, 0.2, 0.3], p=[0.6, 0.3, 0.1])
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
@@ -168,7 +168,7 @@ class FakeTextDataGenerator(object):
                         ## random pixel discard
                         # print("lol")
                         im_arr = np.array(rotated_img)
-                        prob = np.random.choice([0.1, 0.15, 0.25], p=[0.8, 0.15, 0.05])
+                        prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
@@ -303,7 +303,7 @@ class FakeTextDataGenerator(object):
                 #         final_image = binary_im
 
                 ## random invert
-                if decision(0.1):
+                if decision(0.2):
                     im_arr = np.array(final_image)
                     im_arr = np.bitwise_not(im_arr)
                     final_image = Image.fromarray(im_arr)

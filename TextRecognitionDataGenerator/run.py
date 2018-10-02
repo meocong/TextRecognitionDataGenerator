@@ -356,7 +356,7 @@ def query_wikipedia(args):
     # Only take a certain length
     lines = list(filter(
         lambda s:
-        len(s.replace(' ', '')) > min_length * 0.6
+        len(s.split(" ")) > min_length
         and not "Wikipedia" in s and not "This page was" in s
         and not "wikipedia" in s and not "Not logged in" in s and not "This article" in s
         and not "Jump to " in s and not "PDF" in s and not "Book" in s
@@ -364,23 +364,24 @@ def query_wikipedia(args):
         and not "What links here" in s,
         [
             ' '.join(re.findall(r"[\w'@!\"#$%&()*+,-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】–ー・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
-                                s.strip())) for s in soup.get_text().splitlines()
+                                s.strip()))[0:200] for s in soup.get_text().splitlines()
             ]
     ))
 
-    new_lines = []
-    for i, l in enumerate(lines):
-        for j in range(len(lines) // min_length + 1):
-            idx = random.randint(0, len(l) // 2)
-            llen = random.randint(6, min_length)
-            l = l.strip()[idx:idx + llen]
-            if len(l.strip()) > 2:
-                new_lines.append(l)
-
-    random.shuffle(new_lines)
-
-    # Remove the last lines that talks about contributing
-    return new_lines[0:min(max([1, len(lines) - 5]), max_lines)]
+    # new_lines = []
+    # for i, l in enumerate(lines):
+    #     for j in range(len(lines) // min_length + 1):
+    #         idx = random.randint(0, len(l) // 2)
+    #         llen = random.randint(6, min_length)
+    #         l = l.strip()[idx:idx + llen]
+    #         if len(l.strip()) > 2:
+    #             new_lines.append(l)
+    #
+    # random.shuffle(new_lines)
+    #
+    # # Remove the last lines that talks about contributing
+    # return new_lines[0:min(max([1, len(lines) - 5]), max_lines)]
+    return lines[0:max([1, len(lines) - 5])]
 
 import multiprocessing
 def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 8, nb_workers = 16):
