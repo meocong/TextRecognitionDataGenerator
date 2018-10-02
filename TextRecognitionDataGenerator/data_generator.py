@@ -128,7 +128,7 @@ class FakeTextDataGenerator(object):
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
                 image.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "7.jpg")))
+                    os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
                 random_angle = random.uniform(-skewing_angle, skewing_angle)
 
                 # rotated_img = image.convert('RGBA')
@@ -143,7 +143,7 @@ class FakeTextDataGenerator(object):
                 rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
 
                 rotated_img.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "6.jpg")))
+                    os.path.join(out_dir, image_name.replace(".jpg", "_6.jpg")))
                 # rotated_img = rotated_img.convert('L')
 
                 ###################################
@@ -171,7 +171,7 @@ class FakeTextDataGenerator(object):
                 rotated_img = Image.fromarray(im_arr)
 
                 rotated_img.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "5.jpg")))
+                    os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
                 random_erode_pixel = decision(0.1)
                 random_pixel_discard = decision(0.06) and not random_erode_pixel
 
@@ -188,7 +188,7 @@ class FakeTextDataGenerator(object):
                     rotated_img = Image.fromarray(im_arr)
                     rotated_img.convert('L').save(
                         os.path.join(out_dir,
-                                     image_name.replace(".jpg", "3.jpg")))
+                                     image_name.replace(".jpg", "_3.jpg")))
                 else:
                     random_pixel_discard = decision(0.06)
                     if random_pixel_discard:
@@ -203,7 +203,7 @@ class FakeTextDataGenerator(object):
                         rotated_img = Image.fromarray(im_arr)
 
                         rotated_img.convert('L').save(
-                            os.path.join(out_dir, image_name.replace(".jpg", "4.jpg")))
+                            os.path.join(out_dir, image_name.replace(".jpg", "_4.jpg")))
                 ######################################
                 # Apply geometry distortion to image #
                 ######################################
@@ -235,7 +235,7 @@ class FakeTextDataGenerator(object):
                 new_text_width, new_text_height = distorted_img.size
 
                 distorted_img.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "2.jpg")))
+                    os.path.join(out_dir, image_name.replace(".jpg", "_2.jpg")))
 
                 affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0.15, 0.4])[0]
                 if not random_pixel_discard:
@@ -252,7 +252,7 @@ class FakeTextDataGenerator(object):
                 x = random.randint(1, 5)
                 y = random.randint(1, 5)
 
-                distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","1.jpg")))
+                distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","_1.jpg")))
                 #############################
                 # Generate background image #
                 #############################
