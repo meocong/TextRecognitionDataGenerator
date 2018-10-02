@@ -239,6 +239,7 @@ class FakeTextDataGenerator(object):
                 x = random.randint(1, 5)
                 y = random.randint(1, 5)
 
+                distorted_img.convert('L').save(os.path.join(out_dir.replace(".jpg",".png"), image_name))
                 #############################
                 # Generate background image #
                 #############################
