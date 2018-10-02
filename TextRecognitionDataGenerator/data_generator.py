@@ -80,7 +80,7 @@ def nick_binarize(img_list):
 class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = ""):
-            try:
+            # try:
                 #####################################
                 # Generate name for resulting image #
                 #####################################
@@ -176,10 +176,10 @@ class FakeTextDataGenerator(object):
                     im_arr = np.array(rotated_img)
                     erode = cv2.erode(im_arr, kernel, iterations=1)
                     # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                    prob = random.uniform(0.0,0.1)
+                    prob = random.uniform(0.97,1.0)
                     mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                     im_arr[mask > 0] = erode[mask > 0]
-                    rotated_img = Image.fromarray(im_arr)
+                    # rotated_img = Image.fromarray(im_arr)
                 else:
                     random_pixel_discard = decision(0.06)
                     if random_pixel_discard:
@@ -187,11 +187,11 @@ class FakeTextDataGenerator(object):
                         # print("lol")
                         im_arr = np.array(rotated_img)
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = random.uniform(0.0,0.1)
+                        prob = random.uniform(0.97,1.0)
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                        rotated_img = Image.fromarray(im_arr)
+                        # rotated_img = Image.fromarray(im_arr)
 
 
                 ######################################
@@ -336,6 +336,6 @@ class FakeTextDataGenerator(object):
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
-            except Exception as ex:
-                print(ex)
-                pass
+            # except Exception as ex:
+            #     print(ex)
+            #     pass
