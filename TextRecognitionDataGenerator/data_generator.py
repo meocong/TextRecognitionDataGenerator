@@ -175,7 +175,7 @@ class FakeTextDataGenerator(object):
                 if debug:
                     rotated_img.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
-                random_erode_pixel = decision(0.1)
+                random_erode_pixel = decision(0.1) and rotated_img.size[1] > 40
                 random_pixel_discard = decision(0.1) and not random_erode_pixel
 
                 if random_erode_pixel:
