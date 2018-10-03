@@ -21,7 +21,7 @@ import scipy
 import random
 import imutils
 def decision(probability):
-    return random.random() < probability
+    return random.uniform(0,1) < probability
 
 def sauvola_bin(img, thres=0.3):
     img = np.array(img)
@@ -252,7 +252,7 @@ class FakeTextDataGenerator(object):
 
                 affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0, 0.55])[0]
                 if not random_pixel_discard and not random_erode_pixel:
-                    if affine_type == 0 and distorted_img.size[1] > 40:
+                    if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
                         distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
                         if debug:
                             distorted_img.convert('L').save(os.path.join(out_dir,
@@ -331,7 +331,7 @@ class FakeTextDataGenerator(object):
                     final_image.save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                 # blur distortion
-                blur_type =  np.random.choice(3, 1, p=[0.1, 0.4, 0.5])[0]
+                blur_type =  np.random.choice(3, 1, p=[0.4, 0.3, 0.3])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
