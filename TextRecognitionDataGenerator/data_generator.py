@@ -175,8 +175,8 @@ class FakeTextDataGenerator(object):
                 if debug:
                     rotated_img.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
-                random_erode_pixel = decision(0.06)
-                random_pixel_discard = decision(0.06) and not random_erode_pixel
+                random_erode_pixel = decision(0.1)
+                random_pixel_discard = decision(0.1) and not random_erode_pixel
 
                 if random_erode_pixel:
                     ## random erode with random pixel sampling
@@ -276,8 +276,8 @@ class FakeTextDataGenerator(object):
                 if np.min(np.array(distorted_img)) > 250:
                     print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
 
-                x = random.randint(1, 10)
-                y = random.randint(1, 10)
+                x = random.randint(1, 8)
+                y = random.randint(1, 8)
 
                 if debug:
                     distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","_1.jpg")))
@@ -331,7 +331,7 @@ class FakeTextDataGenerator(object):
                     final_image.save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                 # blur distortion
-                blur_type =  np.random.choice(3, 1, p=[0.4, 0.3, 0.3])[0]
+                blur_type =  np.random.choice(3, 1, p=[0.2, 0.5, 0.3])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
@@ -380,7 +380,7 @@ class FakeTextDataGenerator(object):
                 #         final_image = binary_im
 
                 ## random invert
-                if decision(0.2):
+                if decision(0.3):
                     if (background_type == 3 | distorsion_type | blur_type in [0,1]):
                         if (decision(0.1)):
                             im_arr = np.array(final_image)
