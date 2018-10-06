@@ -671,7 +671,7 @@ def random_sequences_sjnk(fonts):
                 generated += random.choice(japan_chars_in_font)
 
             generated += random.choice(special_chars_in_font)
-            generated += random.choice(latin_chars)
+            generated += random.choice(latin_chars_in_font)
         for x in range(random.randint(0,69-len(generated))):
             generated += random.choice(japan_chars_in_font)
 
