@@ -672,6 +672,9 @@ def random_sequences_sjnk(fonts):
 
             generated += random.choice(special_chars_in_font)
             generated += random.choice(latin_chars_in_font)
+            if (random.randint(0,10) == 0):
+                generated += " "
+                
         for x in range(random.randint(0,69-len(generated))):
             generated += random.choice(japan_chars_in_font)
 
