@@ -368,7 +368,7 @@ def query_wikipedia(args):
                                 s.strip()))[0:random.randint(1, 90)] for s in soup.get_text().splitlines()
             ]
     ))
-
+    print(lines)
     # new_lines = []
     # for i, l in enumerate(lines):
     #     for j in range(len(lines) // min_length + 1):
