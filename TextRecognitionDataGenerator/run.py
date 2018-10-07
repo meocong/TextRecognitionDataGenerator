@@ -365,7 +365,7 @@ def query_wikipedia(args):
         [
             ' '.join(re.findall(r"[\w'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
             # ' '.join(re.findall(r"[\w一-龯'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
-                                s.strip()))[0:random.randint(1, 90)] for s in soup.get_text().splitlines()
+                                s.strip()))[0:random.randint(1, 100)] for s in soup.get_text().splitlines()
             ]
     ))
 
