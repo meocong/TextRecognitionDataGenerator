@@ -361,7 +361,8 @@ def query_wikipedia(args):
         and not "wikipedia" in s and not "Not logged in" in s and not "This article" in s
         and not "Jump to " in s and not "PDF" in s and not "Book" in s
         and not "Cookie" in s
-        and not "What links here" in s,
+        and not "What links here" in s
+        and len(re.findall(r"一-龯", s[0:100])) > 10,
         [
             #' '.join(re.findall(r"#[\w'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
             ' '.join(re.findall(r"[\w一-龯'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
