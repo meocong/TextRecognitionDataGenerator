@@ -362,9 +362,9 @@ def query_wikipedia(args):
         and not "Jump to " in s and not "PDF" in s and not "Book" in s
         and not "Cookie" in s
         and not "What links here" in s
-        and len(re.findall(r"[一-龯]", s[0:100])) > 10,
+        # and len(re.findall(r"[一-龯]", s[0:100])) > 10,
         [
-            re.sub(r"^\^ ?a? ?b? ?", " ", ' '.join(re.findall(r"[\w'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
+            re.sub(r"^\^ ?a? ?b? ?c? ?d? ?e? ?f? ?", " ", ' '.join(re.findall(r"[\w'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
             # re.sub(r"^\^ ?a? ?b? ?", " ", ' '.join(re.findall(r"[\w一-龯'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
                                 s.strip())))[0:random.randint(1, 100)] for s in soup.get_text().splitlines()
             ]
