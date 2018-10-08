@@ -363,12 +363,12 @@ def query_wikipedia(args):
         and not "Cookie" in s
         and not "What links here" in s,
         [
-            ' '.join(re.findall(r"[\w'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
-            # ' '.join(re.findall(r"[\w一-龯'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
+            #' '.join(re.findall(r"#[\w'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~€¢³ðŸ¦±°‰¶§£¥·“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
+            ' '.join(re.findall(r"[\w一-龯'@!\"#$%&()*+,\-./:;<=>?[\]^_`{|}~£¥§·—“”≪≫➡【】・くぐ〇〜ゝゞヽヾ一©®①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]+",
                                 s.strip()))[0:random.randint(1, 100)] for s in soup.get_text().splitlines()
             ]
     ))
-
+    print(lines)
     # new_lines = []
     # for i, l in enumerate(lines):
     #     for j in range(len(lines) // min_length + 1):
