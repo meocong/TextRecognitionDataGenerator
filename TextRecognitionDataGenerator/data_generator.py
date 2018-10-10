@@ -358,13 +358,21 @@ class FakeTextDataGenerator(object):
                 ##################################
                 # Random aspect ration change    #
                 ##################################
-                f = random.uniform(0.65, 1.35)
                 # if distorsion_type != 3:
                 resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
-                if (random.randint(0, 1) == 0):
-                    final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+
+                if (decision(0.5)):
+                    f = random.uniform(0.8, 1.2)
+                    final_image = final_image.resize((int(
+                        final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                     resize_type)
                 else:
-                    final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
+                    f = random.uniform(0.7, 1.3)
+
+                    if (random.randint(0, 1) == 0):
+                        final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                    else:
+                        final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
