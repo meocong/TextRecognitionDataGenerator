@@ -127,16 +127,15 @@ class FakeTextDataGenerator(object):
                 else:
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
-                if debug:
-                    image.convert('L').save(
-                        os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
+                # if debug:
+                image.convert('L').save(
+                    os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
                 random_angle = random.uniform(-skewing_angle, skewing_angle)
 
                 # rotated_img = image.convert('RGBA')
                 # rotated_img = rotated_img.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
 
                 # if decision(0.3):
-                print(random_angle)
                 rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
                 # else:
                 #     rotated_img = Image.fromarray(imutils.rotate_bound(np.array(image), random_angle))
@@ -144,9 +143,9 @@ class FakeTextDataGenerator(object):
                 #     white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
                 #     rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
 
-                if debug:
-                    rotated_img.convert('L').save(
-                        os.path.join(out_dir, image_name.replace(".jpg", "_6.jpg")))
+                # if debug:
+                rotated_img.convert('L').save(
+                    os.path.join(out_dir, image_name.replace(".jpg", "_6.jpg")))
                 # rotated_img = rotated_img.convert('L')
 
                 ###################################
@@ -336,13 +335,13 @@ class FakeTextDataGenerator(object):
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
-                        final_image = RandomizedBlur(final_image, 2)
+                        final_image = GaussianBlur_random(final_image)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_0_0.jpg")))
                     elif blur_type == 1:
-                        final_image = PsfBlur(final_image, random.choice([1,2]))
+                        final_image = PsfBlur(final_image, 1.5)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
