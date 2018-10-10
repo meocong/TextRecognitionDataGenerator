@@ -176,7 +176,7 @@ class FakeTextDataGenerator(object):
                     rotated_img.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
                 random_erode_pixel = decision(0.1) and rotated_img.size[1] > 40
-                random_pixel_discard = decision(0.1) and not random_erode_pixel
+                random_pixel_discard = decision(0.15) and not random_erode_pixel
 
                 if random_erode_pixel:
                     ## random erode with random pixel sampling
@@ -200,7 +200,7 @@ class FakeTextDataGenerator(object):
                         # print("lol")
                         im_arr = np.array(rotated_img)
                         # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = random.uniform(0.97,1.0)
+                        prob = random.uniform(0.96,1.0)
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask == 0] = 255
                         # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
@@ -358,17 +358,13 @@ class FakeTextDataGenerator(object):
                 ##################################
                 # Random aspect ration change    #
                 ##################################
-                f = random.uniform(0.7, 1.2)
+                f = random.uniform(0.85, 1.15)
                 # if distorsion_type != 3:
-                if (random.randint(0,1) == 0):
-                    final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), Image.ANTIALIAS)
+                resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
+                if (random.randint(0, 1) == 0):
+                    final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
                 else:
-                    if (random.randint(0, 1) == 0):
-                        final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)),
-                                                     Image.BILINEAR)
-                    else:
-                        final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)),
-                                                         Image.LANCZOS)
+                    final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 

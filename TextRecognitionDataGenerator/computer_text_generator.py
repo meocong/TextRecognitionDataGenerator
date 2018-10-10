@@ -36,7 +36,7 @@ class ComputerTextGenerator(object):
         if text_mode == TIGHT_TEXT:
             ## draw letter by letter for tight text generation
             text_width, text_height = image_font.getsize(text)
-            txt_img = Image.new('L', (int(text_width*0.96), text_height), 255)
+            txt_img = Image.new('L', (int(text_width*0.95), text_height), 255)
             txt_draw = ImageDraw.Draw(txt_img)
 
             offset_x = 0
