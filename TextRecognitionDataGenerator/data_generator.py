@@ -341,7 +341,7 @@ class FakeTextDataGenerator(object):
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_0_0.jpg")))
                     elif blur_type == 1:
-                        final_image = PsfBlur(final_image, 2)
+                        final_image = PsfBlur(final_image, random.choice([1,2]))
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
@@ -358,9 +358,8 @@ class FakeTextDataGenerator(object):
                 ##################################
                 # Random aspect ration change    #
                 ##################################
-                # f = random.uniform(0.8, 1.2)
+                f = random.uniform(0.65, 1.35)
                 # if distorsion_type != 3:
-                f = 0.5
                 resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
                 if (random.randint(0, 1) == 0):
                     final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
