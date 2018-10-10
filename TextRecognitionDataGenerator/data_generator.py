@@ -80,7 +80,7 @@ def nick_binarize(img_list):
 class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
-            try:
+            # try:
                 #####################################
                 # Generate name for resulting image #
                 #####################################
@@ -127,9 +127,9 @@ class FakeTextDataGenerator(object):
                 else:
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
-                # if debug:
-                image.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
+                if debug:
+                    image.convert('L').save(
+                        os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
                 random_angle = random.uniform(-skewing_angle, skewing_angle)
 
                 # rotated_img = image.convert('RGBA')
@@ -143,9 +143,9 @@ class FakeTextDataGenerator(object):
                 #     white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
                 #     rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
 
-                # if debug:
-                rotated_img.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "_6.jpg")))
+                if debug:
+                    rotated_img.convert('L').save(
+                        os.path.join(out_dir, image_name.replace(".jpg", "_6.jpg")))
                 # rotated_img = rotated_img.convert('L')
 
                 ###################################
@@ -390,6 +390,6 @@ class FakeTextDataGenerator(object):
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
-            except Exception as ex:
-                print(ex)
-                pass
+            # except Exception as ex:
+            #     print(ex)
+            #     pass
