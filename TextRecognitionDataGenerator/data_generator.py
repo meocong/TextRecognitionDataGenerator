@@ -431,13 +431,13 @@ class FakeTextDataGenerator(object):
 
                 # if decision(0.1):
                 # if (distorsion_type != 3):
-                # seq = iaa.Sequential(iaa.OneOf([
-                #     iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
-                #     iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
-                #     ]))
-                #
-                # final_image = Image.fromarray(
-                #     seq.augment_image(np.array(final_image)))
+                seq = iaa.Sequential(iaa.OneOf([
+                    iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
+                    iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
+                    ]))
+
+                final_image = Image.fromarray(
+                    seq.augment_image(np.array(final_image)))
 
                 seq = iaa.Sequential(iaa.OneOf([
                         iaa.Affine(
@@ -445,7 +445,7 @@ class FakeTextDataGenerator(object):
                                    order=[0,1],
                                    cval=(0, 255),
                                    mode=ia.ALL),
-                        # iaa.PerspectiveTransform(scale=random.uniform(0.01, 0.075))
+                        iaa.PerspectiveTransform(scale=random.uniform(0.01, 0.03))
                         ]))
 
                 final_image = Image.fromarray(
