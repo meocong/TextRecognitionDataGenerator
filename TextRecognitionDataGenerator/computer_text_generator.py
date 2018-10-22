@@ -62,10 +62,10 @@ class ComputerTextGenerator(object):
                 txt_img = Image.new('L', (text_width1 + text_width2, max(text_height1, text_height2)), 255)
                 txt_draw = ImageDraw.Draw(txt_img)
 
-                txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 80) if text_color < 0 else text_color,
+                txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 50) if text_color < 0 else text_color,
                               font=image_font)
                 txt_draw.text((image_font.getsize(first_half)[0], 0), u'{0}'.format(second_half),
-                              fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              fill=random.randint(1, 50) if text_color < 0 else text_color,
                               font=image_font_big)
             else:
                 N1 = random.randint(1,len(text) - 3)
@@ -80,15 +80,15 @@ class ComputerTextGenerator(object):
 
                 txt_draw.text((0, 0), u'{0}'.format(text[:N1]),
                               fill=random.randint(1,
-                                                  80) if text_color < 0 else text_color,
+                                                  50) if text_color < 0 else text_color,
                               font=image_font_big)
                 txt_draw.text((image_font_big.getsize(text[:N1])[0], 0), u'{0}'.format(text[N1:N2]),
                               fill=random.randint(1,
-                                                  80) if text_color < 0 else text_color,
+                                                  50) if text_color < 0 else text_color,
                               font=image_font)
                 txt_draw.text((image_font_big.getsize(text[:N1])[0] + image_font.getsize(text[N1:N2])[0], 0), u'{0}'.format(text[N2:]),
                               fill=random.randint(1,
-                                                  80) if text_color < 0 else text_color,
+                                                  50) if text_color < 0 else text_color,
                               font=image_font_big)
 
         elif text_mode == RANDOM_BIG_TEXT:
@@ -102,7 +102,7 @@ class ComputerTextGenerator(object):
                 font = image_font_big if is_bigger[i] else image_font
                 char_w, char_h = font.getsize(c)
                 txt_draw.text((offset_x, 0), u'{0}'.format(c),
-                              fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              fill=random.randint(1, 50) if text_color < 0 else text_color,
                               font=font)
                 offset_x += char_w
 
@@ -112,7 +112,7 @@ class ComputerTextGenerator(object):
             txt_draw = ImageDraw.Draw(txt_img)
 
             ## normal text print
-            txt_draw.text((0, 0), u'{0}'.format(text), fill=random.randint(1, 80) if text_color < 0 else text_color,
+            txt_draw.text((0, 0), u'{0}'.format(text), fill=random.randint(1, 50) if text_color < 0 else text_color,
                           font=image_font)
 
 
