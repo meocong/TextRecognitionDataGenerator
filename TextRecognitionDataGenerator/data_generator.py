@@ -440,8 +440,8 @@ class FakeTextDataGenerator(object):
                 #     seq.augment_image(np.array(final_image)))
 
                 seq = iaa.Sequential(iaa.OneOf([
-                        iaa.Affine(translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
-                                   shear=(-10, 10),
+                        iaa.Affine(
+                                   shear=(-20, 20),
                                    order=[0,1],
                                    cval=(0, 255),
                                    mode=ia.ALL),
