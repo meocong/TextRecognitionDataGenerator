@@ -232,7 +232,7 @@ class FakeTextDataGenerator(object):
                         horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2),
                         max_offset = 2
                     )
-                elif not random_erode_pixel and not random_pixel_discard:
+                elif not random_erode_pixel and not random_pixel_discard and distorsion_type == 3:
                     distorted_img = DistorsionGenerator.random(
                         rotated_img,
                         vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
@@ -430,13 +430,14 @@ class FakeTextDataGenerator(object):
                             seq.augment_image(np.array(final_image)))
 
                 # if decision(0.1):
-                seq = iaa.Sequential(iaa.OneOf([
-                    iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
-                    iaa.ElasticTransformation(alpha=random.uniform(0, 0.3),sigma=0.2)
-                    ]))
-
-                final_image = Image.fromarray(
-                    seq.augment_image(np.array(final_image)))
+                # if (distorsion_type != 3):
+                #     seq = iaa.Sequential(iaa.OneOf([
+                #         iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
+                #         iaa.ElasticTransformation(alpha=random.uniform(0, 0.3),sigma=0.2)
+                #         ]))
+                #
+                #     final_image = Image.fromarray(
+                #         seq.augment_image(np.array(final_image)))
 
                 seq = iaa.Sequential(iaa.OneOf([
                         iaa.Affine(translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
