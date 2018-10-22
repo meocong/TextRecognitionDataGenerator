@@ -110,6 +110,7 @@ class FakeTextDataGenerator(object):
                 ##########################
                 add_random_space = ' ' in text and decision(0.2)
 
+                text = "  " +text + "  "
                 if (len(text) < 40):
                     for x in range(random.randint(1,3)):
                         text = " " + text
