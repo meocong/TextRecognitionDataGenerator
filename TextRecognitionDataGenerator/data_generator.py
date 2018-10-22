@@ -253,25 +253,25 @@ class FakeTextDataGenerator(object):
                     distorted_img.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_2.jpg")))
 
-                affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0, 0.55])[0]
-                if not random_pixel_discard and not random_erode_pixel:
-                    if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
-                        distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
-                        if debug:
-                            distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_1.jpg")))
-                    elif affine_type == 1:
-                        # distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
-                        seq = iaa.Sequential([iaa.ElasticTransformation(alpha=random.uniform(0.1, 0.8), sigma=0.2)])
-                        distorted_img = Image.fromarray(seq.augment_image(np.array(distorted_img)))
-
-                        if debug:
-                            distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_2.jpg")))
+                # affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0, 0.55])[0]
+                # if not random_pixel_discard and not random_erode_pixel:
+                #     if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
+                #         distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
+                #         if debug:
+                #             distorted_img.convert('L').save(os.path.join(out_dir,
+                #                                                          image_name.replace(
+                #                                                              ".jpg",
+                #                                                              "_1_1.jpg")))
+                #     elif affine_type == 1:
+                #         # distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
+                #         seq = iaa.Sequential([iaa.ElasticTransformation(alpha=random.uniform(0.1, 0.8), sigma=0.2)])
+                #         distorted_img = Image.fromarray(seq.augment_image(np.array(distorted_img)))
+                #
+                #         if debug:
+                #             distorted_img.convert('L').save(os.path.join(out_dir,
+                #                                                          image_name.replace(
+                #                                                              ".jpg",
+                #                                                              "_1_2.jpg")))
                     # elif affine_type == 2:
                     #     distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
                     #     distorted_img.convert('L').save(os.path.join(out_dir,
@@ -429,15 +429,23 @@ class FakeTextDataGenerator(object):
                         final_image = Image.fromarray(
                             seq.augment_image(np.array(final_image)))
 
+                if decision(0.1):
+                    seq = iaa.ElasticTransformation(alpha=random.uniform(0, 0.3),
+                                              sigma=0.2)
+
+                    final_image = Image.fromarray(
+                        seq.augment_image(np.array(final_image)))
+
                 seq = iaa.Sequential(iaa.SomeOf((0, 1),[iaa.PiecewiseAffine(scale=random.uniform(0, 0.03)),
-                                                        iaa.Affine(translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
-                                                                   shear=(-16, 16),
+                                                        iaa.Affine(translate_percent={"x": (-0.05, 0.05), "y": (-0.05, 0.05)},
+                                                                   shear=(-10, 10),
                                                                    order=[0,
                                                                           1],
                                                                    cval=(
                                                                    0, 255),
                                                                    mode=ia.ALL),
-                                                        iaa.PerspectiveTransform(scale=random.uniform(0.025, 0.075))]))
+                                                        iaa.PerspectiveTransform(scale=random.uniform(0.025, 0.075))
+                                                        ]))
                 final_image = Image.fromarray(
                     seq.augment_image(np.array(final_image)))
 
