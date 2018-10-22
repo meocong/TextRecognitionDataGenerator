@@ -206,7 +206,7 @@ class FakeTextDataGenerator(object):
                         # rotated_img = Image.fromarray(im_arr)
 
                         seq = iaa.Sequential([iaa.Dropout(random.uniform(0,0.05))])
-                        rotated_img = seq.augment_image(rotated_img)
+                        rotated_img = Image.fromarray(seq.augment_image(np.array(rotated_img)))
 
                         if debug:
                             rotated_img.convert('L').save(
@@ -265,7 +265,7 @@ class FakeTextDataGenerator(object):
                     elif affine_type == 1:
                         # distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
                         seq = iaa.Sequential([iaa.ElasticTransformation(alpha=random.uniform(0.1, 0.8), sigma=0.2)])
-                        rotated_img = seq.augment_image(rotated_img)
+                        distorted_img = Image.fromarray(seq.augment_image(np.array(distorted_img)))
 
                         if debug:
                             distorted_img.convert('L').save(os.path.join(out_dir,
@@ -354,13 +354,13 @@ class FakeTextDataGenerator(object):
                                              image_name.replace(".jpg", "_0_1.jpg")))
                     elif blur_type == 2:
                         kernel = np.ones((5, 5), np.float32) / 25
-                        final_image = cv2.filter2D(final_image, -1, kernel)
+                        final_image = Image.fromarray(cv2.filter2D(np.array(final_image), -1, kernel))
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_0_2.jpg")))
                     elif blur_type == 3:
-                        final_image = cv2.blur(final_image, (5, 5))
+                        final_image = Image.fromarray(cv2.blur(np.array(final_image), (5, 5)))
 
                         if debug:
                             final_image.save(
@@ -369,7 +369,7 @@ class FakeTextDataGenerator(object):
 
 
                 ## additional sharpening
-                if decision(0.2):
+                if decision(0.1):
                     final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
                     if debug:
                         final_image.save(
@@ -388,7 +388,7 @@ class FakeTextDataGenerator(object):
                         final_image.size[0] * f), int(final_image.size[1] * f)),
                                                      resize_type)
                 else:
-                    f = random.uniform(0.7, 1.3)
+                    f = random.uniform(0.7, 1.2)
                     
                     if (random.randint(0, 1) == 0):
                         final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
@@ -422,10 +422,12 @@ class FakeTextDataGenerator(object):
                 if decision(0.1):
                     if inverted == True:
                         seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
-                        final_image = seq.augment_image(final_image)
+                        final_image = Image.fromarray(
+                            seq.augment_image(np.array(final_image)))
                     else:
                         seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
-                        final_image = seq.augment_image(final_image)
+                        final_image = Image.fromarray(
+                            seq.augment_image(np.array(final_image)))
 
                 seq = iaa.Sequential(iaa.SomeOf((0, 1),[iaa.PiecewiseAffine(scale=random.uniform(0, 0.03)),
                                                         iaa.Affine(translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
@@ -436,7 +438,8 @@ class FakeTextDataGenerator(object):
                                                                    0, 255),
                                                                    mode=ia.ALL),
                                                         iaa.PerspectiveTransform(scale=random.uniform(0.025, 0.075))]))
-                final_image = seq.augment_image(final_image)
+                final_image = Image.fromarray(
+                    seq.augment_image(np.array(final_image)))
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
