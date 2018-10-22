@@ -20,6 +20,9 @@ from pyblur import *
 import scipy
 import random
 import imutils
+from imgaug import augmenters as iaa
+import imgaug as ia
+
 def decision(probability):
     return random.uniform(0,1) < probability
 
@@ -105,7 +108,7 @@ class FakeTextDataGenerator(object):
                 ##########################
                 # Create picture of text #
                 ##########################
-                add_random_space = ' ' in text and decision(0.7)
+                add_random_space = ' ' in text and decision(0.2)
 
                 if (len(text) < 40):
                     for x in range(random.randint(1,3)):
@@ -117,16 +120,16 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(4, 1, p=[0.87, 0.1, 0.03, 0.0])[0]
+                text_mode = np.random.choice(4, 1, p=[0.85, 0.1, 0.05, 0.0])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
                 else:
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
-                # if debug:
-                image.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
+                if debug:
+                    image.convert('L').save(
+                        os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
                 random_angle = random.uniform(-skewing_angle, skewing_angle)
 
                 # rotated_img = image.convert('RGBA')
@@ -191,17 +194,20 @@ class FakeTextDataGenerator(object):
                             os.path.join(out_dir,
                                          image_name.replace(".jpg", "_3.jpg")))
                 else:
-                    random_pixel_discard = decision(0.06)
                     if random_pixel_discard:
-                        ## random pixel discard
-                        # print("lol")
-                        im_arr = np.array(rotated_img)
-                        # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        prob = random.uniform(0.95,1.0)
-                        mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                        im_arr[mask == 0] = 255
-                        # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                        rotated_img = Image.fromarray(im_arr)
+                        # ## random pixel discard
+                        # # print("lol")
+                        # im_arr = np.array(rotated_img)
+                        # # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
+                        # prob = random.uniform(0.95,1.0)
+                        # mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                        # im_arr[mask == 0] = 255
+                        # # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
+                        # rotated_img = Image.fromarray(im_arr)
+
+                        seq = iaa.Sequential([iaa.Dropout(random.uniform(0,0.05))])
+                        rotated_img = seq.augment_image(rotated_img)
+
                         if debug:
                             rotated_img.convert('L').save(
                                 os.path.join(out_dir, image_name.replace(".jpg", "_4.jpg")))
@@ -257,7 +263,10 @@ class FakeTextDataGenerator(object):
                                                                              ".jpg",
                                                                              "_1_1.jpg")))
                     elif affine_type == 1:
-                        distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
+                        # distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
+                        seq = iaa.Sequential([iaa.ElasticTransformation(alpha=random.uniform(0.1, 0.8), sigma=0.2)])
+                        rotated_img = seq.augment_image(rotated_img)
+
                         if debug:
                             distorted_img.convert('L').save(os.path.join(out_dir,
                                                                          image_name.replace(
@@ -328,21 +337,36 @@ class FakeTextDataGenerator(object):
                     final_image.save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                 # blur distortion
-                blur_type =  np.random.choice(3, 1, p=[0.2, 0.5, 0.3])[0]
+                blur_type =  np.random.choice(3, 1, p=[0.2, 0.2, 0.2, 0.2, 0.2])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
-                        final_image = GaussianBlur_random(final_image)
+                        final_image = RandomizedBlur(final_image)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_0_0.jpg")))
                     elif blur_type == 1:
-                        final_image = PsfBlur(final_image, random.choice([1,2]))
+                        final_image = GaussianBlur_random(final_image)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_0_1.jpg")))
+                    elif blur_type == 2:
+                        kernel = np.ones((5, 5), np.float32) / 25
+                        final_image = cv2.filter2D(final_image, -1, kernel)
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg", "_0_2.jpg")))
+                    elif blur_type == 3:
+                        final_image = cv2.blur(final_image, (5, 5))
+
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg", "_0_3.jpg")))
+
 
                 ## additional sharpening
                 if decision(0.2):
@@ -381,17 +405,38 @@ class FakeTextDataGenerator(object):
                 #         final_image = binary_im
 
                 ## random invert
+                inverted = False
                 if decision(0.3):
                     if (background_type == 3 | distorsion_type | blur_type in [0,1]):
                         if (decision(0.1)):
                             im_arr = np.array(final_image)
                             im_arr = np.bitwise_not(im_arr)
                             final_image = Image.fromarray(im_arr)
+                            inverted = True
                     else:
                         im_arr = np.array(final_image)
                         im_arr = np.bitwise_not(im_arr)
                         final_image = Image.fromarray(im_arr)
+                        inverted = True
 
+                if decision(0.1):
+                    if inverted == True:
+                        seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
+                        final_image = seq.augment_image(final_image)
+                    else:
+                        seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
+                        final_image = seq.augment_image(final_image)
+
+                seq = iaa.Sequential(iaa.SomeOf((0, 1),[iaa.PiecewiseAffine(scale=random.uniform(0, 0.03)),
+                                                        iaa.Affine(translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
+                                                                   shear=(-16, 16),
+                                                                   order=[0,
+                                                                          1],
+                                                                   cval=(
+                                                                   0, 255),
+                                                                   mode=ia.ALL),
+                                                        iaa.PerspectiveTransform(scale=random.uniform(0.025, 0.075))]))
+                final_image = seq.augment_image(final_image)
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
