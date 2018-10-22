@@ -337,7 +337,7 @@ class FakeTextDataGenerator(object):
                     final_image.save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                 # blur distortion
-                blur_type =  np.random.choice(3, 1, p=[0.2, 0.2, 0.2, 0.2, 0.2])[0]
+                blur_type =  np.random.choice(5, 1, p=[0.2, 0.2, 0.2, 0.2, 0.2])[0]
 
                 if not random_erode_pixel and not random_pixel_discard:
                     if blur_type == 0:
