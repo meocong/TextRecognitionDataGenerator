@@ -187,7 +187,7 @@ class FakeTextDataGenerator(object):
                         im_arr = np.array(rotated_img)
                         erode = cv2.erode(im_arr, kernel, iterations=1)
                         # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                        prob = random.uniform(0.97,1.0)
+                        prob = random.uniform(0.98,1.0)
                         mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
                         im_arr[mask > 0] = erode[mask > 0]
                         rotated_img = Image.fromarray(im_arr)
@@ -340,7 +340,7 @@ class FakeTextDataGenerator(object):
                     blur_type =  np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
 
                     if not random_erode_pixel and not random_pixel_discard:
-                        if blur_type == 0:
+                        if blur_type == 0 and apply_background == False:
                             final_image = RandomizedBlur(final_image)
                             if debug:
                                 final_image.save(
@@ -369,7 +369,7 @@ class FakeTextDataGenerator(object):
 
 
                     ## additional sharpening
-                    if decision(0.1):
+                    if decision(0.1) and blur_type != 0:
                         final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
                         if debug:
                             final_image.save(
@@ -407,7 +407,7 @@ class FakeTextDataGenerator(object):
                     ## random invert
                     inverted = False
                     if decision(0.3):
-                        if (background_type == 3 | distorsion_type | blur_type in [0,1]):
+                        if (background_type == 3 | distorsion_type | blur_type != 0):
                             if (decision(0.1)):
                                 im_arr = np.array(final_image)
                                 im_arr = np.bitwise_not(im_arr)
