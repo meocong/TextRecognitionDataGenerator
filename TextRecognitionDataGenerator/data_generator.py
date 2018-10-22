@@ -443,7 +443,6 @@ class FakeTextDataGenerator(object):
                                    order=[0,1],
                                    cval=(0, 255),
                                    mode=ia.ALL),
-                        iaa.PerspectiveTransform(scale=random.uniform(0.01, 0.03))
                         ]))
 
                 final_image = Image.fromarray(
