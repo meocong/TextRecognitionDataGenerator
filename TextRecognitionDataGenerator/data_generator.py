@@ -442,6 +442,7 @@ class FakeTextDataGenerator(object):
                     seq = iaa.Sequential(iaa.OneOf([
                             iaa.Affine(
                                        shear=(-20, 20),
+                                       rotate=(-10, 10),
                                        order=[0,1],
                                        cval=(0, 255),
                                        mode=ia.ALL),
