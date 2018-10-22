@@ -430,22 +430,23 @@ class FakeTextDataGenerator(object):
                             seq.augment_image(np.array(final_image)))
 
                 if decision(0.1):
-                    seq = iaa.ElasticTransformation(alpha=random.uniform(0, 0.3),
-                                              sigma=0.2)
+                    seq = iaa.Sequential(iaa.OneOf([
+                        iaa.PiecewiseAffine(scale=random.uniform(0, 0.03)),
+                        iaa.ElasticTransformation(alpha=random.uniform(0, 0.3),sigma=0.2)
+                        ]))
 
                     final_image = Image.fromarray(
                         seq.augment_image(np.array(final_image)))
 
-                seq = iaa.Sequential(iaa.SomeOf((0, 1),[iaa.PiecewiseAffine(scale=random.uniform(0, 0.03)),
-                                                        iaa.Affine(translate_percent={"x": (-0.05, 0.05), "y": (-0.05, 0.05)},
-                                                                   shear=(-10, 10),
-                                                                   order=[0,
-                                                                          1],
-                                                                   cval=(
-                                                                   0, 255),
-                                                                   mode=ia.ALL),
-                                                        iaa.PerspectiveTransform(scale=random.uniform(0.025, 0.075))
-                                                        ]))
+                seq = iaa.Sequential(iaa.OneOf([
+                        iaa.Affine(translate_percent={"x": (-0.05, 0.05), "y": (-0.05, 0.05)},
+                                   shear=(-10, 10),
+                                   order=[0,1],
+                                   cval=(0, 255),
+                                   mode=ia.ALL),
+                        iaa.PerspectiveTransform(scale=random.uniform(0.025, 0.075))
+                        ]))
+
                 final_image = Image.fromarray(
                     seq.augment_image(np.array(final_image)))
 
