@@ -152,301 +152,304 @@ class FakeTextDataGenerator(object):
                 # Random miscellaneous distortion #
                 ###################################
 
-                if decision(0.3):
-                    if decision(0.7):
-                        ## full image erode
-                        x = random.randint(0, 2)
-                        kernel = np.ones((x, x), np.uint8)
-                        im_arr = cv2.erode(np.array(rotated_img), kernel, iterations=1)
-                    else:
-                        ## partial image erode
-                        im_arr = np.array(rotated_img)
-                        start_x = random.randint(0, int(im_arr.shape[1] * 0.7))
-                        if start_x + 10 < im_arr.shape[1]:
-                            end_x = random.randint(start_x + 10, im_arr.shape[1])
-                            x = random.randint(1, 4)
+                if decision(0.9):
+                    if decision(0.3):
+                        if decision(0.7):
+                            ## full image erode
+                            x = random.randint(0, 2)
                             kernel = np.ones((x, x), np.uint8)
-                            im_arr[:,start_x:end_x] = cv2.erode(im_arr[:,start_x:end_x], kernel, iterations=1)
-                else:
-                    im_arr = np.array(rotated_img)
+                            im_arr = cv2.erode(np.array(rotated_img), kernel, iterations=1)
+                        else:
+                            ## partial image erode
+                            im_arr = np.array(rotated_img)
+                            start_x = random.randint(0, int(im_arr.shape[1] * 0.7))
+                            if start_x + 10 < im_arr.shape[1]:
+                                end_x = random.randint(start_x + 10, im_arr.shape[1])
+                                x = random.randint(1, 4)
+                                kernel = np.ones((x, x), np.uint8)
+                                im_arr[:,start_x:end_x] = cv2.erode(im_arr[:,start_x:end_x], kernel, iterations=1)
+                    else:
+                        im_arr = np.array(rotated_img)
 
-                rotated_img = Image.fromarray(im_arr)
-
-                if debug:
-                    rotated_img.convert('L').save(
-                        os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
-                random_erode_pixel = decision(0.1) and rotated_img.size[1] > 40
-                random_pixel_discard = decision(0.15) and not random_erode_pixel
-
-                if random_erode_pixel:
-                    ## random erode with random pixel sampling
-                    x = random.randint(0, 2)
-                    kernel = np.ones((x, x), np.uint8)
-                    im_arr = np.array(rotated_img)
-                    erode = cv2.erode(im_arr, kernel, iterations=1)
-                    # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
-                    prob = random.uniform(0.97,1.0)
-                    mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                    im_arr[mask > 0] = erode[mask > 0]
                     rotated_img = Image.fromarray(im_arr)
+
                     if debug:
                         rotated_img.convert('L').save(
-                            os.path.join(out_dir,
-                                         image_name.replace(".jpg", "_3.jpg")))
-                else:
-                    if random_pixel_discard:
-                        # ## random pixel discard
-                        # # print("lol")
-                        # im_arr = np.array(rotated_img)
-                        # # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                        # prob = random.uniform(0.95,1.0)
-                        # mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                        # im_arr[mask == 0] = 255
-                        # # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                        # rotated_img = Image.fromarray(im_arr)
+                            os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
+                    random_erode_pixel = decision(0.1) and rotated_img.size[1] > 40
+                    random_pixel_discard = decision(0.15) and not random_erode_pixel
 
-                        seq = iaa.Sequential([iaa.Dropout(random.uniform(0,0.05))])
-                        rotated_img = Image.fromarray(seq.augment_image(np.array(rotated_img)))
-
+                    if random_erode_pixel:
+                        ## random erode with random pixel sampling
+                        x = random.randint(0, 2)
+                        kernel = np.ones((x, x), np.uint8)
+                        im_arr = np.array(rotated_img)
+                        erode = cv2.erode(im_arr, kernel, iterations=1)
+                        # prob = np.random.choice([0.1, 0.2, 0.3], p=[0.05, 0.3, 0.65])
+                        prob = random.uniform(0.97,1.0)
+                        mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                        im_arr[mask > 0] = erode[mask > 0]
+                        rotated_img = Image.fromarray(im_arr)
                         if debug:
                             rotated_img.convert('L').save(
-                                os.path.join(out_dir, image_name.replace(".jpg", "_4.jpg")))
-                ######################################
-                # Apply geometry distortion to image #
-                ######################################
-
-                distorsion_type = np.random.choice(4, 1, p=[0.65, 0.15, 0.15, 0.05])[0]
-                if distorsion_type == 0:
-                    distorted_img = rotated_img # Mind = blown
-                elif distorsion_type == 1:
-                    distorted_img = DistorsionGenerator.sin(
-                        rotated_img,
-                        vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
-                        horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2),
-                        max_offset = 2
-                    )
-                elif distorsion_type == 2:
-                    distorted_img = DistorsionGenerator.cos(
-                        rotated_img,
-                        vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
-                        horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2),
-                        max_offset = 2
-                    )
-                elif not random_erode_pixel and not random_pixel_discard and distorsion_type == 3:
-                    distorted_img = DistorsionGenerator.random(
-                        rotated_img,
-                        vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
-                        horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2)
-                    )
-                else:
-                    distorted_img = DistorsionGenerator.cos(
-                        rotated_img,
-                        vertical=(
-                                    distorsion_orientation == 0 or distorsion_orientation == 2),
-                        horizontal=(
-                                    distorsion_orientation == 1 or distorsion_orientation == 2),
-                        max_offset=2
-                    )
-                new_text_width, new_text_height = distorted_img.size
-
-                if debug:
-                    distorted_img.convert('L').save(
-                        os.path.join(out_dir, image_name.replace(".jpg", "_2.jpg")))
-
-                affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0, 0.55])[0]
-                if not random_pixel_discard and not random_erode_pixel:
-                    if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
-                        distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
-                        if debug:
-                            distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_1.jpg")))
-                    elif affine_type == 1:
-                        distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
-
-                        if debug:
-                            distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_2.jpg")))
-                    # elif affine_type == 2:
-                    #     distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
-                    #     distorted_img.convert('L').save(os.path.join(out_dir,
-                    #                                                  image_name.replace(
-                    #                                                      ".jpg",
-                    #                                                      "_1_3.jpg")))
-
-                if np.min(np.array(distorted_img)) > 250:
-                    print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
-
-                x = random.randint(1, 8)
-                y = random.randint(1, 8)
-
-                if debug:
-                    distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","_1.jpg")))
-                #############################
-                # Generate background image #
-                #############################
-                background_type =  np.random.choice(4, 1, p=[0.1, 0.3, 0.02, 0.58])[0]
-
-                if background_type == 0:
-                    background = BackgroundGenerator.gaussian_noise(new_text_height + x, new_text_width + y)
-                elif background_type == 1:
-                    background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
-                elif background_type == 2 and random_erode_pixel == False and random_pixel_discard == False:
-                    background = BackgroundGenerator.quasicrystal(new_text_height + x, new_text_width + y)
-                elif random_erode_pixel == False and random_pixel_discard == False and distorsion_type != 3:
-                    background = BackgroundGenerator.picture(new_text_height + x, new_text_width + y)
-                else:
-                    background = BackgroundGenerator.gaussian_noise(
-                        new_text_height + x, new_text_width + y)
-
-                distorted_img = distorted_img.convert('L')
-                mask = distorted_img.point(lambda x: 0 if x == 255 or x == 0 else 255, '1')
-
-                apply_background = False
-                if (random.randint(0,10) < 1):
-                    background = distorted_img
-                else:
-                    apply_background = True
-                    background.paste(distorted_img, (5, 5), mask=mask)
-
-                ##################################
-                # Resize image to desired format #
-                ##################################
-                new_width = float(new_text_width + y) * (float(height) / float(new_text_height + x))
-                # image_on_background = background.resize((int(new_width), height), Image.ANTIALIAS)
-
-                # if distorsion_type != 3 and background_type != 2 and new_text_height > 45:
-                #     final_image = background.filter(
-                #         ImageFilter.GaussianBlur(
-                #             radius=(blur if not random_blur else random.randint(0, blur))
-                #         )
-                #     )
-                # else:
-
-                ##################################
-                # Random motion blur             #
-                ##################################
-                final_image = background.convert('L')
-
-                if debug:
-                    final_image.save(
-                        os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
-                # blur distortion
-                blur_type =  np.random.choice(5, 1, p=[0.2, 0.2, 0.2, 0.2, 0.2])[0]
-
-                if not random_erode_pixel and not random_pixel_discard:
-                    if blur_type == 0:
-                        final_image = RandomizedBlur(final_image)
-                        if debug:
-                            final_image.save(
                                 os.path.join(out_dir,
-                                             image_name.replace(".jpg", "_0_0.jpg")))
-                    elif blur_type == 1:
-                        final_image = GaussianBlur_random(final_image)
-                        if debug:
-                            final_image.save(
-                                os.path.join(out_dir,
-                                             image_name.replace(".jpg", "_0_1.jpg")))
-                    elif blur_type == 2:
-                        kernel = np.ones((5, 5), np.float32) / 25
-                        final_image = Image.fromarray(cv2.filter2D(np.array(final_image), -1, kernel))
+                                             image_name.replace(".jpg", "_3.jpg")))
+                    else:
+                        if random_pixel_discard:
+                            # ## random pixel discard
+                            # # print("lol")
+                            # im_arr = np.array(rotated_img)
+                            # # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
+                            # prob = random.uniform(0.95,1.0)
+                            # mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                            # im_arr[mask == 0] = 255
+                            # # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
+                            # rotated_img = Image.fromarray(im_arr)
+
+                            seq = iaa.Sequential([iaa.Dropout(random.uniform(0,0.05))])
+                            rotated_img = Image.fromarray(seq.augment_image(np.array(rotated_img)))
+
+                            if debug:
+                                rotated_img.convert('L').save(
+                                    os.path.join(out_dir, image_name.replace(".jpg", "_4.jpg")))
+                    ######################################
+                    # Apply geometry distortion to image #
+                    ######################################
+
+                    distorsion_type = np.random.choice(4, 1, p=[0.65, 0.15, 0.15, 0.05])[0]
+                    if distorsion_type == 0:
+                        distorted_img = rotated_img # Mind = blown
+                    elif distorsion_type == 1:
+                        distorted_img = DistorsionGenerator.sin(
+                            rotated_img,
+                            vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
+                            horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2),
+                            max_offset = 2
+                        )
+                    elif distorsion_type == 2:
+                        distorted_img = DistorsionGenerator.cos(
+                            rotated_img,
+                            vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
+                            horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2),
+                            max_offset = 2
+                        )
+                    elif not random_erode_pixel and not random_pixel_discard and distorsion_type == 3:
+                        distorted_img = DistorsionGenerator.random(
+                            rotated_img,
+                            vertical=(distorsion_orientation == 0 or distorsion_orientation == 2),
+                            horizontal=(distorsion_orientation == 1 or distorsion_orientation == 2)
+                        )
+                    else:
+                        distorted_img = DistorsionGenerator.cos(
+                            rotated_img,
+                            vertical=(
+                                        distorsion_orientation == 0 or distorsion_orientation == 2),
+                            horizontal=(
+                                        distorsion_orientation == 1 or distorsion_orientation == 2),
+                            max_offset=2
+                        )
+                    new_text_width, new_text_height = distorted_img.size
+
+                    if debug:
+                        distorted_img.convert('L').save(
+                            os.path.join(out_dir, image_name.replace(".jpg", "_2.jpg")))
+
+                    affine_type = np.random.choice(4, 1, p=[0.3, 0.15, 0, 0.55])[0]
+                    if not random_pixel_discard and not random_erode_pixel:
+                        if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
+                            distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
+                            if debug:
+                                distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                             image_name.replace(
+                                                                                 ".jpg",
+                                                                                 "_1_1.jpg")))
+                        elif affine_type == 1:
+                            distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
+
+                            if debug:
+                                distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                             image_name.replace(
+                                                                                 ".jpg",
+                                                                                 "_1_2.jpg")))
+                        # elif affine_type == 2:
+                        #     distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
+                        #     distorted_img.convert('L').save(os.path.join(out_dir,
+                        #                                                  image_name.replace(
+                        #                                                      ".jpg",
+                        #                                                      "_1_3.jpg")))
+
+                    if np.min(np.array(distorted_img)) > 250:
+                        print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
+
+                    x = random.randint(1, 8)
+                    y = random.randint(1, 8)
+
+                    if debug:
+                        distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","_1.jpg")))
+                    #############################
+                    # Generate background image #
+                    #############################
+                    background_type =  np.random.choice(4, 1, p=[0.1, 0.3, 0.02, 0.58])[0]
+
+                    if background_type == 0:
+                        background = BackgroundGenerator.gaussian_noise(new_text_height + x, new_text_width + y)
+                    elif background_type == 1:
+                        background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
+                    elif background_type == 2 and random_erode_pixel == False and random_pixel_discard == False:
+                        background = BackgroundGenerator.quasicrystal(new_text_height + x, new_text_width + y)
+                    elif random_erode_pixel == False and random_pixel_discard == False and distorsion_type != 3:
+                        background = BackgroundGenerator.picture(new_text_height + x, new_text_width + y)
+                    else:
+                        background = BackgroundGenerator.gaussian_noise(
+                            new_text_height + x, new_text_width + y)
+
+                    distorted_img = distorted_img.convert('L')
+                    mask = distorted_img.point(lambda x: 0 if x == 255 or x == 0 else 255, '1')
+
+                    apply_background = False
+                    if (random.randint(0,10) < 1):
+                        background = distorted_img
+                    else:
+                        apply_background = True
+                        background.paste(distorted_img, (5, 5), mask=mask)
+
+                    ##################################
+                    # Resize image to desired format #
+                    ##################################
+                    new_width = float(new_text_width + y) * (float(height) / float(new_text_height + x))
+                    # image_on_background = background.resize((int(new_width), height), Image.ANTIALIAS)
+
+                    # if distorsion_type != 3 and background_type != 2 and new_text_height > 45:
+                    #     final_image = background.filter(
+                    #         ImageFilter.GaussianBlur(
+                    #             radius=(blur if not random_blur else random.randint(0, blur))
+                    #         )
+                    #     )
+                    # else:
+
+                    ##################################
+                    # Random motion blur             #
+                    ##################################
+                    final_image = background.convert('L')
+
+                    if debug:
+                        final_image.save(
+                            os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
+                    # blur distortion
+                    blur_type =  np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
+
+                    if not random_erode_pixel and not random_pixel_discard:
+                        if blur_type == 0:
+                            final_image = RandomizedBlur(final_image)
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg", "_0_0.jpg")))
+                        elif blur_type == 1:
+                            final_image = GaussianBlur_random(final_image)
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg", "_0_1.jpg")))
+                        elif blur_type == 2:
+                            kernel = np.ones((5, 5), np.float32) / 25
+                            final_image = Image.fromarray(cv2.filter2D(np.array(final_image), -1, kernel))
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg", "_0_2.jpg")))
+                        elif blur_type == 3:
+                            final_image = Image.fromarray(cv2.blur(np.array(final_image), (5, 5)))
+
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg", "_0_3.jpg")))
+
+
+                    ## additional sharpening
+                    if decision(0.1):
+                        final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_0_2.jpg")))
-                    elif blur_type == 3:
-                        final_image = Image.fromarray(cv2.blur(np.array(final_image), (5, 5)))
 
-                        if debug:
-                            final_image.save(
-                                os.path.join(out_dir,
-                                             image_name.replace(".jpg", "_0_3.jpg")))
+                    ##################################
+                    # Random aspect ration change    #
+                    ##################################
+                    # if distorsion_type != 3:
+                    resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
 
-
-                ## additional sharpening
-                if decision(0.1):
-                    final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
-                    if debug:
-                        final_image.save(
-                            os.path.join(out_dir,
-                                         image_name.replace(".jpg", "_0_2.jpg")))
-
-                ##################################
-                # Random aspect ration change    #
-                ##################################
-                # if distorsion_type != 3:
-                resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
-
-                if (decision(0.5)):
-                    f = random.uniform(0.8, 1.2)
-                    final_image = final_image.resize((int(
-                        final_image.size[0] * f), int(final_image.size[1] * f)),
-                                                     resize_type)
-                else:
-                    f = random.uniform(0.7, 1.2)
-                    
-                    if (random.randint(0, 1) == 0):
-                        final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                    if (decision(0.5)):
+                        f = random.uniform(0.8, 1.2)
+                        final_image = final_image.resize((int(
+                            final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                         resize_type)
                     else:
-                        final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
+                        f = random.uniform(0.7, 1.2)
 
-                # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
+                        if (random.randint(0, 1) == 0):
+                            final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                        else:
+                            final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
-                ## random binary if background is white
-                # if blur_type in [1, 2] and background_type in [0, 1] and decision(0.6) and distorsion_type != 3:
-                #     bin_thres = 0.3 if blur_type == 2 else 0.03
-                #     binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
-                #     if np.mean(binary_im) > 160:
-                #         final_image = binary_im
+                    # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
-                ## random invert
-                inverted = False
-                if decision(0.3):
-                    if (background_type == 3 | distorsion_type | blur_type in [0,1]):
-                        if (decision(0.1)):
+                    ## random binary if background is white
+                    # if blur_type in [1, 2] and background_type in [0, 1] and decision(0.6) and distorsion_type != 3:
+                    #     bin_thres = 0.3 if blur_type == 2 else 0.03
+                    #     binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
+                    #     if np.mean(binary_im) > 160:
+                    #         final_image = binary_im
+
+                    ## random invert
+                    inverted = False
+                    if decision(0.3):
+                        if (background_type == 3 | distorsion_type | blur_type in [0,1]):
+                            if (decision(0.1)):
+                                im_arr = np.array(final_image)
+                                im_arr = np.bitwise_not(im_arr)
+                                final_image = Image.fromarray(im_arr)
+                                inverted = True
+                        else:
                             im_arr = np.array(final_image)
                             im_arr = np.bitwise_not(im_arr)
                             final_image = Image.fromarray(im_arr)
                             inverted = True
-                    else:
-                        im_arr = np.array(final_image)
-                        im_arr = np.bitwise_not(im_arr)
-                        final_image = Image.fromarray(im_arr)
-                        inverted = True
 
-                if decision(0.1):
-                    if inverted == True:
-                        seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
-                        final_image = Image.fromarray(
-                            seq.augment_image(np.array(final_image)))
-                    else:
-                        seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
-                        final_image = Image.fromarray(
-                            seq.augment_image(np.array(final_image)))
+                    if decision(0.1):
+                        if inverted == True:
+                            seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
+                            final_image = Image.fromarray(
+                                seq.augment_image(np.array(final_image)))
+                        else:
+                            seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
+                            final_image = Image.fromarray(
+                                seq.augment_image(np.array(final_image)))
 
-                # if decision(0.1):
-                # if (distorsion_type != 3):
-                # seq = iaa.Sequential(iaa.OneOf([
-                #     iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
-                #     # iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
-                #     ]))
-                #
-                # final_image = Image.fromarray(
-                #     seq.augment_image(np.array(final_image)))
+                    # if decision(0.1):
+                    # if (distorsion_type != 3):
+                    # seq = iaa.Sequential(iaa.OneOf([
+                    #     iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
+                    #     # iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
+                    #     ]))
+                    #
+                    # final_image = Image.fromarray(
+                    #     seq.augment_image(np.array(final_image)))
 
-                seq = iaa.Sequential(iaa.OneOf([
-                        iaa.Affine(
-                                   shear=(-20, 20),
-                                   order=[0,1],
-                                   cval=(0, 255),
-                                   mode=ia.ALL),
-                        ]))
+                    seq = iaa.Sequential(iaa.OneOf([
+                            iaa.Affine(
+                                       shear=(-20, 20),
+                                       order=[0,1],
+                                       cval=(0, 255),
+                                       mode=ia.ALL),
+                            ]))
 
-                final_image = Image.fromarray(
-                    seq.augment_image(np.array(final_image)))
+                    final_image = Image.fromarray(
+                        seq.augment_image(np.array(final_image)))
+                else:
+                    final_image = rotated_img
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
