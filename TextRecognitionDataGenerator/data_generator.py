@@ -101,7 +101,7 @@ class FakeTextDataGenerator(object):
                         '{} is not a valid name format. Using default.'.format(
                             name_format))
                     image_name = '{}_{}.{}'.format(text, str(index), extension)
-                print(image_name, font)
+                # print(image_name, font)
 
                 image = None
 
