@@ -47,7 +47,7 @@ def affine_transform(image, affine_value = 0.004):#0.005):
         image[:, :, aD] = scipy_affine_transform(image[:, :, aD], R, offset=Off, mode='constant', cval=255.0)
     return image
 
-def elastic_transform(image, elastic_value_x = 0.0004 ,elastic_value_y = 0.0004):
+def elastic_transform(image, elastic_value_x = 0.0003 ,elastic_value_y = 0.0003):
     """Elastic deformation of images as described in [Simard2003]_ (with modifications JUST in Y-DIRECTION).
     .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
          Convolutional Neural Networks applied to Visual Document Analysis", in
@@ -168,7 +168,7 @@ def _order_points(pts):
     return pts_ordered
 
 
-def perspective_transform(im, range=(0.01, 0.08)):
+def perspective_transform(im, range=(0.01, 0.07)):
     M, max_height, max_width = _create_matrices(im.shape, range)
     #max_width = int(max_width * 2.5)
     warped = cv2.warpPerspective(im, M, (max_width, max_height), borderValue=(255,255,255))
