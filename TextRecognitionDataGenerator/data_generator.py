@@ -451,7 +451,9 @@ class FakeTextDataGenerator(object):
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
                         lambda x: 0 if x == 255 or x == 0 else 255, '1')
-                    Image.open("pictures/plain_white.png").paste(final_image, (5, 5), mask=mask)
+                    background = Image.open("pictures/plain_white.png")
+                    background.paste(final_image, (5, 5), mask=mask)
+                    final_image = background
 
 
                 # Save the image
