@@ -280,8 +280,8 @@ class FakeTextDataGenerator(object):
                     if np.min(np.array(distorted_img)) > 250:
                         print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
 
-                    x = random.randint(1, 8)
-                    y = random.randint(1, 8)
+                    x = random.randint(1, 3)
+                    y = random.randint(1, 3)
 
                     if debug:
                         distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","_1.jpg")))
@@ -451,7 +451,7 @@ class FakeTextDataGenerator(object):
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
                         lambda x: 0 if x == 255 or x == 0 else 255, '1')
-                    background = Image.open("pictures/plain_white.png")
+                    background = Image.open("pictures/plain_white.png").resize((final_image.size[0], final_image.size[1]), Image.ANTIALIAS)
                     background.paste(final_image, (5, 5), mask=mask)
                     final_image = background
 
