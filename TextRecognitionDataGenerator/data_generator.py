@@ -83,7 +83,7 @@ def nick_binarize(img_list):
 class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
-            # try:
+            try:
                 #####################################
                 # Generate name for resulting image #
                 #####################################
@@ -464,7 +464,7 @@ class FakeTextDataGenerator(object):
                         lambda x: 0 if x == 255 or x == 0 else 255, '1')
                     background = Image.open("pictures/plain_white.png").resize((final_image.size[0], final_image.size[1]), Image.ANTIALIAS)
                     background.paste(final_image, (5, 5), mask=mask)
-                    final_image = background
+                    final_image = background.convert('L')
 
                     # blur distortion
                     blur_type = \
@@ -496,7 +496,6 @@ class FakeTextDataGenerator(object):
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
-            # except Exception as ex:
-            #     print(ex)
-            #     pass
-    
+            except Exception as ex:
+                print(ex)
+                pass
