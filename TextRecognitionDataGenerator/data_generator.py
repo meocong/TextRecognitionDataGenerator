@@ -132,7 +132,7 @@ class FakeTextDataGenerator(object):
                     image.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
 
-                if decision(0.8):
+                if decision(0.6):
                     random_angle = random.uniform(-skewing_angle/4,
                                                   skewing_angle/4)
 
