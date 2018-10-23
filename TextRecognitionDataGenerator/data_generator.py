@@ -137,7 +137,7 @@ class FakeTextDataGenerator(object):
                 # rotated_img = rotated_img.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
 
                 # if decision(0.3):
-                rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
+                rotated_img = Image.fromarray(scipy.ndimage.rotate(image, 40))
                 # else:
                 #     rotated_img = Image.fromarray(imutils.rotate_bound(np.array(image), random_angle))
                 #
