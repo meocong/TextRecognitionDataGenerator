@@ -292,7 +292,7 @@ class FakeTextDataGenerator(object):
                         print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
 
                     x = random.randint(1, 3)
-                    y = random.randint(3, 5)
+                    y = random.randint(1, 3)
 
                     if debug:
                         distorted_img.convert('L').save(os.path.join(out_dir, image_name.replace(".jpg","_1.jpg")))
