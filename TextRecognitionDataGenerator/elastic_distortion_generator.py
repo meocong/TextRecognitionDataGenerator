@@ -14,7 +14,7 @@ def calcAffineMatrix(sourcePoints, targetPoints):
         A.append([0, sp[0], 0, sp[1], 0, 1])
         b.append(trg[0])
         b.append(trg[1])
-    result, resids, rank, s = np.linalg.lstsq(np.array(A), np.array(b), rcond=-1)
+    result, resids, rank, s = np.linalg.lstsq(np.array(A), np.array(b), rcond=None)
 
     a0, a1, a2, a3, a4, a5 = result
     affineTrafo = np.float32([[a0, a2, a4], [a1, a3, a5]])
