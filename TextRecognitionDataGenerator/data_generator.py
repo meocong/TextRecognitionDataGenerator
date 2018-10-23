@@ -442,7 +442,7 @@ class FakeTextDataGenerator(object):
                             iaa.Affine(
                                        shear=(-30, 30),
                                        order=[0,1],
-                                       cval=(0, 255),
+                                       cval=0,
                                        mode=ia.ALL),
                             ]))
 
