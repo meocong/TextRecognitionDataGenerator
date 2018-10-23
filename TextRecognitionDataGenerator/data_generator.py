@@ -131,9 +131,20 @@ class FakeTextDataGenerator(object):
                 if debug:
                     image.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
-                random_angle = random.uniform(-skewing_angle, skewing_angle)
 
-                rotated_img = image.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
+                if decision(0.8):
+                    random_angle = random.uniform(-skewing_angle/4,
+                                                  skewing_angle/4)
+
+                    rotated_img = image.rotate(skewing_angle if not random_skew else random_angle, expand=1) #.resize(image.size)
+                else:
+                    random_angle = random.uniform(-skewing_angle,
+                                                  skewing_angle)
+
+                    rotated_img = image.rotate(
+                        skewing_angle if not random_skew else random_angle,
+                        expand=1)
+
                 # if decision(0.3):
                 # rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
                 # else:
@@ -482,7 +493,7 @@ class FakeTextDataGenerator(object):
 
                     final_image = Image.fromarray(
                         seq.augment_image(np.array(final_image)))
-                    
+
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             except Exception as ex:
