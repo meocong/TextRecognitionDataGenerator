@@ -455,7 +455,34 @@ class FakeTextDataGenerator(object):
                     background.paste(final_image, (5, 5), mask=mask)
                     final_image = background
 
+                    # blur distortion
+                    blur_type = \
+                    np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
 
+                    if blur_type == 0:
+                        final_image = RandomizedBlur(final_image)
+                    elif blur_type == 1:
+                        final_image = GaussianBlur_random(final_image)
+                    elif blur_type == 2:
+                        kernel = np.ones((5, 5), np.float32) / 25
+                        final_image = Image.fromarray(
+                            cv2.filter2D(np.array(final_image), -1,
+                                         kernel))
+                    elif blur_type == 3:
+                        final_image = Image.fromarray(
+                            cv2.blur(np.array(final_image), (5, 5)))
+
+                    seq = iaa.Sequential(iaa.OneOf([
+                        iaa.Affine(
+                            shear=(-30, 30),
+                            order=[0, 1],
+                            cval=0,
+                            mode=ia.ALL),
+                    ]))
+
+                    final_image = Image.fromarray(
+                        seq.augment_image(np.array(final_image)))
+                    
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             except Exception as ex:
