@@ -82,7 +82,7 @@ def nick_binarize(img_list):
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=True):
             try:
                 #####################################
                 # Generate name for resulting image #
@@ -121,7 +121,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(4, 1, p=[0.85, 0.1, 0.05, 0.0])[0]
+                text_mode = np.random.choice(4, 1, p=[0.9, 0.05, 0.05, 0.0])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
