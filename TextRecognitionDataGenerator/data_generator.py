@@ -268,19 +268,19 @@ class FakeTextDataGenerator(object):
                     if not random_pixel_discard or (random_pixel_discard == True and prob > 0.98):
                         if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
                             distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
-                            if debug:
-                                distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                             image_name.replace(
-                                                                                 ".jpg",
-                                                                                 "_1_1.jpg")))
+                            # if debug:
+                            distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                         image_name.replace(
+                                                                             ".jpg",
+                                                                             "_1_1.jpg")))
                         elif affine_type == 1:
                             distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
 
-                            if debug:
-                                distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                             image_name.replace(
-                                                                                 ".jpg",
-                                                                                 "_1_2.jpg")))
+                            # if debug:
+                            distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                         image_name.replace(
+                                                                             ".jpg",
+                                                                             "_1_2.jpg")))
                         # elif affine_type == 2:
                         #     distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
                         #     distorted_img.convert('L').save(os.path.join(out_dir,
