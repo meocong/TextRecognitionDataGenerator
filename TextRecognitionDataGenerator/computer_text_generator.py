@@ -17,6 +17,7 @@ RANDOM_BIG_TEXT = 3
 class ComputerTextGenerator(object):
     @classmethod
     def generate(cls, text, font, text_color, height, text_mode):
+        extend_bottom = 3
         # print(text, font, text_color)
         # image_font = ImageFont.truetype(font="/Library/Fonts/Arial Unicode.ttf", size=32)
 
@@ -24,7 +25,7 @@ class ComputerTextGenerator(object):
         first_half = text[:N]
         second_half = text[N:]
 
-        image_font = ImageFont.truetype(font=font, size=int(height) + 5)
+        image_font = ImageFont.truetype(font=font, size=int(height))
 
         if (text_mode == RANDOM_BIG_TEXT):
             ## random letter font increase
@@ -36,7 +37,7 @@ class ComputerTextGenerator(object):
         if text_mode == TIGHT_TEXT:
             ## draw letter by letter for tight text generation
             text_width, text_height = image_font.getsize(text)
-            txt_img = Image.new('L', (text_width, text_height), 255)
+            txt_img = Image.new('L', (text_width, text_height + extend_bottom), 255)
             txt_draw = ImageDraw.Draw(txt_img)
 
             offset_x = 0
@@ -59,7 +60,7 @@ class ComputerTextGenerator(object):
             if (random.randint(0,2) != 0 or len(text) < 6):
                 text_width1, text_height1 = image_font.getsize(first_half)
                 text_width2, text_height2 = image_font_big.getsize(second_half)
-                txt_img = Image.new('L', (text_width1 + text_width2, max(text_height1, text_height2)), 255)
+                txt_img = Image.new('L', (text_width1 + text_width2, max(text_height1, text_height2) + extend_bottom), 255)
                 txt_draw = ImageDraw.Draw(txt_img)
 
                 txt_draw.text((0, 0), u'{0}'.format(first_half), fill=random.randint(1, 50) if text_color < 0 else text_color,
@@ -75,7 +76,7 @@ class ComputerTextGenerator(object):
                 text_width2, text_height2 = image_font.getsize(text[N1:N2])
                 text_width3, text_height3 = image_font_big.getsize(text[N2:])
                 txt_img = Image.new('L', (
-                text_width1 + text_width2 + text_width3, max(max(text_height1, text_height2), text_height3)), 255)
+                text_width1 + text_width2 + text_width3, max(max(text_height1, text_height2), text_height3 + extend_bottom)), 255)
                 txt_draw = ImageDraw.Draw(txt_img)
 
                 txt_draw.text((0, 0), u'{0}'.format(text[:N1]),
@@ -93,7 +94,7 @@ class ComputerTextGenerator(object):
 
         elif text_mode == RANDOM_BIG_TEXT:
             text_width, text_height = image_font_big.getsize(text)
-            txt_img = Image.new('L', (text_width, text_height), 255)
+            txt_img = Image.new('L', (text_width, text_height + extend_bottom), 255)
             txt_draw = ImageDraw.Draw(txt_img)
 
             offset_x = 0
@@ -108,7 +109,7 @@ class ComputerTextGenerator(object):
 
         elif text_mode == NORMAL_TEXT:
             text_width, text_height = image_font.getsize(text)
-            txt_img = Image.new('L', (text_width, text_height), 255)
+            txt_img = Image.new('L', (text_width, text_height + extend_bottom), 255)
             txt_draw = ImageDraw.Draw(txt_img)
 
             ## normal text print

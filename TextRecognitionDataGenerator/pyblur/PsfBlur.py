@@ -21,5 +21,3 @@ def PsfBlur(img, psfid):
 def PsfBlur_random(img):
     psfid = np.random.randint(0, len(psfDictionary))
     return PsfBlur(img, psfid)
-    
-    

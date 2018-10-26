@@ -317,7 +317,7 @@ class FakeTextDataGenerator(object):
                     mask = distorted_img.point(lambda x: 0 if x == 255 or x == 0 else 255, '1')
 
                     apply_background = False
-                    if (random.randint(0,10) < 1):
+                    if (random.randint(0,10) < 2):
                         background = distorted_img
                     else:
                         apply_background = True
@@ -348,8 +348,8 @@ class FakeTextDataGenerator(object):
                     # blur distortion
                     blur_type =  np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
 
-                    if not random_pixel_discard or (random_pixel_discard == True and prob > 0.98):
-                        if blur_type == 0 and apply_background == False:
+                    if decision(0.9):
+                        if blur_type == 0:
                             final_image = RandomizedBlur(final_image)
                             if debug:
                                 final_image.save(
@@ -375,6 +375,13 @@ class FakeTextDataGenerator(object):
                                 final_image.save(
                                     os.path.join(out_dir,
                                                  image_name.replace(".jpg", "_0_3.jpg")))
+                        elif blur_type == 4:
+                            final_image = PsfBlur_random(final_image)
+
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg", "_0_4.jpg")))
 
 
                     ## additional sharpening
