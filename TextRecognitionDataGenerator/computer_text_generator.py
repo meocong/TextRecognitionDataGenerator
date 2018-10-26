@@ -17,7 +17,7 @@ RANDOM_BIG_TEXT = 3
 class ComputerTextGenerator(object):
     @classmethod
     def generate(cls, text, font, text_color, height, text_mode):
-        extend_bottom = 3
+        extend_bottom = 5
         # print(text, font, text_color)
         # image_font = ImageFont.truetype(font="/Library/Fonts/Arial Unicode.ttf", size=32)
 
