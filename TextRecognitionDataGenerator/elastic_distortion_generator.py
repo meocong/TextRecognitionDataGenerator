@@ -28,7 +28,7 @@ def pil_2_arr(pil_image):
 def arr_2_pil(img_arr):
     return Image.fromarray(np.uint8(img_arr)).convert('L')
 
-def affine_transform(image, affine_value = 0.004):#0.005):
+def affine_transform(image, affine_value = 0.003):#0.005):
     shape = image.shape
     alpha_affine = min(shape[0], shape[1]) * affine_value
     random_state = np.random.RandomState(None)
@@ -47,7 +47,7 @@ def affine_transform(image, affine_value = 0.004):#0.005):
         image[:, :, aD] = scipy_affine_transform(image[:, :, aD], R, offset=Off, mode='constant', cval=255.0)
     return image
 
-def elastic_transform(image, elastic_value_x = 0.0003 ,elastic_value_y = 0.0002):
+def elastic_transform(image, elastic_value_x = 0.0004 ,elastic_value_y = 0.0004):
     """Elastic deformation of images as described in [Simard2003]_ (with modifications JUST in Y-DIRECTION).
     .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
          Convolutional Neural Networks applied to Visual Document Analysis", in

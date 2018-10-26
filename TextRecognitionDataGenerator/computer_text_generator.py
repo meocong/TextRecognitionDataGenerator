@@ -24,7 +24,7 @@ class ComputerTextGenerator(object):
         first_half = text[:N]
         second_half = text[N:]
 
-        image_font = ImageFont.truetype(font=font, size=int(height) + 3)
+        image_font = ImageFont.truetype(font=font, size=int(height) + 5)
 
         if (text_mode == RANDOM_BIG_TEXT):
             ## random letter font increase
@@ -40,7 +40,7 @@ class ComputerTextGenerator(object):
             txt_draw = ImageDraw.Draw(txt_img)
 
             offset_x = 0
-            f = random.uniform(0.9, 0.96)
+            f = random.uniform(0.9, 0.94)
             for c in text:
                 char_w, char_h = image_font.getsize(c)
                 txt_draw.text((offset_x, 0), u'{0}'.format(c),
