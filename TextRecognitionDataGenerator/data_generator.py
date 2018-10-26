@@ -82,7 +82,7 @@ def nick_binarize(img_list):
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=True):
             try:
                 #####################################
                 # Generate name for resulting image #
@@ -108,7 +108,7 @@ class FakeTextDataGenerator(object):
                 ##########################
                 # Create picture of text #
                 ##########################
-                add_random_space = ' ' in text and decision(0.2)
+                add_random_space = ' ' in text and decision(0.1)
 
                 text = "  " +text + "  "
                 if (len(text) < 40):
@@ -268,19 +268,19 @@ class FakeTextDataGenerator(object):
                     if not random_pixel_discard or (random_pixel_discard == True and prob > 0.98):
                         if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
                             distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
-                            # if debug:
-                            distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_1.jpg")))
+                            if debug:
+                                distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                             image_name.replace(
+                                                                                 ".jpg",
+                                                                                 "_1_1.jpg")))
                         elif affine_type == 1:
                             distorted_img = ElasticDistortionGenerator.elastic_transform(distorted_img)
 
-                            # if debug:
-                            distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_2.jpg")))
+                            if debug:
+                                distorted_img.convert('L').save(os.path.join(out_dir,
+                                                                             image_name.replace(
+                                                                                 ".jpg",
+                                                                                 "_1_2.jpg")))
                         # elif affine_type == 2:
                         #     distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
                         #     distorted_img.convert('L').save(os.path.join(out_dir,
