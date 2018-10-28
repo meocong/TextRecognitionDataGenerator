@@ -362,7 +362,7 @@ class FakeTextDataGenerator(object):
                                     os.path.join(out_dir,
                                                  image_name.replace(".jpg", "_0_1.jpg")))
                         elif blur_type == 2:
-                            kernel = np.ones((5, 5), np.float32) / 20
+                            kernel = np.ones((5, 5), np.float32) / 25
                             final_image = Image.fromarray(cv2.filter2D(np.array(final_image), -1, kernel))
                             if debug:
                                 final_image.save(
