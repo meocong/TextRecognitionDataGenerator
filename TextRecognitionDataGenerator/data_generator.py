@@ -162,7 +162,7 @@ class FakeTextDataGenerator(object):
                 # Random miscellaneous distortion #
                 ###################################
 
-                if decision(0.9):
+                if decision(0.5):
                     if decision(0.3):
                         if decision(0.7):
                             ## full image erode
