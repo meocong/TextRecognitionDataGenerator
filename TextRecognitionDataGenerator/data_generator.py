@@ -348,7 +348,7 @@ class FakeTextDataGenerator(object):
                     # blur distortion
                     blur_type =  np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
 
-                    if decision(0.9):
+                    if decision(0.8):
                         if blur_type == 0:
                             final_image = RandomizedBlur(final_image)
                             if debug:
@@ -385,7 +385,7 @@ class FakeTextDataGenerator(object):
 
 
                     ## additional sharpening
-                    if decision(0.1) and blur_type != 0:
+                    if decision(0.1) and blur_type != 4:
                         final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
                         if debug:
                             final_image.save(
@@ -404,11 +404,13 @@ class FakeTextDataGenerator(object):
                             final_image.size[0] * f), int(final_image.size[1] * f)),
                                                          resize_type)
                     else:
-                        f = random.uniform(0.7, 1.2)
-
                         if (random.randint(0, 1) == 0):
+                            f = random.uniform(0.6, 1.2)
+
                             final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
                         else:
+                            f = random.uniform(0.7, 1.2)
+
                             final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                     # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
@@ -422,49 +424,50 @@ class FakeTextDataGenerator(object):
 
                     ## random invert
                     inverted = False
-                    if decision(0.3):
-                        if (background_type == 3 | distorsion_type | blur_type != 0):
-                            if (decision(0.1)):
+                    if blur_type != 4:
+                        if decision(0.3):
+                            if (background_type == 3 | distorsion_type | blur_type != 0):
+                                if (decision(0.1)):
+                                    im_arr = np.array(final_image)
+                                    im_arr = np.bitwise_not(im_arr)
+                                    final_image = Image.fromarray(im_arr)
+                                    inverted = True
+                            else:
                                 im_arr = np.array(final_image)
                                 im_arr = np.bitwise_not(im_arr)
                                 final_image = Image.fromarray(im_arr)
                                 inverted = True
-                        else:
-                            im_arr = np.array(final_image)
-                            im_arr = np.bitwise_not(im_arr)
-                            final_image = Image.fromarray(im_arr)
-                            inverted = True
 
-                    if decision(0.1):
-                        if inverted == True:
-                            seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
-                            final_image = Image.fromarray(
-                                seq.augment_image(np.array(final_image)))
-                        else:
-                            seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
-                            final_image = Image.fromarray(
-                                seq.augment_image(np.array(final_image)))
+                        if decision(0.1):
+                            if inverted == True:
+                                seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
+                                final_image = Image.fromarray(
+                                    seq.augment_image(np.array(final_image)))
+                            else:
+                                seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
+                                final_image = Image.fromarray(
+                                    seq.augment_image(np.array(final_image)))
 
-                    # if decision(0.1):
-                    # if (distorsion_type != 3):
-                    # seq = iaa.Sequential(iaa.OneOf([
-                    #     iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
-                    #     # iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
-                    #     ]))
-                    #
-                    # final_image = Image.fromarray(
-                    #     seq.augment_image(np.array(final_image)))
+                        # if decision(0.1):
+                        # if (distorsion_type != 3):
+                        # seq = iaa.Sequential(iaa.OneOf([
+                        #     iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
+                        #     # iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
+                        #     ]))
+                        #
+                        # final_image = Image.fromarray(
+                        #     seq.augment_image(np.array(final_image)))
 
-                    seq = iaa.Sequential(iaa.OneOf([
-                            iaa.Affine(
-                                       shear=(-30, 30),
-                                       order=[0,1],
-                                       cval=0,
-                                       mode=ia.ALL),
-                            ]))
+                        seq = iaa.Sequential(iaa.OneOf([
+                                iaa.Affine(
+                                           shear=(-40, 40),
+                                           order=[0,1],
+                                           cval=0,
+                                           mode=ia.ALL),
+                                ]))
 
-                    final_image = Image.fromarray(
-                        seq.augment_image(np.array(final_image)))
+                        final_image = Image.fromarray(
+                            seq.augment_image(np.array(final_image)))
                 else:
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
