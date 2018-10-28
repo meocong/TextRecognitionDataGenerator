@@ -480,18 +480,48 @@ class FakeTextDataGenerator(object):
                     blur_type = \
                     np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
 
-                    if blur_type == 0:
-                        final_image = RandomizedBlur(final_image)
-                    elif blur_type == 1:
-                        final_image = GaussianBlur_random(final_image)
-                    elif blur_type == 2:
-                        kernel = np.ones((5, 5), np.float32) / 20
-                        final_image = Image.fromarray(
-                            cv2.filter2D(np.array(final_image), -1,
-                                         kernel))
-                    elif blur_type == 3:
-                        final_image = Image.fromarray(
-                            cv2.blur(np.array(final_image), (5, 5)))
+                    if decision(0.8):
+                        if blur_type == 0:
+                            final_image = RandomizedBlur(final_image)
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg",
+                                                                    "_0_0.jpg")))
+                        elif blur_type == 1:
+                            final_image = GaussianBlur_random(final_image)
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg",
+                                                                    "_0_1.jpg")))
+                        elif blur_type == 2:
+                            kernel = np.ones((5, 5), np.float32) / 25
+                            final_image = Image.fromarray(
+                                cv2.filter2D(np.array(final_image), -1,
+                                             kernel))
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg",
+                                                                    "_0_2.jpg")))
+                        elif blur_type == 3:
+                            final_image = Image.fromarray(
+                                cv2.blur(np.array(final_image), (5, 5)))
+
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg",
+                                                                    "_0_3.jpg")))
+                        elif blur_type == 4:
+                            final_image = PsfBlur_random(final_image)
+
+                            if debug:
+                                final_image.save(
+                                    os.path.join(out_dir,
+                                                 image_name.replace(".jpg",
+                                                                    "_0_4.jpg")))
 
                     seq = iaa.Sequential(iaa.OneOf([
                         iaa.Affine(
