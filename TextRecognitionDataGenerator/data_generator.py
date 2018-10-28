@@ -82,7 +82,7 @@ def nick_binarize(img_list):
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=True):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
             try:
                 #####################################
                 # Generate name for resulting image #
@@ -162,9 +162,9 @@ class FakeTextDataGenerator(object):
                 # Random miscellaneous distortion #
                 ###################################
 
-                if decision(0.5):
-                    if decision(0.3):
-                        if decision(0.7):
+                if decision(0.8):
+                    if decision(0.2):
+                        if decision(0.5):
                             ## full image erode
                             x = random.randint(0, 2)
                             kernel = np.ones((x, x), np.uint8)
@@ -348,7 +348,7 @@ class FakeTextDataGenerator(object):
                     # blur distortion
                     blur_type =  np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
 
-                    if decision(0.8):
+                    if decision(0.7):
                         if blur_type == 0:
                             final_image = RandomizedBlur(final_image)
                             if debug:
@@ -398,20 +398,21 @@ class FakeTextDataGenerator(object):
                     # if distorsion_type != 3:
                     resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
 
-                    if (decision(0.5)):
-                        f = random.uniform(0.8, 1.2)
-                        final_image = final_image.resize((int(
-                            final_image.size[0] * f), int(final_image.size[1] * f)),
-                                                         resize_type)
-                    else:
-                        if (random.randint(0, 1) == 0):
-                            f = random.uniform(0.6, 1.2)
-
-                            final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                    if decision(0.7):
+                        if (decision(0.5)):
+                            f = random.uniform(0.8, 1.2)
+                            final_image = final_image.resize((int(
+                                final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                             resize_type)
                         else:
-                            f = random.uniform(0.7, 1.2)
+                            if (random.randint(0, 1) == 0):
+                                f = random.uniform(0.6, 1.2)
 
-                            final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
+                                final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                            else:
+                                f = random.uniform(0.7, 1.2)
+
+                                final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                     # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
