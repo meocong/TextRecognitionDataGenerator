@@ -528,7 +528,7 @@ def random_latin(fonts):
     generated_list = []
     latin_chars = [x[:-1] for x in
                    open("dicts/latin.txt", encoding="utf-8").readlines()]
-    special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
+    special_chars = [x[:-1] for x in open("dicts/special_char_latin_random.txt",
                                           encoding="utf-8").readlines()]
 
     max_len = 100
