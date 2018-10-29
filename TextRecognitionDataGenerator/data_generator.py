@@ -346,7 +346,7 @@ class FakeTextDataGenerator(object):
                         final_image.save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                     # blur distortion
-                    blur_type =  np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
+                    blur_type =  np.random.choice(5, 1, p=[0.25, 0.3, 0.2, 0.2, 0.05])[0]
 
                     if decision(0.7):
                         if blur_type == 0:
@@ -459,16 +459,17 @@ class FakeTextDataGenerator(object):
                         # final_image = Image.fromarray(
                         #     seq.augment_image(np.array(final_image)))
 
-                        seq = iaa.Sequential(iaa.OneOf([
-                                iaa.Affine(
-                                           shear=(-40, 40),
-                                           order=[0,1],
-                                           cval=0,
-                                           mode=ia.ALL),
-                                ]))
+                        if decision(0.4):
+                            seq = iaa.Sequential(iaa.OneOf([
+                                    iaa.Affine(
+                                               shear=(-30, 30),
+                                               order=[0,1],
+                                               cval=0,
+                                               mode=ia.ALL),
+                                    ]))
 
-                        final_image = Image.fromarray(
-                            seq.augment_image(np.array(final_image)))
+                            final_image = Image.fromarray(
+                                seq.augment_image(np.array(final_image)))
                 else:
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
@@ -479,7 +480,7 @@ class FakeTextDataGenerator(object):
 
                     # blur distortion
                     blur_type = \
-                    np.random.choice(5, 1, p=[0.1, 0.3, 0.2, 0.2, 0.2])[0]
+                    np.random.choice(5, 1, p=[0.25, 0.3, 0.2, 0.2, 0.05])[0]
 
                     if decision(0.8):
                         if blur_type == 0:
@@ -524,16 +525,17 @@ class FakeTextDataGenerator(object):
                                                  image_name.replace(".jpg",
                                                                     "_0_4.jpg")))
 
-                    seq = iaa.Sequential(iaa.OneOf([
-                        iaa.Affine(
-                            shear=(-30, 30),
-                            order=[0, 1],
-                            cval=0,
-                            mode=ia.ALL),
-                    ]))
+                    if decision(0.4):
+                        seq = iaa.Sequential(iaa.OneOf([
+                            iaa.Affine(
+                                shear=(-30, 30),
+                                order=[0, 1],
+                                cval=0,
+                                mode=ia.ALL),
+                        ]))
 
-                    final_image = Image.fromarray(
-                        seq.augment_image(np.array(final_image)))
+                        final_image = Image.fromarray(
+                            seq.augment_image(np.array(final_image)))
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
