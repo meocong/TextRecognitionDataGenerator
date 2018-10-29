@@ -5,9 +5,7 @@ from PIL import ImageFilter
 gaussianbandwidths = np.random.choice([1, 1.5, 2], 1, p=[0.5, 0.3, 0.2])[0]
 
 def GaussianBlur_random(img):
-    gaussianidx = np.random.randint(0, len(gaussianbandwidths))
-    gaussianbandwidth = gaussianbandwidths[gaussianidx]
-    return GaussianBlur(img, gaussianbandwidth)
+    return GaussianBlur(img, np.random.choice([1, 1.5, 2], 1, p=[0.5, 0.3, 0.2])[0])
 
 def GaussianBlur(img, bandwidth):
     img = img.filter(ImageFilter.GaussianBlur(bandwidth))
