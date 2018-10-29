@@ -82,7 +82,7 @@ def nick_binarize(img_list):
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=True):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
             try:
                 #####################################
                 # Generate name for resulting image #
@@ -467,17 +467,17 @@ class FakeTextDataGenerator(object):
                         # final_image = Image.fromarray(
                         #     seq.augment_image(np.array(final_image)))
 
-                        if decision(0.4):
-                            seq = iaa.Sequential(iaa.OneOf([
-                                    iaa.Affine(
-                                               shear=(-30, 30),
-                                               order=[0,1],
-                                               cval=0,
-                                               mode=ia.ALL),
-                                    ]))
+                        # if decision(0.4):
+                        seq = iaa.Sequential(iaa.OneOf([
+                                iaa.Affine(
+                                           shear=(-30, 30),
+                                           order=[0,1],
+                                           cval=0,
+                                           mode=ia.ALL),
+                                ]))
 
-                            final_image = Image.fromarray(
-                                seq.augment_image(np.array(final_image)))
+                        final_image = Image.fromarray(
+                            seq.augment_image(np.array(final_image)))
                 else:
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
@@ -532,17 +532,17 @@ class FakeTextDataGenerator(object):
                                                  image_name.replace(".jpg",
                                                                     "_0_4.jpg")))
 
-                    if decision(0.4):
-                        seq = iaa.Sequential(iaa.OneOf([
-                            iaa.Affine(
-                                shear=(-30, 30),
-                                order=[0, 1],
-                                cval=0,
-                                mode=ia.ALL),
-                        ]))
+                    # if decision(0.4):
+                    seq = iaa.Sequential(iaa.OneOf([
+                        iaa.Affine(
+                            shear=(-30, 30),
+                            order=[0, 1],
+                            cval=0,
+                            mode=ia.ALL),
+                    ]))
 
-                        final_image = Image.fromarray(
-                            seq.augment_image(np.array(final_image)))
+                    final_image = Image.fromarray(
+                        seq.augment_image(np.array(final_image)))
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
