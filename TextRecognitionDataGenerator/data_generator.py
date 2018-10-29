@@ -346,42 +346,50 @@ class FakeTextDataGenerator(object):
                         final_image.save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                     # blur distortion
-                    blur_type =  np.random.choice(5, 1, p=[0.25, 0.3, 0.2, 0.2, 0.05])[0]
+                    blur_type = np.random.choice(5, 1, p=[0.05, 0.3, 0.4, 0.2, 0.05])[0]
 
-                    if decision(0.7):
+                    if decision(0.8):
                         if blur_type == 0:
-                            final_image = RandomizedBlur(final_image)
+                            final_image = LinearMotionBlur_random(final_image)
                             if debug:
                                 final_image.save(
                                     os.path.join(out_dir,
-                                                 image_name.replace(".jpg", "_0_0.jpg")))
+                                                 image_name.replace(".jpg",
+                                                                    "_0_0.jpg")))
                         elif blur_type == 1:
                             final_image = GaussianBlur_random(final_image)
                             if debug:
                                 final_image.save(
                                     os.path.join(out_dir,
-                                                 image_name.replace(".jpg", "_0_1.jpg")))
+                                                 image_name.replace(".jpg",
+                                                                    "_0_1.jpg")))
                         elif blur_type == 2:
-                            kernel = np.ones((5, 5), np.float32) / 25
-                            final_image = Image.fromarray(cv2.filter2D(np.array(final_image), -1, kernel))
+                            kernel = np.ones((5, 5), np.float32) / random.randint(30,40)
+                            final_image = Image.fromarray(
+                                cv2.filter2D(np.array(final_image), -1,
+                                             kernel))
                             if debug:
                                 final_image.save(
                                     os.path.join(out_dir,
-                                                 image_name.replace(".jpg", "_0_2.jpg")))
+                                                 image_name.replace(".jpg",
+                                                                    "_0_2.jpg")))
                         elif blur_type == 3:
-                            final_image = Image.fromarray(cv2.blur(np.array(final_image), (5, 5)))
+                            final_image = Image.fromarray(
+                                cv2.blur(np.array(final_image), (5, 5)))
 
                             if debug:
                                 final_image.save(
                                     os.path.join(out_dir,
-                                                 image_name.replace(".jpg", "_0_3.jpg")))
+                                                 image_name.replace(".jpg",
+                                                                    "_0_3.jpg")))
                         elif blur_type == 4 and not apply_background:
                             final_image = PsfBlur_random(final_image)
 
                             if debug:
                                 final_image.save(
                                     os.path.join(out_dir,
-                                                 image_name.replace(".jpg", "_0_4.jpg")))
+                                                 image_name.replace(".jpg",
+                                                                    "_0_4.jpg")))
 
 
                     ## additional sharpening
@@ -479,12 +487,11 @@ class FakeTextDataGenerator(object):
                     final_image = background.convert('L')
 
                     # blur distortion
-                    blur_type = \
-                    np.random.choice(5, 1, p=[0.25, 0.3, 0.2, 0.2, 0.05])[0]
+                    blur_type = np.random.choice(5, 1, p=[0.05, 0.3, 0.4, 0.2, 0.05])[0]
 
                     if decision(0.8):
                         if blur_type == 0:
-                            final_image = RandomizedBlur(final_image)
+                            final_image = LinearMotionBlur_random(final_image)
                             if debug:
                                 final_image.save(
                                     os.path.join(out_dir,
@@ -498,7 +505,7 @@ class FakeTextDataGenerator(object):
                                                  image_name.replace(".jpg",
                                                                     "_0_1.jpg")))
                         elif blur_type == 2:
-                            kernel = np.ones((5, 5), np.float32) / 25
+                            kernel = np.ones((5, 5), np.float32) / random.randint(30,40)
                             final_image = Image.fromarray(
                                 cv2.filter2D(np.array(final_image), -1,
                                              kernel))
@@ -516,7 +523,7 @@ class FakeTextDataGenerator(object):
                                     os.path.join(out_dir,
                                                  image_name.replace(".jpg",
                                                                     "_0_3.jpg")))
-                        elif blur_type == 4:
+                        elif blur_type == 4 and not apply_background:
                             final_image = PsfBlur_random(final_image)
 
                             if debug:
