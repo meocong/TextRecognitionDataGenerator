@@ -523,7 +523,7 @@ class FakeTextDataGenerator(object):
                                     os.path.join(out_dir,
                                                  image_name.replace(".jpg",
                                                                     "_0_3.jpg")))
-                        elif blur_type == 4 and not apply_background:
+                        elif blur_type == 4:
                             final_image = PsfBlur_random(final_image)
 
                             if debug:
