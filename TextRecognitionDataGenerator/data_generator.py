@@ -187,7 +187,7 @@ class FakeTextDataGenerator(object):
                         rotated_img.convert('L').save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
                     random_erode_pixel = decision(0.1) and rotated_img.size[1] > 40
-                    random_pixel_discard = decision(0.15) and not random_erode_pixel
+                    random_pixel_discard = decision(0.2) and not random_erode_pixel
                     prob = 1.0
                     if random_erode_pixel:
                         ## random erode with random pixel sampling
@@ -346,9 +346,9 @@ class FakeTextDataGenerator(object):
                         final_image.save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
                     # blur distortion
-                    blur_type = np.random.choice(5, 1, p=[0.05, 0.3, 0.4, 0.2, 0.05])[0]
+                    blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
 
-                    if decision(0.8):
+                    if decision(0.9):
                         if blur_type == 0:
                             final_image = LinearMotionBlur_random(final_image)
                             if debug:
@@ -408,7 +408,7 @@ class FakeTextDataGenerator(object):
 
                     if decision(0.7):
                         if (decision(0.5)):
-                            f = random.uniform(0.8, 1.2)
+                            f = random.uniform(0.8, 1.5)
                             final_image = final_image.resize((int(
                                 final_image.size[0] * f), int(final_image.size[1] * f)),
                                                              resize_type)
@@ -418,7 +418,7 @@ class FakeTextDataGenerator(object):
 
                                 final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
                             else:
-                                f = random.uniform(0.7, 1.2)
+                                f = random.uniform(0.8, 1.1)
 
                                 final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
@@ -487,9 +487,9 @@ class FakeTextDataGenerator(object):
                     final_image = background.convert('L')
 
                     # blur distortion
-                    blur_type = np.random.choice(5, 1, p=[0.05, 0.3, 0.4, 0.2, 0.05])[0]
+                    blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
 
-                    if decision(0.8):
+                    if decision(0.9):
                         if blur_type == 0:
                             final_image = LinearMotionBlur_random(final_image)
                             if debug:
