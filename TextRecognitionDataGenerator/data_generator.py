@@ -84,6 +84,8 @@ class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
             try:
+                max_height = 80.0
+
                 #####################################
                 # Generate name for resulting image #
                 #####################################
@@ -408,17 +410,17 @@ class FakeTextDataGenerator(object):
 
                     if decision(0.7):
                         if (decision(0.5)):
-                            f = random.uniform(0.8, 1.5)
+                            f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
                             final_image = final_image.resize((int(
                                 final_image.size[0] * f), int(final_image.size[1] * f)),
                                                              resize_type)
                         else:
                             if (random.randint(0, 1) == 0):
-                                f = random.uniform(0.6, 1.2)
+                                f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
 
                                 final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
                             else:
-                                f = random.uniform(0.8, 1.1)
+                                f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
 
                                 final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
@@ -543,6 +545,24 @@ class FakeTextDataGenerator(object):
 
                     final_image = Image.fromarray(
                         seq.augment_image(np.array(final_image)))
+
+                    resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
+
+                    if decision(0.7):
+                        if (decision(0.5)):
+                            f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
+                            final_image = final_image.resize((int(
+                                final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                             resize_type)
+                        else:
+                            if (random.randint(0, 1) == 0):
+                                f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
+
+                                final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                            else:
+                                f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
+
+                                final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
