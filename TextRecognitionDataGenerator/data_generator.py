@@ -136,7 +136,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(5, 1, p=[0.9, 0.05, 0.02, 0.0, 0.03])[0]
+                text_mode = np.random.choice(5, 1, p=[0.9, 0.05, 0.01, 0.0, 0.04])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -206,7 +206,7 @@ class FakeTextDataGenerator(object):
                     if debug:
                         rotated_img.convert('L').save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
-                    random_erode_pixel = decision(0.005) and rotated_img.size[1] > 40
+                    random_erode_pixel = decision(0.005)
                     prob = 1.0
                     if random_erode_pixel:
                         ## random erode with random pixel sampling
@@ -405,7 +405,7 @@ class FakeTextDataGenerator(object):
                             final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # blur distortion
-                blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
+                blur_type = np.random.choice(5, 1, p=[0.1, 0.1, 0.55, 0.2, 0.05])[0]
 
                 if decision(0.9) and distorsion_type != 2:
                     if blur_type == 0:
