@@ -91,7 +91,7 @@ class FakeTextDataGenerator(object):
                     A.RandomBrightness(limit=.1, p=0.3),
                     A.RandomContrast(limit=.1, p=0.3),
                     A.RandomGamma(gamma_limit=(90,110), p=0.3),
-                    # A.CLAHE(p=0.3),
+                    A.CLAHE(p=0.3),
                     A.HueSaturationValue(hue_shift_limit=20,
                                          sat_shift_limit=30,
                                          val_shift_limit=20, p=0.3),
@@ -178,8 +178,9 @@ class FakeTextDataGenerator(object):
                 ###################################
 
                 if decision(0.3):
-                    augmented = albu(image=np.array(rotated_img), mask=None, bboxes=[],)
-                    rotated_img = augmented['image']
+                    rotated_img = cv2.cvtColor(np.array(rotated_img), cv2.COLOR_GRAY2BGR)
+                    augmented = albu(image=rotated_img, mask=None, bboxes=[],)
+                    rotated_img = Image.fromarray(cv2.cvtColor(augmented['image'], cv2.COLOR_BGR2GRAY))
 
                 if decision(0.9):
                     if decision(0.2):
