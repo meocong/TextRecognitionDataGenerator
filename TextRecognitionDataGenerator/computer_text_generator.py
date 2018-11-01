@@ -13,6 +13,7 @@ NORMAL_TEXT = 0
 SECOND_HALF_BIG_TEXT = 1
 TIGHT_TEXT = 2
 RANDOM_BIG_TEXT = 3
+RANDOM_ADDITIONAL_SPACE = 4
 
 class ComputerTextGenerator(object):
     @classmethod
@@ -36,12 +37,12 @@ class ComputerTextGenerator(object):
 
         if text_mode == TIGHT_TEXT:
             ## draw letter by letter for tight text generation
+            f = random.uniform(0.93, 0.96)
             text_width, text_height = image_font.getsize(text)
-            txt_img = Image.new('L', (text_width, text_height + extend_bottom), 255)
+            txt_img = Image.new('L', (int(text_width * (f + 0.01)), text_height + extend_bottom), 255)
             txt_draw = ImageDraw.Draw(txt_img)
 
             offset_x = 0
-            f = random.uniform(0.9, 0.94)
             for c in text:
                 char_w, char_h = image_font.getsize(c)
                 txt_draw.text((offset_x, 0), u'{0}'.format(c),
@@ -115,6 +116,19 @@ class ComputerTextGenerator(object):
             ## normal text print
             txt_draw.text((0, 0), u'{0}'.format(text), fill=random.randint(1, 50) if text_color < 0 else text_color,
                           font=image_font)
+        elif text_mode == RANDOM_ADDITIONAL_SPACE:
+            ## draw letter by letter for additional random space
+            text_width, text_height = image_font.getsize(text)
+            txt_img = Image.new('L', (text_width + 2 * len(text), text_height + extend_bottom), 255)
+            txt_draw = ImageDraw.Draw(txt_img)
+
+            offset_x = 0
+            for c in text:
+                char_w, char_h = image_font.getsize(c)
+                txt_draw.text((offset_x, 0), u'{0}'.format(c),
+                              fill=random.randint(1, 80) if text_color < 0 else text_color,
+                              font=image_font)
+                offset_x += char_w + random.randint(0,2)
 
 
         return txt_img
