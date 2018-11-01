@@ -206,8 +206,7 @@ class FakeTextDataGenerator(object):
                     if debug:
                         rotated_img.convert('L').save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_5.jpg")))
-                    random_erode_pixel = decision(0.1) and rotated_img.size[1] > 40
-                    random_pixel_discard = decision(0.2) and not random_erode_pixel
+                    random_erode_pixel = decision(0.005) and rotated_img.size[1] > 40
                     prob = 1.0
                     if random_erode_pixel:
                         ## random erode with random pixel sampling
@@ -224,29 +223,31 @@ class FakeTextDataGenerator(object):
                             rotated_img.convert('L').save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg", "_3.jpg")))
-                    else:
-                        if random_pixel_discard:
-                            ## random pixel discard
-                            # print("lol")
-                            im_arr = np.array(rotated_img)
-                            # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
-                            prob = random.uniform(0.95,1.0)
-                            mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
-                            im_arr[mask == 0] = 255
-                            # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
-                            rotated_img = Image.fromarray(im_arr)
 
-                            # seq = iaa.Sequential([iaa.Dropout(random.uniform(0,0.05))])
-                            # rotated_img = Image.fromarray(seq.augment_image(np.array(rotated_img)))
+                    random_pixel_discard = decision(0.2)
 
-                            if debug:
-                                rotated_img.convert('L').save(
-                                    os.path.join(out_dir, image_name.replace(".jpg", "_4.jpg")))
+                    if random_pixel_discard:
+                        ## random pixel discard
+                        # print("lol")
+                        im_arr = np.array(rotated_img)
+                        # prob = np.random.choice([0.1, 0.15, 0.25], p=[0.6, 0.3, 0.1])
+                        prob = random.uniform(0.95,1.0)
+                        mask = np.random.choice(2, im_arr.shape, p=[1 - prob, prob]).astype('uint8')
+                        im_arr[mask == 0] = 255
+                        # im_arr = np.clip(im_arr, 0, 255).astype('uint8')
+                        rotated_img = Image.fromarray(im_arr)
+
+                        # seq = iaa.Sequential([iaa.Dropout(random.uniform(0,0.05))])
+                        # rotated_img = Image.fromarray(seq.augment_image(np.array(rotated_img)))
+
+                        if debug:
+                            rotated_img.convert('L').save(
+                                os.path.join(out_dir, image_name.replace(".jpg", "_4.jpg")))
                     ######################################
                     # Apply geometry distortion to image #
                     ######################################
 
-                    distorsion_type = np.random.choice(4, 1, p=[0.65, 0.15, 0.15, 0.05])[0]
+                    distorsion_type = np.random.choice(4, 1, p=[0.75, 0.15, 0.05, 0.05])[0]
                     if distorsion_type == 0:
                         distorted_img = rotated_img # Mind = blown
                     elif distorsion_type == 1:
@@ -378,14 +379,35 @@ class FakeTextDataGenerator(object):
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
                         lambda x: 0 if x == 255 or x == 0 else 255, '1')
-                    background = Image.open("pictures/plain_white.png").resize((final_image.size[0], final_image.size[1]), Image.ANTIALIAS)
+                    new_text_width, new_text_height = final_image.size
+                    x = random.randint(1, 3)
+                    y = random.randint(1, 3)
+                    background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
                     background.paste(final_image, (5, 5), mask=mask)
                     final_image = background.convert('L')
+
+                resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
+
+                if decision(0.7):
+                    if (decision(0.5)):
+                        f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
+                        final_image = final_image.resize((int(
+                            final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                         resize_type)
+                    else:
+                        if (random.randint(0, 1) == 0):
+                            f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
+
+                            final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
+                        else:
+                            f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
+
+                            final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # blur distortion
                 blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
 
-                if decision(0.9):
+                if decision(0.9) and distorsion_type != 2:
                     if blur_type == 0:
                         final_image = LinearMotionBlur_random(final_image)
                         if debug:
@@ -419,7 +441,7 @@ class FakeTextDataGenerator(object):
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg",
                                                                 "_0_3.jpg")))
-                    elif blur_type == 4:
+                    elif blur_type == 4 and final_image.size[0] > 40:
                         final_image = PsfBlur_random(final_image)
 
                         if debug:
@@ -448,23 +470,6 @@ class FakeTextDataGenerator(object):
                 final_image = Image.fromarray(
                     seq.augment_image(np.array(final_image)))
 
-                resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
-
-                if decision(0.7):
-                    if (decision(0.5)):
-                        f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
-                        final_image = final_image.resize((int(
-                            final_image.size[0] * f), int(final_image.size[1] * f)),
-                                                         resize_type)
-                    else:
-                        if (random.randint(0, 1) == 0):
-                            f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
-
-                            final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
-                        else:
-                            f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
-
-                            final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 ## random invert
                 inverted = False
