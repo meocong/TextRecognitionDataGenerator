@@ -177,7 +177,7 @@ class FakeTextDataGenerator(object):
                 # Random miscellaneous distortion #
                 ###################################
 
-                if decision(0.3):
+                if decision(0.7):
                     rotated_img = cv2.cvtColor(np.array(rotated_img), cv2.COLOR_GRAY2BGR)
                     augmented = albu(image=rotated_img, mask=None, bboxes=[],)
                     rotated_img = Image.fromarray(cv2.cvtColor(augmented['image'], cv2.COLOR_BGR2GRAY))
