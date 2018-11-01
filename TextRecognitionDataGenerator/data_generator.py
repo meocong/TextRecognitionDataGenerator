@@ -390,7 +390,7 @@ class FakeTextDataGenerator(object):
 
                 if decision(0.7):
                     if (decision(0.5)):
-                        f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
+                        f = random.uniform(0.8, min(1.7,max_height/final_image.size[1]))
                         final_image = final_image.resize((int(
                             final_image.size[0] * f), int(final_image.size[1] * f)),
                                                          resize_type)
@@ -400,14 +400,14 @@ class FakeTextDataGenerator(object):
 
                             final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
                         else:
-                            f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
+                            f = random.uniform(0.85, min(1.1,max_height/final_image.size[1]))
 
                             final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # blur distortion
                 blur_type = np.random.choice(5, 1, p=[0.1, 0.1, 0.59, 0.2, 0.01])[0]
 
-                if decision(0.9) and distorsion_type != 2:
+                if decision(0.7) and distorsion_type != 2:
                     if blur_type == 0:
                         final_image = LinearMotionBlur_random(final_image)
                         if debug:
@@ -423,7 +423,7 @@ class FakeTextDataGenerator(object):
                                              image_name.replace(".jpg",
                                                                 "_0_1.jpg")))
                     elif blur_type == 2:
-                        kernel = np.ones((5, 5), np.float32) / random.randint(30,40)
+                        kernel = np.ones((5, 5), np.float32) / random.randint(30,50)
                         final_image = Image.fromarray(
                             cv2.filter2D(np.array(final_image), -1,
                                          kernel))
