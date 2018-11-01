@@ -22,6 +22,7 @@ import random
 import imutils
 from imgaug import augmenters as iaa
 import imgaug as ia
+import albumentations as A
 
 def decision(probability):
     return random.uniform(0,1) < probability
@@ -85,6 +86,18 @@ class FakeTextDataGenerator(object):
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
             try:
                 max_height = 80.0
+
+                albu = A.Compose([
+                    A.RandomBrightness(p=0.3),
+                    A.RandomContrast(p=0.3),
+                    A.RandomGamma(p=0.3),
+                    A.CLAHE(p=0.3),
+                    A.HueSaturationValue(hue_shift_limit=20,
+                                         sat_shift_limit=50,
+                                         val_shift_limit=50, p=0.3),
+                    A.ChannelShuffle(p=0.3),
+                    A.JpegCompression(p=0.3),
+                ], p=1)
 
                 #####################################
                 # Generate name for resulting image #
@@ -347,82 +360,6 @@ class FakeTextDataGenerator(object):
                     if debug:
                         final_image.save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_0.jpg")))
-                    # blur distortion
-                    blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
-
-                    if decision(0.9):
-                        if blur_type == 0:
-                            final_image = LinearMotionBlur_random(final_image)
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_0.jpg")))
-                        elif blur_type == 1:
-                            final_image = GaussianBlur_random(final_image)
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_1.jpg")))
-                        elif blur_type == 2:
-                            kernel = np.ones((5, 5), np.float32) / random.randint(30,40)
-                            final_image = Image.fromarray(
-                                cv2.filter2D(np.array(final_image), -1,
-                                             kernel))
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_2.jpg")))
-                        elif blur_type == 3:
-                            final_image = Image.fromarray(
-                                cv2.blur(np.array(final_image), (5, 5)))
-
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_3.jpg")))
-                        elif blur_type == 4 and not apply_background:
-                            final_image = PsfBlur_random(final_image)
-
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_4.jpg")))
-
-
-                    ## additional sharpening
-                    if decision(0.1) and blur_type != 4:
-                        final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
-                        if debug:
-                            final_image.save(
-                                os.path.join(out_dir,
-                                             image_name.replace(".jpg", "_0_2.jpg")))
-
-                    ##################################
-                    # Random aspect ration change    #
-                    ##################################
-                    # if distorsion_type != 3:
-                    resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
-
-                    if decision(0.7):
-                        if (decision(0.5)):
-                            f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
-                            final_image = final_image.resize((int(
-                                final_image.size[0] * f), int(final_image.size[1] * f)),
-                                                             resize_type)
-                        else:
-                            if (random.randint(0, 1) == 0):
-                                f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
-
-                                final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
-                            else:
-                                f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
-
-                                final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                     # final_image = Image.fromarray(nick_binarize([np.array(final_image)])[0])
 
@@ -432,54 +369,6 @@ class FakeTextDataGenerator(object):
                     #     binary_im = Image.fromarray(sauvola_bin(final_image, thres=bin_thres))
                     #     if np.mean(binary_im) > 160:
                     #         final_image = binary_im
-
-                    ## random invert
-                    inverted = False
-                    if blur_type != 4:
-                        if decision(0.3):
-                            if (background_type == 3 | distorsion_type | blur_type != 0):
-                                if (decision(0.1)):
-                                    im_arr = np.array(final_image)
-                                    im_arr = np.bitwise_not(im_arr)
-                                    final_image = Image.fromarray(im_arr)
-                                    inverted = True
-                            else:
-                                im_arr = np.array(final_image)
-                                im_arr = np.bitwise_not(im_arr)
-                                final_image = Image.fromarray(im_arr)
-                                inverted = True
-
-                        if decision(0.1):
-                            if inverted == True:
-                                seq = iaa.Sequential([iaa.Salt(random.uniform(0,0.05))])
-                                final_image = Image.fromarray(
-                                    seq.augment_image(np.array(final_image)))
-                            else:
-                                seq = iaa.Sequential([iaa.Pepper(random.uniform(0,0.05))])
-                                final_image = Image.fromarray(
-                                    seq.augment_image(np.array(final_image)))
-
-                        # if decision(0.1):
-                        # if (distorsion_type != 3):
-                        # seq = iaa.Sequential(iaa.OneOf([
-                        #     iaa.PiecewiseAffine(scale=random.uniform(0.01, 0.03)),
-                        #     # iaa.ElasticTransformation(alpha=random.uniform(0, 0.1),sigma=0.2)
-                        #     ]))
-                        #
-                        # final_image = Image.fromarray(
-                        #     seq.augment_image(np.array(final_image)))
-
-                        # if decision(0.4):
-                        seq = iaa.Sequential(iaa.OneOf([
-                                iaa.Affine(
-                                           shear=(-30, 30),
-                                           order=[0,1],
-                                           cval=0,
-                                           mode=ia.ALL),
-                                ]))
-
-                        final_image = Image.fromarray(
-                            seq.augment_image(np.array(final_image)))
                 else:
                     final_image = rotated_img.convert("L")
                     mask = final_image.point(
@@ -488,82 +377,123 @@ class FakeTextDataGenerator(object):
                     background.paste(final_image, (5, 5), mask=mask)
                     final_image = background.convert('L')
 
-                    # blur distortion
-                    blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
+                # blur distortion
+                blur_type = np.random.choice(5, 1, p=[0.1, 0.3, 0.35, 0.2, 0.05])[0]
 
-                    if decision(0.9):
-                        if blur_type == 0:
-                            final_image = LinearMotionBlur_random(final_image)
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_0.jpg")))
-                        elif blur_type == 1:
-                            final_image = GaussianBlur_random(final_image)
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_1.jpg")))
-                        elif blur_type == 2:
-                            kernel = np.ones((5, 5), np.float32) / random.randint(30,40)
-                            final_image = Image.fromarray(
-                                cv2.filter2D(np.array(final_image), -1,
-                                             kernel))
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_2.jpg")))
-                        elif blur_type == 3:
-                            final_image = Image.fromarray(
-                                cv2.blur(np.array(final_image), (5, 5)))
+                if decision(0.9):
+                    if blur_type == 0:
+                        final_image = LinearMotionBlur_random(final_image)
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg",
+                                                                "_0_0.jpg")))
+                    elif blur_type == 1:
+                        final_image = GaussianBlur_random(final_image)
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg",
+                                                                "_0_1.jpg")))
+                    elif blur_type == 2:
+                        kernel = np.ones((5, 5), np.float32) / random.randint(30,40)
+                        final_image = Image.fromarray(
+                            cv2.filter2D(np.array(final_image), -1,
+                                         kernel))
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg",
+                                                                "_0_2.jpg")))
+                    elif blur_type == 3:
+                        final_image = Image.fromarray(
+                            cv2.blur(np.array(final_image), (5, 5)))
 
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_3.jpg")))
-                        elif blur_type == 4:
-                            final_image = PsfBlur_random(final_image)
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg",
+                                                                "_0_3.jpg")))
+                    elif blur_type == 4:
+                        final_image = PsfBlur_random(final_image)
 
-                            if debug:
-                                final_image.save(
-                                    os.path.join(out_dir,
-                                                 image_name.replace(".jpg",
-                                                                    "_0_4.jpg")))
+                        if debug:
+                            final_image.save(
+                                os.path.join(out_dir,
+                                             image_name.replace(".jpg",
+                                                                "_0_4.jpg")))
 
-                    # if decision(0.4):
-                    seq = iaa.Sequential(iaa.OneOf([
-                        iaa.Affine(
-                            shear=(-30, 30),
-                            order=[0, 1],
-                            cval=0,
-                            mode=ia.ALL),
-                    ]))
+                ## additional sharpening
+                if decision(0.1) and blur_type != 4:
+                    final_image = final_image.filter(ImageFilter.EDGE_ENHANCE)
+                    if debug:
+                        final_image.save(
+                            os.path.join(out_dir,
+                                         image_name.replace(".jpg",
+                                                            "_0_2.jpg")))
 
-                    final_image = Image.fromarray(
-                        seq.augment_image(np.array(final_image)))
+                seq = iaa.Sequential(iaa.OneOf([
+                    iaa.Affine(
+                        shear=(-30, 30),
+                        order=[0, 1],
+                        cval=0,
+                        mode=ia.ALL),
+                ]))
 
-                    resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
+                final_image = Image.fromarray(
+                    seq.augment_image(np.array(final_image)))
 
-                    if decision(0.7):
-                        if (decision(0.5)):
-                            f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
-                            final_image = final_image.resize((int(
-                                final_image.size[0] * f), int(final_image.size[1] * f)),
-                                                             resize_type)
+                resize_type = random.choice([Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
+
+                if decision(0.7):
+                    if (decision(0.5)):
+                        f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
+                        final_image = final_image.resize((int(
+                            final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                         resize_type)
+                    else:
+                        if (random.randint(0, 1) == 0):
+                            f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
+
+                            final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
                         else:
-                            if (random.randint(0, 1) == 0):
-                                f = random.uniform(0.6, min(1.2,max_height/final_image.size[1]))
+                            f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
 
-                                final_image = final_image.resize((int(final_image.size[0] * f), int(final_image.size[1])), resize_type)
-                            else:
-                                f = random.uniform(0.8, min(1.1,max_height/final_image.size[1]))
+                            final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
-                                final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
+                ## random invert
+                inverted = False
+                if blur_type != 4:
+                    if decision(0.3):
+                        if (
+                                background_type == 3 | distorsion_type | blur_type != 0):
+                            if (decision(0.1)):
+                                im_arr = np.array(final_image)
+                                im_arr = np.bitwise_not(im_arr)
+                                final_image = Image.fromarray(im_arr)
+                                inverted = True
+                        else:
+                            im_arr = np.array(final_image)
+                            im_arr = np.bitwise_not(im_arr)
+                            final_image = Image.fromarray(im_arr)
+                            inverted = True
 
+                    if decision(0.1):
+                        if inverted == True:
+                            seq = iaa.Sequential(
+                                [iaa.Salt(random.uniform(0.02, 0.05))])
+                            final_image = Image.fromarray(
+                                seq.augment_image(np.array(final_image)))
+                        else:
+                            seq = iaa.Sequential(
+                                [iaa.Pepper(random.uniform(0.02, 0.05))])
+                            final_image = Image.fromarray(
+                                seq.augment_image(np.array(final_image)))
+
+                if decision(0.3):
+                    augmented = albu(image=np.array(final_image), mask=None, bboxes=[],)
+                    final_image = Image.fromarray(cv2.cvtColor(augmented['image'],
+                                             cv2.COLOR_BGR2RGB))
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             except Exception as ex:
