@@ -83,7 +83,7 @@ def nick_binarize(img_list):
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=True):
             # try:
                 max_height = 80.0
 
@@ -178,11 +178,8 @@ class FakeTextDataGenerator(object):
                 ###################################
 
                 if decision(0.3):
-                    print(np.array(rotated_img).shape)
                     augmented = albu(image=np.array(rotated_img), mask=None, bboxes=[],)
-                    print(augmented['image'].shape)
-                    rotated_img = Image.fromarray(cv2.cvtColor(augmented['image'],
-                                             cv2.COLOR_BGR2RGB))
+                    rotated_img = augmented['image']
 
                 if decision(0.9):
                     if decision(0.2):
