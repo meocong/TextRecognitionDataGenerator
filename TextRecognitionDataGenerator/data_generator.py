@@ -390,7 +390,7 @@ class FakeTextDataGenerator(object):
 
                 if decision(0.7):
                     if (decision(0.5)):
-                        f = random.uniform(0.8, min(1.7,max_height/final_image.size[1]))
+                        f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
                         final_image = final_image.resize((int(
                             final_image.size[0] * f), int(final_image.size[1] * f)),
                                                          resize_type)
