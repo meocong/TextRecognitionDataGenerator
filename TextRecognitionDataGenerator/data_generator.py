@@ -91,7 +91,7 @@ class FakeTextDataGenerator(object):
                     A.RandomBrightness(limit=.1, p=0.3),
                     A.RandomContrast(limit=.1, p=0.3),
                     A.RandomGamma(gamma_limit=(90,110), p=0.3),
-                    A.CLAHE(p=0.3),
+                    # A.CLAHE(p=0.3),
                     A.HueSaturationValue(hue_shift_limit=20,
                                          sat_shift_limit=30,
                                          val_shift_limit=20, p=0.3),
