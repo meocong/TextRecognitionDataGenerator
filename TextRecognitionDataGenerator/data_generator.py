@@ -338,7 +338,7 @@ class FakeTextDataGenerator(object):
                     mask = distorted_img.point(lambda x: 0 if x == 255 or x == 0 else 255, '1')
 
                     apply_background = False
-                    if (random.randint(0,10) < 2):
+                    if (random.randint(0,10) < 3):
                         background = distorted_img
                     else:
                         apply_background = True
