@@ -88,15 +88,15 @@ class FakeTextDataGenerator(object):
                 max_height = 80.0
 
                 albu = A.Compose([
-                    A.RandomBrightness(p=0.3),
-                    A.RandomContrast(p=0.3),
-                    A.RandomGamma(p=0.3),
+                    A.RandomBrightness(limit=.1, p=0.3),
+                    A.RandomContrast(limit=.1, p=0.3),
+                    A.RandomGamma(gamma_limit=(90,110), p=0.3),
                     A.CLAHE(p=0.3),
                     A.HueSaturationValue(hue_shift_limit=20,
-                                         sat_shift_limit=50,
-                                         val_shift_limit=50, p=0.3),
-                    A.ChannelShuffle(p=0.3),
-                    A.JpegCompression(p=0.3),
+                                         sat_shift_limit=30,
+                                         val_shift_limit=20, p=0.3),
+                    # A.ChannelShuffle(p=0.3),
+                    A.JpegCompression(quality_lower=95,p=0.3),
                 ], p=1)
 
                 #####################################
@@ -176,6 +176,11 @@ class FakeTextDataGenerator(object):
                 ###################################
                 # Random miscellaneous distortion #
                 ###################################
+
+                if decision(0.3):
+                    augmented = albu(image=np.array(rotated_img), mask=None, bboxes=[],)
+                    rotated_img = Image.fromarray(cv2.cvtColor(augmented['image'],
+                                             cv2.COLOR_BGR2RGB))
 
                 if decision(0.9):
                     if decision(0.2):
@@ -490,11 +495,6 @@ class FakeTextDataGenerator(object):
                             final_image = Image.fromarray(
                                 seq.augment_image(np.array(final_image)))
 
-                if decision(0.3):
-                    augmented = albu(image=np.array(final_image), mask=None, bboxes=[],)
-                    print(augmented['image'].shape)
-                    final_image = Image.fromarray(cv2.cvtColor(augmented['image'],
-                                             cv2.COLOR_BGR2RGB))
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             # except Exception as ex:
