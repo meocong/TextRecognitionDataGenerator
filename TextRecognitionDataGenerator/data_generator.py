@@ -178,6 +178,7 @@ class FakeTextDataGenerator(object):
                 ###################################
 
                 if decision(0.3):
+                    print(np.array(rotated_img).shape)
                     augmented = albu(image=np.array(rotated_img), mask=None, bboxes=[],)
                     print(augmented['image'].shape)
                     rotated_img = Image.fromarray(cv2.cvtColor(augmented['image'],
