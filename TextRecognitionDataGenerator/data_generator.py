@@ -136,7 +136,7 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(5, 1, p=[0.9, 0.05, 0.01, 0.0, 0.04])[0]
+                text_mode = np.random.choice(5, 1, p=[0.9, 0.01, 0.01, 0.0, 0.08])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -390,7 +390,7 @@ class FakeTextDataGenerator(object):
 
                 if decision(0.7):
                     if (decision(0.5)):
-                        f = random.uniform(0.8, min(1.5,max_height/final_image.size[1]))
+                        f = random.uniform(0.8, min(1.4,max_height/final_image.size[1]))
                         final_image = final_image.resize((int(
                             final_image.size[0] * f), int(final_image.size[1] * f)),
                                                          resize_type)
@@ -407,7 +407,7 @@ class FakeTextDataGenerator(object):
                 # blur distortion
                 blur_type = np.random.choice(5, 1, p=[0.1, 0.1, 0.59, 0.2, 0.01])[0]
 
-                if decision(0.7) and distorsion_type != 2:
+                if decision(0.8) and distorsion_type != 2:
                     if blur_type == 0:
                         final_image = LinearMotionBlur_random(final_image)
                         if debug:
