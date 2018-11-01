@@ -405,7 +405,7 @@ class FakeTextDataGenerator(object):
                             final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # blur distortion
-                blur_type = np.random.choice(5, 1, p=[0.1, 0.1, 0.55, 0.2, 0.05])[0]
+                blur_type = np.random.choice(5, 1, p=[0.1, 0.1, 0.59, 0.2, 0.01])[0]
 
                 if decision(0.9) and distorsion_type != 2:
                     if blur_type == 0:
