@@ -143,9 +143,9 @@ class FakeTextDataGenerator(object):
                 else:
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
-                # if debug:
-                image.convert('L').save(
-                    os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
+                if debug:
+                    image.convert('L').save(
+                        os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
 
                 if decision(0.6):
                     random_angle = random.uniform(-skewing_angle/4,
@@ -502,7 +502,7 @@ class FakeTextDataGenerator(object):
 
                 #Random crop
                 final_image = np.array(final_image)
-                final_image = final_image[random.randint(0,5):,:]
+                final_image = final_image[random.randint(3,7):,:]
                 final_image = Image.fromarray(final_image)
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
