@@ -312,7 +312,7 @@ class FakeTextDataGenerator(object):
                     if np.min(np.array(distorted_img)) > 250:
                         print(index, "2 wtf. why!!!", affine_type, random_pixel_discard)
 
-                    x = random.randint(1, 3)
+                    x = random.randint(-3, 3)
                     y = random.randint(1, 3)
 
                     if debug:
@@ -380,7 +380,7 @@ class FakeTextDataGenerator(object):
                     mask = final_image.point(
                         lambda x: 0 if x == 255 or x == 0 else 255, '1')
                     new_text_width, new_text_height = final_image.size
-                    x = random.randint(1, 3)
+                    x = random.randint(-3, 3)
                     y = random.randint(1, 3)
                     background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
                     background.paste(final_image, (5, 5), mask=mask)
