@@ -387,6 +387,7 @@ class FakeTextDataGenerator(object):
                     x = random.randint(-3, 3)
                     y = random.randint(1, 3)
                     background = BackgroundGenerator.plain_white(new_text_height + x, new_text_width + y)
+                    apply_background = False
                     background.paste(final_image, (5, 5), mask=mask)
                     final_image = background.convert('L')
 
@@ -445,7 +446,7 @@ class FakeTextDataGenerator(object):
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg",
                                                                 "_0_3.jpg")))
-                    elif blur_type == 4 and final_image.size[0] > 40:
+                    elif blur_type == 4 and final_image.size[0] > 40 and apply_background != True:
                         final_image = PsfBlur_random(final_image)
 
                         if debug:
