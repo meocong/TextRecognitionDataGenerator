@@ -143,6 +143,10 @@ class FakeTextDataGenerator(object):
                 else:
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
+                image = np.array(image)
+                image = image[random.randint(3, 7):, :]
+                image = Image.fromarray(image)
+
                 if debug:
                     image.convert('L').save(
                         os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
@@ -390,7 +394,7 @@ class FakeTextDataGenerator(object):
 
                 if decision(0.7):
                     if (decision(0.5)):
-                        f = random.uniform(0.8, min(1.4,max_height/final_image.size[1]))
+                        f = random.uniform(0.7, min(1.4,max_height/final_image.size[1]))
                         final_image = final_image.resize((int(
                             final_image.size[0] * f), int(final_image.size[1] * f)),
                                                          resize_type)
@@ -405,7 +409,7 @@ class FakeTextDataGenerator(object):
                             final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # blur distortion
-                blur_type = np.random.choice(5, 1, p=[0.1, 0.1, 0.55, 0.2, 0.05])[0]
+                blur_type = np.random.choice(5, 1, p=[0.15, 0.2, 0.35, 0.2, 0.1])[0]
 
                 if decision(0.8) and distorsion_type != 2:
                     if blur_type == 0:
@@ -501,9 +505,9 @@ class FakeTextDataGenerator(object):
                                 seq.augment_image(np.array(final_image)))
 
                 #Random crop
-                final_image = np.array(final_image)
-                final_image = final_image[random.randint(3,7):,:]
-                final_image = Image.fromarray(final_image)
+                # final_image = np.array(final_image)
+                # final_image = final_image[random.randint(3,7):,:]
+                # final_image = Image.fromarray(final_image)
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             # except Exception as ex:
