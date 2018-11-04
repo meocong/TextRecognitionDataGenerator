@@ -500,6 +500,10 @@ class FakeTextDataGenerator(object):
                             final_image = Image.fromarray(
                                 seq.augment_image(np.array(final_image)))
 
+                #Random crop
+                final_image = np.array(final_image)
+                final_image = final_image[random.randint(0,5):,:]
+                final_image = Image.fromarray(final_image)
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
             # except Exception as ex:
