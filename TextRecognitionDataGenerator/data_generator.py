@@ -144,7 +144,9 @@ class FakeTextDataGenerator(object):
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
 
                 image = np.array(image)
-                image = image[random.randint(5, 7):, :]
+                image = image[random.randint(3, 6):, :]
+                if (image.shape[0] < 10):
+                    return
                 image = Image.fromarray(image)
 
                 if debug:
@@ -289,7 +291,7 @@ class FakeTextDataGenerator(object):
                         distorted_img.convert('L').save(
                             os.path.join(out_dir, image_name.replace(".jpg", "_2.jpg")))
 
-                    affine_type = np.random.choice(4, 1, p=[0.1, 0.01, 0, 0.89])[0]
+                    affine_type = np.random.choice(4, 1, p=[0.1, 0.05, 0, 0.85])[0]
                     if not random_pixel_discard or (random_pixel_discard == True and prob > 0.98):
                         if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
                             distorted_img = ElasticDistortionGenerator.afffine_transform(distorted_img)
