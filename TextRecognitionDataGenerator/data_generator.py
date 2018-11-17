@@ -123,7 +123,7 @@ class FakeTextDataGenerator(object):
                 ##########################
                 # Create picture of text #
                 ##########################
-                add_random_space = ' ' in text and decision(0.1)
+                add_random_space = ' ' in text and decision(0.02)
 
                 text = "  " +text + "  "
                 if (len(text) < 40):
@@ -137,7 +137,7 @@ class FakeTextDataGenerator(object):
                     text = add_random_space_to_string(text)
 
                 text_mode = np.random.choice(5, 1, p=[0.86, 0.02, 0.02, 0.0, 0.1])[0]
-                extend_bottom = random.randint(0,5)
+                extend_bottom = np.random.choice(5, 1, p=[0.5, 0.2, 0.15, 0.1, 0.05])[0]
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
@@ -417,7 +417,7 @@ class FakeTextDataGenerator(object):
                             final_image = final_image.resize((int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
                 # blur distortion
-                blur_type = np.random.choice(5, 1, p=[0.15, 0.2, 0.35, 0.2, 0.1])[0]
+                blur_type = np.random.choice(5, 1, p=[0.15, 0.2, 0.25, 0.2, 0.2])[0]
 
                 if decision(0.8) and distorsion_type != 2:
                     if blur_type == 0:
@@ -473,7 +473,7 @@ class FakeTextDataGenerator(object):
 
                 seq = iaa.Sequential(iaa.OneOf([
                     iaa.Affine(
-                        shear=(-30, 30),
+                        shear=(-36, 36),
                         order=[0, 1],
                         cval=0,
                         mode=ia.ALL),
