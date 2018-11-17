@@ -136,16 +136,17 @@ class FakeTextDataGenerator(object):
                 if add_random_space:
                     text = add_random_space_to_string(text)
 
-                text_mode = np.random.choice(5, 1, p=[0.9, 0.01, 0.01, 0.0, 0.08])[0]
+                text_mode = np.random.choice(5, 1, p=[0.86, 0.02, 0.02, 0.0, 0.1])[0]
+                extend_bottom = random.randint(0,5)
 
                 if is_handwritten:
                     image = HandwrittenTextGenerator.generate(text)
                 else:
-                    image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode)
+                    image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode, extend_bottom=extend_bottom)
 
-                image = np.array(image)
-                image = image[random.randint(3, 6):, :]
-                image = Image.fromarray(image)
+                # image = np.array(image)
+                # image = image[random.randint(0, 1):, :]
+                # image = Image.fromarray(image)
 
                 if debug:
                     image.convert('L').save(
@@ -397,6 +398,12 @@ class FakeTextDataGenerator(object):
                     if (decision(0.5)):
                         f = random.uniform(0.7, min(1.4,max_height/final_image.size[1]))
                         final_image = final_image.resize((int(
+                            final_image.size[0] * f), int(final_image.size[1] * f)),
+                                                         resize_type)
+
+                        if decision(0.05):
+                            f = 64.0/final_image,size[1]
+                            final_image = final_image.resize((int(
                             final_image.size[0] * f), int(final_image.size[1] * f)),
                                                          resize_type)
                     else:
