@@ -122,7 +122,7 @@ class ComputerTextGenerator(object):
 
             addi = []
             for c in text:
-                addi.append(np.random.choice(3, 1, p=[0.5, 0.2, 0.2, 0.1])[0])
+                addi.append(np.random.choice(4, 1, p=[0.5, 0.2, 0.2, 0.1])[0])
 
             txt_img = Image.new('L', (text_width + np.sum(addi), text_height + extend_bottom), 255)
             txt_draw = ImageDraw.Draw(txt_img)
