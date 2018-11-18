@@ -21,7 +21,7 @@ class ComputerTextGenerator(object):
         # print(text, font, text_color)
         # image_font = ImageFont.truetype(font="/Library/Fonts/Arial Unicode.ttf", size=32)
 
-        start_pixel = random.randint(0,extend_bottom)
+        start_pixel = 0
         N = len(text) // 2
         first_half = text[:N]
         second_half = text[N:]
