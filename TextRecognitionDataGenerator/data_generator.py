@@ -144,9 +144,9 @@ class FakeTextDataGenerator(object):
                 else:
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode, extend_bottom=extend_bottom)
 
-                # image = np.array(image)
-                # image = image[random.randint(0, 1):, :]
-                # image = Image.fromarray(image)
+                image = np.array(image)
+                image = image[random.randint(0, 4):, :]
+                image = Image.fromarray(image)
 
                 if debug:
                     image.convert('L').save(
