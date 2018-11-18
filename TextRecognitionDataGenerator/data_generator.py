@@ -84,7 +84,7 @@ def nick_binarize(img_list):
 class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix = "", debug=False):
-            # try:
+            try:
                 max_height = 80.0
 
                 albu = A.Compose([
@@ -145,7 +145,7 @@ class FakeTextDataGenerator(object):
                     image = ComputerTextGenerator.generate(text, font, text_color, height, text_mode=text_mode, extend_bottom=extend_bottom)
 
                 image = np.array(image)
-                image = image[random.randint(0, 4):, :]
+                image = image[random.randint(0, 2):, :]
                 image = Image.fromarray(image)
 
                 if debug:
@@ -518,6 +518,6 @@ class FakeTextDataGenerator(object):
                 # final_image = Image.fromarray(final_image)
                 # Save the image
                 final_image.convert('L').save(os.path.join(out_dir, image_name))
-            # except Exception as ex:
-            #     print(ex)
-            #     pass
+            except Exception as ex:
+                print(ex)
+                pass
