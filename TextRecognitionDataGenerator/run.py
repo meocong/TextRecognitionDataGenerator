@@ -827,13 +827,13 @@ def main():
 
     import pickle
     try:
-        fonts_dict = pickle.load(open("font_dict.pkl", "rb"))
+        fonts_dict = pickle.load(open("./fonts/jp/font_dict.pkl", "rb"))
         font_charsets = [fonts_dict[font] for font in fonts_arr]
     except:
         fonts_dict = {}
         print("Generating font char maps...")
         fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
-        pickle.dump(fonts_dict, open("font_dict.pkl", "wb"))
+        pickle.dump(fonts_dict, open("./fonts/jp/font_dict.pkl", "wb"))
         font_charsets = [fonts_dict[font] for font in fonts_arr]
 
     # print(fonts_dict)
