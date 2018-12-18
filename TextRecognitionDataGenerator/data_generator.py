@@ -16,7 +16,7 @@ from skimage.morphology import disk
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageEnhance, ImageFilter
 from skimage.filters import threshold_sauvola, threshold_otsu
-from pyblur import *
+import pyblur
 import scipy
 import random
 import imutils
@@ -421,14 +421,14 @@ class FakeTextDataGenerator(object):
 
                 if decision(0.8) and distorsion_type != 2:
                     if blur_type == 0:
-                        final_image = LinearMotionBlur_random(final_image)
+                        final_image = pyblur.LinearMotionBlur_random(final_image)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
                                              image_name.replace(".jpg",
                                                                 "_0_0.jpg")))
                     elif blur_type == 1:
-                        final_image = GaussianBlur_random(final_image)
+                        final_image = pyblur.GaussianBlur_random(final_image)
                         if debug:
                             final_image.save(
                                 os.path.join(out_dir,
@@ -454,7 +454,7 @@ class FakeTextDataGenerator(object):
                                              image_name.replace(".jpg",
                                                                 "_0_3.jpg")))
                     elif blur_type == 4 and final_image.size[0] > 40 and apply_background != True:
-                        final_image = PsfBlur_random(final_image)
+                        final_image = pyblur.PsfBlur_random(final_image)
 
                         if debug:
                             final_image.save(
