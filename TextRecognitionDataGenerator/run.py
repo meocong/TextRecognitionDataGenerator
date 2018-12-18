@@ -779,7 +779,6 @@ def create_strings_randomly(length, allow_variable, count, let, num, sym, lang):
 
 def print_text(file, list_):
     f = open(file, 'w', encoding="utf-8")
-
     f.writelines(list_)
 
 def gen_one_character(font_dicts:{}):
@@ -872,11 +871,14 @@ def main():
     strings = [''.join([c for c in text if c in charset]) for text, charset in zip(strings, font_charsets)]
     # strings = [s.strip() for s in strings if len(s.strip()) > 1]
 
+    if os.path.isdir('./logs/') is False:
+        os.system("mkdir logs")
+
     string_count = len(strings)
     print("String count", string_count)
-    print_text("src-train.txt", ['{}_{}.{}\n'.format(args.prefix, str(index), args.extension) for index in range(string_count)])
-    print_text("tgt-train.txt", ['{}\n'.format(x) for x in strings])
-    print_text("tgt-fonts.txt", ['{}\n'.format(x) for x in fonts_arr])
+    print_text("./logs/src-train.txt", ['{}_{}.{}\n'.format(args.prefix, str(index), args.extension) for index in range(string_count)])
+    print_text("./logs/tgt-train.txt", ['{}\n'.format(x) for x in strings])
+    print_text("./logs/tgt-fonts.txt", ['{}\n'.format(x) for x in fonts_arr])
 
 
     # exit()
