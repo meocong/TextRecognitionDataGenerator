@@ -8,8 +8,8 @@ import random
 
 from PIL import ImageFile
 
-from .data_generator import FakeTextDataGenerator
-from .string_generator import (create_string_from_dict_with_random_chars,
+from data_generator import FakeTextDataGenerator
+from string_generator import (create_string_from_dict_with_random_chars,
                                create_strings_from_file,
                                create_strings_from_fonts,
                                create_strings_from_wikipedia,

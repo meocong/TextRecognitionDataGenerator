@@ -11,11 +11,11 @@ from skimage.morphology import disk
 
 import pyblur
 
-from .background_generator import BackgroundGenerator
-from .computer_text_generator import ComputerTextGenerator
-from .distorsion_generator import DistorsionGenerator
-from .elastic_distortion_generator import ElasticDistortionGenerator
-from .handwritten_text_generator import HandwrittenTextGenerator
+from background_generator import BackgroundGenerator
+from computer_text_generator import ComputerTextGenerator
+from distorsion_generator import DistorsionGenerator
+from elastic_distortion_generator import ElasticDistortionGenerator
+from handwritten_text_generator import HandwrittenTextGenerator
 
 
 def decision(probability):
