@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os, errno
+import errno
+import glob
+import multiprocessing
+import os
 import random
 import re
-import requests
 import string
-
-from bs4 import BeautifulSoup
-from PIL import Image, ImageFont, ImageFile
-from data_generator import FakeTextDataGenerator
-from multiprocessing import Pool
-ImageFile.LOAD_TRUNCATED_IMAGES = True
-import glob
 from itertools import chain
-import sys
-import math
+
+import cv2
+import numpy as np
+import requests
+from bs4 import BeautifulSoup
 from fontTools.ttLib import TTFont
 from fontTools.unicode import Unicode
-from PIL import Image, ImageFont, ImageDraw, ImageFilter
-import numpy as np
-import cv2
+from PIL import Image, ImageDraw, ImageFile, ImageFont
+
+from .data_generator import FakeTextDataGenerator
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def parse_arguments():
     """
@@ -315,13 +315,13 @@ def decision(probability):
 
 def random_insert_sym(word, pool):
     word = list(word)
-    for i, c in enumerate(word):
+    for i, _ in enumerate(word):
         if decision(0.33):
             while decision(0.33):
                 word[i] += random.choice(pool)
     return ''.join(word)
 
-def create_string_from_dict_with_random_chars(length, allow_variable, count, lang_dict, num = True, sym = False):
+def create_string_from_dict_with_random_chars(length, allow_variable, count, lang_dict, num=True, sym=False):
     """
         Create all strings by picking X random word in the dictionary
     """
@@ -346,7 +346,7 @@ def create_string_from_dict_with_random_chars(length, allow_variable, count, lan
 
 
 def query_wikipedia(args):
-    lang, min_length, max_lines = args
+    lang, min_length, _ = args
     page = requests.get('https://{}.wikipedia.org/wiki/Special:Random'.format(lang))
 
     soup = BeautifulSoup(page.text, 'html.parser')
@@ -363,9 +363,9 @@ def query_wikipedia(args):
         and not "Jump to " in s and not "PDF" in s and not "Book" in s
         and not "Cookie" in s
         and re.match(r"our server", s.lower()) is None
-        and re.match(r"ur server",s.lower()) is None
+        and re.match(r"ur server", s.lower()) is None
         and re.match(r"see the error", s.lower()) is None
-        and re.match(r"if you report",s.lower()) is None
+        and re.match(r"if you report", s.lower()) is None
         and not s[0] == "^"
         and not "What links here" in s,
         # and len(re.findall(r"[一-龯]", s[0:100])) > 10,
@@ -390,15 +390,14 @@ def query_wikipedia(args):
     # return new_lines[0:min(max([1, len(lines) - 5]), max_lines)]
     return lines[0:max([1, len(lines) - 5])]
 
-import multiprocessing
-def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page = 3, nb_workers = 8):
+def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_page=3, nb_workers=8):
     """
         Create all string by randomly picking Wikipedia articles and taking sentences from them.
     """
     sentences = []
     print("Generating strings from wiki...")
     pool = multiprocessing.Pool(nb_workers)
-    files = [(lang , minimum_length, max_lines_per_page)] * int(count / max_lines_per_page * 2)
+    files = [(lang, minimum_length, max_lines_per_page)] * int(count / max_lines_per_page * 2)
     it = pool.imap_unordered(query_wikipedia, files)
     for lines in it:
         print(len(lines))
@@ -433,7 +432,7 @@ def check_character_in_font(char, font):
         print(u'1{}1'.format(char))
     return False
 
-def check_character_in_fontc1(char, font, height = 32):
+def check_character_in_fontc1(char, font, height=32):
     image_font = ImageFont.truetype(font=font, size=height)
     text_width, text_height = image_font.getsize(char)
 
@@ -453,7 +452,7 @@ def check_character_in_fontc1(char, font, height = 32):
     return len(np.nonzero(np.array(txt_img) != 255)[0]) > 0
 
 
-def check_character_in_fontc2(char, font, height = 32):
+def check_character_in_fontc2(char, font, height=32):
     if (char in ["ロ"]):
         return True
 
@@ -475,9 +474,8 @@ def check_character_in_fontc2(char, font, height = 32):
     if (len(contours) < 4):
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01 * cv2.arcLength(cnt, True), True)
-
-            if (len(approx)==4):
-                (x, y, w, h) = cv2.boundingRect(approx)
+            if (len(approx) == 4):
+                (_, _, w, h) = cv2.boundingRect(approx)
                 ar = w / float(h)
                 if ar >= 0.8 and ar <= 1.2:
                     return False
@@ -546,15 +544,15 @@ def random_latin(fonts):
         special_chars_in_font = [x for x in special_chars if x in font] + [
             " "] * 5
 
-        for i in range(3):
-            for x in range(random.randint(1, 10)):
+        for _ in range(3):
+            for _ in range(random.randint(1, 10)):
                 generated += random.choice(latin_chars_in_font)
 
             generated += random.choice(special_chars_in_font)
 
 
         if (len(generated) < max_len):
-            for x in range(random.randint(0, max_len - len(generated))):
+            for _ in range(random.randint(0, max_len - len(generated))):
                 generated += random.choice(latin_chars_in_font)
 
         generated_list.append(generated)
@@ -568,7 +566,7 @@ def random_latin_space(fonts):
     special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
                                           encoding="utf-8").readlines()]
 
-    max_len = 100
+    # max_len = 100
     for font in fonts:
         font = set(font)
         generated = ""
@@ -578,11 +576,11 @@ def random_latin_space(fonts):
 
         char_in_font = latin_chars_in_font + special_chars_in_font
 
-        for i in range(random.randint(2,5)):
-            for x in range(random.randint(1, 10)):
+        for _ in range(random.randint(2, 5)):
+            for _ in range(random.randint(1, 10)):
                 generated += random.choice(char_in_font)
 
-            for x in range(random.randint(2,10)):
+            for _ in range(random.randint(2, 10)):
                 generated += " "
 
         generated_list.append(generated)
@@ -596,7 +594,7 @@ def gen_check_font(fonts):
     special_chars = [x[:-1] for x in open("dicts/special_char_latin.txt",
                                           encoding="utf-8").readlines()]
 
-    max_len = 100
+    # max_len = 100
     for font in fonts:
         font = set(font)
 
@@ -612,9 +610,9 @@ def random_space(fonts):
     generated_list = []
 
     max_len = 75
-    for font in fonts:
+    for _ in fonts:
         temp = ""
-        for x in range(random.randint(5, max_len)):
+        for _ in range(random.randint(5, max_len)):
             temp += " "
 
         generated_list.append(temp)
@@ -626,9 +624,9 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
     latin_chars = [x[:-1] for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
     special_chars = [x[:-1] for x in open("dicts/special_char.txt", encoding="utf-8").readlines()]
     japan_chars = [x[:-1] for x in open("dicts/japan.txt", encoding="utf-8").readlines()]
-    full_chars = latin_chars + special_chars + japan_chars
+    # full_chars = latin_chars + special_chars + japan_chars
     font_dicts = {}
-    max_length = 60
+    # max_length = 60
 
     for font in fonts:
         print(font)
@@ -636,7 +634,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
             ttf = TTFont(font, fontNumber=0)
 
             chars = set([u'{0}'.format(chr(x[0])) for x in
-                     list(chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in ttf["cmap"].tables))])
+                        list(chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in ttf["cmap"].tables))])
             japan_chars_in_font = [x for x in japan_chars if check_character_in_font(x, ttf)
                                    and check_character_in_fontc1(x, font)
                                    and check_character_in_fontc2(x, font)
@@ -648,7 +646,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
             special_chars_in_font = [x for x in special_chars if check_character_in_font(x, ttf)
                                      and check_character_in_fontc1(x, font)
                                      and check_character_in_fontc2(x, font)
-                                     and x in chars] + [" " for x in range(1,5)]
+                                     and x in chars] + [" " for x in range(1, 5)]
 
             font_dicts[font] = japan_chars_in_font + latin_chars_in_font + special_chars_in_font
         elif font in font_dicts:
@@ -672,16 +670,16 @@ def random_sequences_sjnk(fonts):
         japan_chars_in_font = [x for x in japan_chars if x in font]
         special_chars_in_font = [x for x in special_chars if x in font] + [" "]*5
 
-        for i in range(3):
-            for x in range(random.randint(1,15)):
+        for _ in range(3):
+            for _ in range(random.randint(1, 15)):
                 generated += random.choice(japan_chars_in_font)
 
             generated += random.choice(special_chars_in_font)
             generated += random.choice(latin_chars_in_font)
             if (random.randint(0,10) == 0):
                 generated += " "
-                
-        for x in range(random.randint(0,69-len(generated))):
+
+        for _ in range(random.randint(0, 69-len(generated))):
             generated += random.choice(japan_chars_in_font)
 
         generated_list.append(generated)
@@ -782,16 +780,16 @@ def print_text(file, list_):
     f = open(file, 'w', encoding="utf-8")
     f.writelines(list_)
 
-def gen_one_character(font_dicts:{}):
+def gen_one_character(font_dicts: {}):
     fonts_arr = []
     strings = []
 
     for font in font_dicts.keys():
-        for x in range(0,100):
+        for _ in range(0, 100):
             font_chars = font_dicts[font]
             generated = ""
 
-            for y in range(random.randint(1,5)):
+            for _ in range(random.randint(1,5)):
                 generated += random.choice(font_chars)
 
             fonts_arr.append(font)
@@ -884,7 +882,7 @@ def main():
 
     # exit()
 
-    p = Pool(args.thread_count)
+    p = multiprocessing.Pool(args.thread_count)
     p.starmap(
         FakeTextDataGenerator.generate,
         zip(

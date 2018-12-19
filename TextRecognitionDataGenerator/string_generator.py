@@ -1,10 +1,10 @@
-import os
 import random
 import re
 import string
-import requests
 
+import requests
 from bs4 import BeautifulSoup
+
 
 def create_strings_from_file(filename, count):
     """
@@ -25,6 +25,7 @@ def create_strings_from_file(filename, count):
 
     return strings
 
+
 def create_strings_from_dict(length, allow_variable, count, lang_dict):
     """
         Create all strings by picking X random word in the dictionnary
@@ -40,6 +41,7 @@ def create_strings_from_dict(length, allow_variable, count, lang_dict):
         strings.append(current_string[:-1])
     return strings
 
+
 def create_strings_from_wikipedia(minimum_length, count, lang):
     """
         Create all string by randomly picking Wikipedia articles and taking sentences from them.
@@ -48,7 +50,8 @@ def create_strings_from_wikipedia(minimum_length, count, lang):
 
     while len(sentences) < count:
         # We fetch a random page
-        page = requests.get('https://{}.wikipedia.org/wiki/Special:Random'.format(lang))
+        page = requests.get(
+            'https://{}.wikipedia.org/wiki/Special:Random'.format(lang))
 
         soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -63,13 +66,14 @@ def create_strings_from_wikipedia(minimum_length, count, lang):
                 and not "wikipedia" in s,
             [
                 ' '.join(re.findall(r"[\w']+", s.strip()))[0:200] for s in soup.get_text().splitlines()
-            ]
+                ]
         ))
 
         # Remove the last lines that talks about contributing
         sentences.extend(lines[0:max([1, len(lines) - 5])])
 
     return sentences[0:count]
+
 
 def create_strings_randomly(length, allow_variable, count, let, num, sym, lang):
     """
@@ -83,7 +87,8 @@ def create_strings_randomly(length, allow_variable, count, let, num, sym, lang):
     pool = ''
     if let:
         if lang == 'cn':
-            pool += ''.join([chr(i) for i in range(19968, 40908)]) # Unicode range of CHK characters
+            # Unicode range of CHK characters
+            pool += ''.join([chr(i) for i in range(19968, 40908)])
         else:
             pool += string.ascii_letters
     if num:
@@ -103,7 +108,8 @@ def create_strings_randomly(length, allow_variable, count, let, num, sym, lang):
         current_string = ""
         for _ in range(0, random.randint(1, length) if allow_variable else length):
             seq_len = random.randint(min_seq_len, max_seq_len)
-            current_string += ''.join([random.choice(pool) for _ in range(seq_len)])
+            current_string += ''.join([random.choice(pool)
+                                       for _ in range(seq_len)])
             current_string += ' '
         strings.append(current_string[:-1])
     return strings
