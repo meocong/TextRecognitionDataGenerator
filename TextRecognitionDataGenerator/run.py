@@ -167,7 +167,7 @@ def parse_arguments():
         "--extension",
         type=str,
         nargs="?",
-        help="Define the extension to save the image with",
+        help="Define the extension (eg: .jpg, .png) to save the image with",
         default="jpg",
     )
     parser.add_argument(
@@ -175,7 +175,7 @@ def parse_arguments():
         "--prefix",
         type=str,
         nargs="?",
-        help="Define the extension to save the image with",
+        help="Define the extension to save the image with, for example with prefix = abc, output name will be abc_1.jpg, abc_2.jpg",
         default="",
     )
     parser.add_argument(
@@ -204,7 +204,7 @@ def parse_arguments():
         "-ck",
         "--check_font",
         action="store_true",
-        help="Use Wikipedia as the source text for the generation, using this paremeter ignores -r, -n, -s",
+        help="Unknown",
         default=False,
     )
     parser.add_argument(
@@ -343,7 +343,6 @@ def main():
         font_charsets = [fonts_dict[font] for font in fonts_arr]
 
     # print(fonts_dict)
-
     if args.use_wikipedia:
         strings = create_strings_from_wikipedia(
             args.length, args.count, args.language)
@@ -385,7 +384,12 @@ def main():
         os.system("mkdir logs")
 
     string_count = len(strings)
-    print("String count", string_count)
+    print("Generated", string_count, "string.")
+    if string_count < 10:
+        [print('\t' + each_string) for each_string in strings]
+    else:
+        [print('\t' + each_string) for each_string in strings[:5]]
+        print('\t...')
 
     # print(strings)
 
@@ -395,7 +399,7 @@ def main():
     print_text("./logs/tgt-fonts.txt", ['{}\n'.format(x) for x in fonts_arr])
 
     # exit()
-
+    print('Generating images from the string ...')
     p = multiprocessing.Pool(args.thread_count)
     for _ in tqdm(
             p.imap_unordered(
@@ -431,7 +435,7 @@ def main():
             for i in range(string_count):
                 file_name = str(i) + "." + args.extension
                 f.write("{} {}\n".format(file_name, strings[i]))
-
+    print('Generated', args.count, 'images to', args.output_dir)
 
 if __name__ == '__main__':
     main()
