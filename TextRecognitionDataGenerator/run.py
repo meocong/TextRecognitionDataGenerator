@@ -4,10 +4,10 @@ import errno
 import glob
 import multiprocessing
 import os
-os.chdir('/Users/lamhoangtung/TextRecognitionDataGenerator/TextRecognitionDataGenerator')
 import random
 
 from PIL import ImageFile
+from tqdm import tqdm
 
 from data_generator import FakeTextDataGenerator
 from string_generator import (create_string_from_dict_with_random_chars,
@@ -18,6 +18,10 @@ from string_generator import (create_string_from_dict_with_random_chars,
                               gen_one_character, generate_char_map_from_font,
                               print_text, random_latin, random_latin_space,
                               random_sequences_sjnk, random_space)
+
+os.chdir('/Users/lamhoangtung/TextRecognitionDataGenerator/TextRecognitionDataGenerator')
+
+
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -378,32 +382,32 @@ def main():
     # exit()
 
     p = multiprocessing.Pool(args.thread_count)
-    p.starmap(
-        FakeTextDataGenerator.generate,
-        zip(
-            [i for i in range(0, string_count)],
-            strings,
-            fonts_arr,
-            [args.output_dir] * string_count,
-            [args.format] * string_count,
-            # [random.randint(args.format, args.format + 40) for x in range(string_count)],
-            [args.extension] * string_count,
-            [args.skew_angle] * string_count,
-            [args.random_skew] * string_count,
-            [args.blur] * string_count,
-            [args.random_blur] * string_count,
-            [args.background] * string_count,
-            [args.distorsion] * string_count,
-            [args.distorsion_orientation] * string_count,
-            [args.handwritten] * string_count,
-            [args.name_format] * string_count,
-            [-1] * string_count,
-            [args.prefix] * string_count,
-        )
-    )
-    print("I'm at line 403")
+    for _ in tqdm(
+        p.imap_unordered(
+            FakeTextDataGenerator.generate_from_tuple,
+            zip(
+                [i for i in range(0, string_count)],
+                strings,
+                fonts_arr,
+                [args.output_dir] * string_count,
+                [args.format] * string_count,
+                # [random.randint(args.format, args.format + 40) for x in range(string_count)],
+                [args.extension] * string_count,
+                [args.skew_angle] * string_count,
+                [args.random_skew] * string_count,
+                [args.blur] * string_count,
+                [args.random_blur] * string_count,
+                [args.background] * string_count,
+                [args.distorsion] * string_count,
+                [args.distorsion_orientation] * string_count,
+                [args.handwritten] * string_count,
+                [args.name_format] * string_count,
+                [-1] * string_count,
+                [args.prefix] * string_count,
+            )
+    ), total=args.count):
+        pass
     p.terminate()
-    print("I'm at line 405")
     if args.name_format == 2:
         # Create file with filename-to-label connections
         with open(os.path.join(args.output_dir, "labels.txt"), 'w', encoding="utf8") as f:
