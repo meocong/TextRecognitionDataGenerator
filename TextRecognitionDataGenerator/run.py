@@ -4,19 +4,20 @@ import errno
 import glob
 import multiprocessing
 import os
+os.chdir('/Users/lamhoangtung/TextRecognitionDataGenerator/TextRecognitionDataGenerator')
 import random
 
 from PIL import ImageFile
 
 from data_generator import FakeTextDataGenerator
 from string_generator import (create_string_from_dict_with_random_chars,
-                               create_strings_from_file,
-                               create_strings_from_fonts,
-                               create_strings_from_wikipedia,
-                               create_strings_randomly, gen_check_font,
-                               gen_one_character, generate_char_map_from_font,
-                               print_text, random_latin, random_latin_space,
-                               random_sequences_sjnk, random_space)
+                              create_strings_from_file,
+                              create_strings_from_fonts,
+                              create_strings_from_wikipedia,
+                              create_strings_randomly, gen_check_font,
+                              gen_one_character, generate_char_map_from_font,
+                              print_text, random_latin, random_latin_space,
+                              random_sequences_sjnk, random_space)
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -33,7 +34,7 @@ def parse_arguments():
         type=str,
         nargs="?",
         help="The output directory",
-        default="images/",
+        default="./images/",
     )
     parser.add_argument(
         "-i",
@@ -313,13 +314,13 @@ def main():
 
     import pickle
     try:
-        fonts_dict = pickle.load(open("./fonts/jp/font_dict.pkl", "rb"))
+        fonts_dict = pickle.load(open("./fonts/en/font_dict.pkl", "rb"))
         font_charsets = [fonts_dict[font] for font in fonts_arr]
     except:
         fonts_dict = {}
         print("Generating font char maps...")
         fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
-        pickle.dump(fonts_dict, open("./fonts/jp/font_dict.pkl", "wb"))
+        pickle.dump(fonts_dict, open("./fonts/en/font_dict.pkl", "wb"))
         font_charsets = [fonts_dict[font] for font in fonts_arr]
 
     # print(fonts_dict)
@@ -366,6 +367,9 @@ def main():
 
     string_count = len(strings)
     print("String count", string_count)
+
+    print(strings)
+
     print_text("./logs/src-train.txt", ['{}_{}.{}\n'.format(
         args.prefix, str(index), args.extension) for index in range(string_count)])
     print_text("./logs/tgt-train.txt", ['{}\n'.format(x) for x in strings])
@@ -394,11 +398,12 @@ def main():
             [args.handwritten] * string_count,
             [args.name_format] * string_count,
             [-1] * string_count,
-            [args.prefix] * string_count
+            [args.prefix] * string_count,
         )
     )
+    print("I'm at line 403")
     p.terminate()
-
+    print("I'm at line 405")
     if args.name_format == 2:
         # Create file with filename-to-label connections
         with open(os.path.join(args.output_dir, "labels.txt"), 'w', encoding="utf8") as f:

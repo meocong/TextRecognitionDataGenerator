@@ -108,3 +108,7 @@ ENV/
 TextRecognitionDataGenerator/fonts/
 TextRecognitionDataGenerator/images/
 TextRecognitionDataGenerator/pictures/
+TextRecognitionDataGenerator/logs/src-train.txt
+TextRecognitionDataGenerator/logs/tgt-fonts.txt
+TextRecognitionDataGenerator/logs/tgt-train.txt
+.vscode/launch.json
