@@ -326,7 +326,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
     # max_length = 60
 
     for font in tqdm(fonts):
-        print("Generating font char maps...")
+        print("Generating font char maps ...")
         print(font)
         if (font not in font_dicts and font not in pre_font_dics):
             ttf = TTFont(font, fontNumber=0)
@@ -357,7 +357,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
 
 
 def random_sequences_sjnk(fonts):
-    print("Generating strings for sjnk project...")
+    print("Generating random sequences string from random font for sjnk project ...")
     generated_list = []
     latin_chars = [x[:-1]
                    for x in open("dicts/latin.txt", encoding="utf-8").readlines()]

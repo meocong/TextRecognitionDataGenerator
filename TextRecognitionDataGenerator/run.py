@@ -79,28 +79,28 @@ def parse_arguments():
         "-rdo",
         "--random_one_character",
         action="store_true",
-        help="Use random sequences by characters in random fonts as the source text for the generation.",
+        help="Use random single characters in random fonts as the source text for the generation.",
         default=False
     )
     parser.add_argument(
         "-sjnk",
         "--random_sequences_sjnk",
         action="store_true",
-        help="Generate data for sjnk project",
+        help="Generate random sequences string from random font for sjnk project",
         default=False
     )
     parser.add_argument(
         "-sjnk_latin",
         "--random_latin_sjnk",
         action="store_true",
-        help="Generate data for sjnk project",
+        help="Generate random latin string from random font for sjnk project",
         default=False
     )
     parser.add_argument(
         "-rdlt",
         "--random_latin_space",
         action="store_true",
-        help="Generate data for sjnk project",
+        help="Generate random latiin string with random space from random font for sjnk project",
         default=False
     )
     parser.add_argument(
@@ -143,7 +143,7 @@ def parse_arguments():
         "-rp",
         "--random_space",
         action="store_true",
-        help="Random Space",
+        help="Generate random space images",
         default=False
     )
     parser.add_argument(
