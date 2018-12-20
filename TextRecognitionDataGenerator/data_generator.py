@@ -83,7 +83,15 @@ def nick_binarize(img_list):
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", debug=False):
+    def generate_from_tuple(cls, t):
+        """
+            Same as generate, but takes all parameters as one tuple
+        """
+
+        cls.generate(*t)
+
+    @classmethod
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", random_crop=False, debug=False):
         try:
             max_height = 80.0
 
@@ -93,8 +101,8 @@ class FakeTextDataGenerator(object):
                 A.RandomGamma(gamma_limit=(90, 110), p=0.3),
                 A.CLAHE(p=0.3),
                 A.HueSaturationValue(hue_shift_limit=20,
-                                     sat_shift_limit=30,
-                                     val_shift_limit=20, p=0.3),
+                                        sat_shift_limit=30,
+                                        val_shift_limit=20, p=0.3),
                 # A.ChannelShuffle(p=0.3),
                 A.JpegCompression(quality_lower=95, p=0.3),
             ], p=1)
@@ -110,7 +118,7 @@ class FakeTextDataGenerator(object):
                 image_name = '{}.{}'.format(str(index), extension)
             elif name_format == 3:
                 image_name = '{}_{}.{}'.format(prefix, str(index),
-                                               extension)
+                                                extension)
             else:
                 print(
                     '{} is not a valid name format. Using default.'.format(
@@ -118,7 +126,7 @@ class FakeTextDataGenerator(object):
                 image_name = '{}_{}.{}'.format(text, str(index), extension)
             # print(image_name, font)
 
-            image = None
+            img = None
 
             ##########################
             # Create picture of text #
@@ -141,37 +149,37 @@ class FakeTextDataGenerator(object):
             extend_bottom = np.random.choice(3, 1, p=[0.5, 0.3, 0.2])[0] + 2
 
             if is_handwritten:
-                image = HandwrittenTextGenerator.generate(text)
+                img = HandwrittenTextGenerator.generate(text)
             else:
-                image = ComputerTextGenerator.generate(
+                img = ComputerTextGenerator.generate(
                     text, font, text_color, height, text_mode=text_mode, extend_bottom=extend_bottom)
 
-            image = np.array(image)
-            image = image[random.randint(0, 2):, :]
-            image = Image.fromarray(image)
+            img = np.array(img)
+            img = img[random.randint(0, 2):, :]
+            img = Image.fromarray(img)
 
             if debug:
-                image.convert('L').save(
+                img.convert('L').save(
                     os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
 
             if decision(0.6):
                 random_angle = random.uniform(-skewing_angle/4,
-                                              skewing_angle/4)
+                                                skewing_angle/4)
 
-                rotated_img = image.rotate(
-                    skewing_angle if not random_skew else random_angle, expand=1)  # .resize(image.size)
+                rotated_img = img.rotate(
+                    skewing_angle if not random_skew else random_angle, expand=1)  # .resize(img.size)
             else:
                 random_angle = random.uniform(-skewing_angle,
-                                              skewing_angle)
+                                                skewing_angle)
 
-                rotated_img = image.rotate(
+                rotated_img = img.rotate(
                     skewing_angle if not random_skew else random_angle,
                     expand=1)
 
             # if decision(0.3):
-            # rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
+            # rotated_img = Image.fromarray(scipy.ndimage.rotate(img, random_angle))
             # else:
-            # rotated_img = Image.fromarray(imutils.rotate_bound(np.array(image), random_angle))
+            # rotated_img = Image.fromarray(imutils.rotate_bound(np.array(img), random_angle))
             #
             #     white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
             #     rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
@@ -236,7 +244,7 @@ class FakeTextDataGenerator(object):
                     if debug:
                         rotated_img.convert('L').save(
                             os.path.join(out_dir,
-                                         image_name.replace(".jpg", "_3.jpg")))
+                                            image_name.replace(".jpg", "_3.jpg")))
 
                 random_pixel_discard = decision(0.2)
 
@@ -270,7 +278,7 @@ class FakeTextDataGenerator(object):
                     distorted_img = DistorsionGenerator.sin(
                         rotated_img,
                         vertical=(distorsion_orientation ==
-                                  0 or distorsion_orientation == 2),
+                                    0 or distorsion_orientation == 2),
                         horizontal=(distorsion_orientation ==
                                     1 or distorsion_orientation == 2),
                         max_offset=2
@@ -279,7 +287,7 @@ class FakeTextDataGenerator(object):
                     distorted_img = DistorsionGenerator.cos(
                         rotated_img,
                         vertical=(distorsion_orientation ==
-                                  0 or distorsion_orientation == 2),
+                                    0 or distorsion_orientation == 2),
                         horizontal=(distorsion_orientation ==
                                     1 or distorsion_orientation == 2),
                         max_offset=2
@@ -288,7 +296,7 @@ class FakeTextDataGenerator(object):
                     distorted_img = DistorsionGenerator.random(
                         rotated_img,
                         vertical=(distorsion_orientation ==
-                                  0 or distorsion_orientation == 2),
+                                    0 or distorsion_orientation == 2),
                         horizontal=(distorsion_orientation ==
                                     1 or distorsion_orientation == 2)
                     )
@@ -308,24 +316,24 @@ class FakeTextDataGenerator(object):
                         os.path.join(out_dir, image_name.replace(".jpg", "_2.jpg")))
 
                 affine_type = np.random.choice(4, 1, p=[0.1, 0.05, 0, 0.85])[0]
-                if not random_pixel_discard or (random_pixel_discard == True and prob > 0.98):
+                if not random_pixel_discard or (random_pixel_discard is True and prob > 0.98):
                     if affine_type == 0 and distorted_img.size[1] > 40 and distorsion_type == 0:
                         distorted_img = ElasticDistortionGenerator.afffine_transform(
                             distorted_img)
                         if debug:
                             distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_1.jpg")))
+                                                                            image_name.replace(
+                                                                                ".jpg",
+                                                                                "_1_1.jpg")))
                     elif affine_type == 1:
                         distorted_img = ElasticDistortionGenerator.elastic_transform(
                             distorted_img)
 
                         if debug:
                             distorted_img.convert('L').save(os.path.join(out_dir,
-                                                                         image_name.replace(
-                                                                             ".jpg",
-                                                                             "_1_2.jpg")))
+                                                                            image_name.replace(
+                                                                                ".jpg",
+                                                                                "_1_2.jpg")))
                     # elif affine_type == 2:
                     #     distorted_img = ElasticDistortionGenerator.perspective_transform(distorted_img)
                     #     distorted_img.convert('L').save(os.path.join(out_dir,
@@ -335,7 +343,7 @@ class FakeTextDataGenerator(object):
 
                 if np.min(np.array(distorted_img)) > 250:
                     print(index, "2 wtf. why!!!",
-                          affine_type, random_pixel_discard)
+                            affine_type, random_pixel_discard)
 
                 x = random.randint(-3, 3)
                 y = random.randint(1, 3)
@@ -412,6 +420,7 @@ class FakeTextDataGenerator(object):
                 final_image = rotated_img.convert("L")
                 mask = final_image.point(
                     lambda x: 0 if x == 255 or x == 0 else 255, '1')
+            
                 new_text_width, new_text_height = final_image.size
                 x = random.randint(-3, 3)
                 y = random.randint(1, 3)
@@ -420,7 +429,6 @@ class FakeTextDataGenerator(object):
                 apply_background = False
                 background.paste(final_image, (5, 5), mask=mask)
                 final_image = background.convert('L')
-
             resize_type = random.choice(
                 [Image.ANTIALIAS, Image.BILINEAR, Image.LANCZOS])
 
@@ -461,25 +469,25 @@ class FakeTextDataGenerator(object):
                     if debug:
                         final_image.save(
                             os.path.join(out_dir,
-                                         image_name.replace(".jpg",
+                                            image_name.replace(".jpg",
                                                             "_0_0.jpg")))
                 elif blur_type == 1:
                     final_image = pyblur.GaussianBlur_random(final_image)
                     if debug:
                         final_image.save(
                             os.path.join(out_dir,
-                                         image_name.replace(".jpg",
+                                            image_name.replace(".jpg",
                                                             "_0_1.jpg")))
                 elif blur_type == 2:
                     kernel = np.ones((5, 5), np.float32) / \
                         random.randint(30, 50)
                     final_image = Image.fromarray(
                         cv2.filter2D(np.array(final_image), -1,
-                                     kernel))
+                                        kernel))
                     if debug:
                         final_image.save(
                             os.path.join(out_dir,
-                                         image_name.replace(".jpg",
+                                            image_name.replace(".jpg",
                                                             "_0_2.jpg")))
                 elif blur_type == 3:
                     final_image = Image.fromarray(
@@ -488,7 +496,7 @@ class FakeTextDataGenerator(object):
                     if debug:
                         final_image.save(
                             os.path.join(out_dir,
-                                         image_name.replace(".jpg",
+                                            image_name.replace(".jpg",
                                                             "_0_3.jpg")))
                 elif blur_type == 4 and final_image.size[0] > 40 and apply_background is not True:
                     final_image = pyblur.PsfBlur_random(final_image)
@@ -496,7 +504,7 @@ class FakeTextDataGenerator(object):
                     if debug:
                         final_image.save(
                             os.path.join(out_dir,
-                                         image_name.replace(".jpg",
+                                            image_name.replace(".jpg",
                                                             "_0_4.jpg")))
 
             # additional sharpening
@@ -505,7 +513,7 @@ class FakeTextDataGenerator(object):
                 if debug:
                     final_image.save(
                         os.path.join(out_dir,
-                                     image_name.replace(".jpg",
+                                        image_name.replace(".jpg",
                                                         "_0_2.jpg")))
 
             seq = ia.augmenters.Sequential(ia.augmenters.OneOf([
@@ -518,7 +526,7 @@ class FakeTextDataGenerator(object):
 
             final_image = Image.fromarray(
                 seq.augment_image(np.array(final_image)))
-
+            
             # random invert
             inverted = False
             if blur_type != 4:
@@ -549,9 +557,11 @@ class FakeTextDataGenerator(object):
                             seq.augment_image(np.array(final_image)))
 
             # Random crop
-            # final_image = np.array(final_image)
-            # final_image = final_image[random.randint(3,7):,:]
-            # final_image = Image.fromarray(final_image)
+            if random_crop and decision(0.1):
+                final_image = np.array(final_image)
+                final_image = final_image[random.randint(10,20):,:]
+                final_image = Image.fromarray(final_image)
+
             # Save the image
             final_image.convert('L').save(os.path.join(out_dir, image_name))
         except Exception as ex:

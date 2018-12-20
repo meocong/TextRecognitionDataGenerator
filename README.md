@@ -37,19 +37,19 @@ Go to `./TextRecognitionDataGenerator`, then run `python3 run.py` with these fol
 | --count                      | -c          | The number of images to be created.                                                                                                                         | 1000    |
 | --random_sequences           | -rs         | Use random sequences as the source text for the generation. Set '-let','-num','-sym' to use letters/numbers/symbols. If none specified, using all three.    | False   |
 | --random_sequences_from_font | -rsff       | Use random sequences by characters in random fonts as the source text for the generation.                                                                   | False   |
-| --random_one_character       | -rdo        | Use random sequences by characters in random fonts as the source text for the generation.                                                                   | False   |
-| --random_sequences_sjnk      | -sjnk       | Generate data for sjnk project                                                                                                                              | False   |
-| --random_latin_sjnk          | -sjnk_latin | Generate data for sjnk project                                                                                                                              | False   |
-| --random_latin_space         | -rdlt       | Generate data for sjnk project                                                                                                                              | False   |
+| --random_one_character       | -rdo        |  Use random single characters in random fonts as the source text for the generation.                                                                        | False   |
+| --random_sequences_sjnk      | -sjnk       | Generate random sequences string from random font for sjnk project                                                                                          | False   |
+| --random_latin_sjnk          | -sjnk_latin | Generate random latin string from random font for sjnk project                                                                                              | False   |
+| --random_latin_space         | -rdlt       | Generate random latiin string with random space from random font for sjnk project                                                                           | False   |
 | --include_letters            | -let        | Define if random sequences should contain letters. Only works with -rs                                                                                      | False   |
 | --include_symbols            | -sym        | Define if random sequences should contain symbols. Only works with -rs                                                                                      | False   |
 | --length                     | -w          | Define how many words should be included in each generated sample. If the text source is Wikipedia, this is the MINIMUM length                              | 1       |
 | --random                     | -r          | Define if the produced string will have variable word count (with --length being the maximum)                                                               | False   |
-| --random_space               | -rp         | Random Space                                                                                                                                                | False   |
+| --random_space               | -rp         | Generate random space images                                                                                                                                | False   |
 | --format                     | -f          | Define the height of the produced images                                                                                                                    | 32      |
 | --thread_count               | -t          | Define the number of thread to use for image generation                                                                                                     | 1       |
-| --extension                  | -e          | Define the extension to save the image with                                                                                                                 | jpg     |
-| --prefix                     | -pre        | Define the extension to save the image with                                                                                                                 |         |
+| --extension                  | -e          | Define the extension(eg: .jpg, .png) to save the image with                                                                                                 | jpg     |
+| --prefix                     | -pre        | Define the extension to save the image with, for example with prefix = abc, output name will be abc_1.jpg, abc_2.jpg                                        | None    |
 | --skew_angle                 | -k          | Define skewing angle of the generated text. In positive degrees                                                                                             | 0       |
 | --random_skew                | -rk         | When set, the skew angle will be randomized between the value set with -k and it's opposite                                                                 | False   |
 | --use_wikipedia              | -wk         | Use Wikipedia as the source text for the generation, using this paremeter ignores -r, -n, -s                                                                | False   |
@@ -60,6 +60,8 @@ Go to `./TextRecognitionDataGenerator`, then run `python3 run.py` with these fol
 | --name_format                | -na         | Define how the produced files will be named. 0: [TEXT]_[ID].[EXT], 1: [ID]_[TEXT].[EXT] 2: [ID].[EXT] + one file labels.txt containing id-to-label mappings | 0       |
 | --distorsion                 | -d          | Define a distorsion applied to the resulting image. 0: None (Default), 1: Sine wave, 2: Cosine wave, 3: Random                                              | 0       |
 | --distorsion_orientation     | -do         | Define the distorsion's orientation. Only used if -d is specified. 0: Vertical (Up and down), 1: Horizontal (Left and Right), 2: Both                       | 0       |
+| --random_crop                | -rc         | When set, generated images will be randomly crop at the top within 10-20 pixel range                                                                        | False   |
+| --debug                      | -dg         | When set, multiple images will be generated at each step                                                                                                    | False   |
 
 ### Example
 

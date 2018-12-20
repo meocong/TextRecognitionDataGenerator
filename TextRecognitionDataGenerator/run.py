@@ -7,16 +7,18 @@ import os
 import random
 
 from PIL import ImageFile
+from tqdm import tqdm
 
 from data_generator import FakeTextDataGenerator
 from string_generator import (create_string_from_dict_with_random_chars,
-                               create_strings_from_file,
-                               create_strings_from_fonts,
-                               create_strings_from_wikipedia,
-                               create_strings_randomly, gen_check_font,
-                               gen_one_character, generate_char_map_from_font,
-                               print_text, random_latin, random_latin_space,
-                               random_sequences_sjnk, random_space)
+                              create_strings_from_file,
+                              create_strings_from_fonts,
+                              create_strings_from_wikipedia,
+                              create_strings_randomly, gen_check_font,
+                              gen_one_character, generate_char_map_from_font,
+                              print_text, random_latin, random_latin_space,
+                              random_sequences_sjnk, random_space)
+
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -33,7 +35,7 @@ def parse_arguments():
         type=str,
         nargs="?",
         help="The output directory",
-        default="images/",
+        default="./images/",
     )
     parser.add_argument(
         "-i",
@@ -77,28 +79,28 @@ def parse_arguments():
         "-rdo",
         "--random_one_character",
         action="store_true",
-        help="Use random sequences by characters in random fonts as the source text for the generation.",
+        help="Use random single characters in random fonts as the source text for the generation.",
         default=False
     )
     parser.add_argument(
         "-sjnk",
         "--random_sequences_sjnk",
         action="store_true",
-        help="Generate data for sjnk project",
+        help="Generate random sequences string from random font for sjnk project",
         default=False
     )
     parser.add_argument(
         "-sjnk_latin",
         "--random_latin_sjnk",
         action="store_true",
-        help="Generate data for sjnk project",
+        help="Generate random latin string from random font for sjnk project",
         default=False
     )
     parser.add_argument(
         "-rdlt",
         "--random_latin_space",
         action="store_true",
-        help="Generate data for sjnk project",
+        help="Generate random latiin string with random space from random font for sjnk project",
         default=False
     )
     parser.add_argument(
@@ -141,7 +143,7 @@ def parse_arguments():
         "-rp",
         "--random_space",
         action="store_true",
-        help="Random Space",
+        help="Generate random space images",
         default=False
     )
     parser.add_argument(
@@ -165,7 +167,7 @@ def parse_arguments():
         "--extension",
         type=str,
         nargs="?",
-        help="Define the extension to save the image with",
+        help="Define the extension (eg: .jpg, .png) to save the image with",
         default="jpg",
     )
     parser.add_argument(
@@ -173,7 +175,7 @@ def parse_arguments():
         "--prefix",
         type=str,
         nargs="?",
-        help="Define the extension to save the image with",
+        help="Define the extension to save the image with, for example with prefix = abc, output name will be abc_1.jpg, abc_2.jpg",
         default="",
     )
     parser.add_argument(
@@ -202,7 +204,7 @@ def parse_arguments():
         "-ck",
         "--check_font",
         action="store_true",
-        help="Use Wikipedia as the source text for the generation, using this paremeter ignores -r, -n, -s",
+        help="Unknown",
         default=False,
     )
     parser.add_argument(
@@ -256,6 +258,20 @@ def parse_arguments():
         nargs="?",
         help="Define the distorsion's orientation. Only used if -d is specified. 0: Vertical (Up and down), 1: Horizontal (Left and Right), 2: Both",
         default=0
+    )
+    parser.add_argument(
+        "-rc",
+        "--random_crop",
+        action="store_true",
+        help="When set, generated images will be randomly crop at the top within 10-20 pixel range",
+        default=False,
+    )
+    parser.add_argument(
+        "-dg",
+        "--debug",
+        action="store_true",
+        help="When set, multiple images will be generated at each step",
+        default=False,
     )
 
     return parser.parse_args()
@@ -312,18 +328,21 @@ def main():
         fonts_arr = fonts
 
     import pickle
+    fonts_dict_path = './fonts/' + args.language + '/font_dict.pkl'
     try:
-        fonts_dict = pickle.load(open("./fonts/jp/font_dict.pkl", "rb"))
+        fonts_dict = pickle.load(open(fonts_dict_path, "rb"))
+        print("Loaded fonts dict from", fonts_dict_path)
         font_charsets = [fonts_dict[font] for font in fonts_arr]
     except:
         fonts_dict = {}
-        print("Generating font char maps...")
         fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
-        pickle.dump(fonts_dict, open("./fonts/jp/font_dict.pkl", "wb"))
+        if not os.path.isdir('./fonts/' + args.language):
+            os.system('mkdir ./fonts/' + args.language)
+        pickle.dump(fonts_dict, open(fonts_dict_path, "wb"))
+        print("Saved fonts dict to", fonts_dict_path)
         font_charsets = [fonts_dict[font] for font in fonts_arr]
 
     # print(fonts_dict)
-
     if args.use_wikipedia:
         strings = create_strings_from_wikipedia(
             args.length, args.count, args.language)
@@ -365,47 +384,58 @@ def main():
         os.system("mkdir logs")
 
     string_count = len(strings)
-    print("String count", string_count)
+    print("Generated", string_count, "string.")
+    if string_count < 10:
+        [print('\t' + each_string) for each_string in strings]
+    else:
+        [print('\t' + each_string) for each_string in strings[:5]]
+        print('\t...')
+
+    # print(strings)
+
     print_text("./logs/src-train.txt", ['{}_{}.{}\n'.format(
         args.prefix, str(index), args.extension) for index in range(string_count)])
     print_text("./logs/tgt-train.txt", ['{}\n'.format(x) for x in strings])
     print_text("./logs/tgt-fonts.txt", ['{}\n'.format(x) for x in fonts_arr])
 
     # exit()
-
+    print('Generating images from the string ...')
     p = multiprocessing.Pool(args.thread_count)
-    p.starmap(
-        FakeTextDataGenerator.generate,
-        zip(
-            [i for i in range(0, string_count)],
-            strings,
-            fonts_arr,
-            [args.output_dir] * string_count,
-            [args.format] * string_count,
-            # [random.randint(args.format, args.format + 40) for x in range(string_count)],
-            [args.extension] * string_count,
-            [args.skew_angle] * string_count,
-            [args.random_skew] * string_count,
-            [args.blur] * string_count,
-            [args.random_blur] * string_count,
-            [args.background] * string_count,
-            [args.distorsion] * string_count,
-            [args.distorsion_orientation] * string_count,
-            [args.handwritten] * string_count,
-            [args.name_format] * string_count,
-            [-1] * string_count,
-            [args.prefix] * string_count
-        )
-    )
+    for _ in tqdm(
+            p.imap_unordered(
+                FakeTextDataGenerator.generate_from_tuple,
+                zip(
+                    [i for i in range(0, string_count)],
+                    strings,
+                    fonts_arr,
+                    [args.output_dir] * string_count,
+                    [args.format] * string_count,
+                    # [random.randint(args.format, args.format + 40) for x in range(string_count)],
+                    [args.extension] * string_count,
+                    [args.skew_angle] * string_count,
+                    [args.random_skew] * string_count,
+                    [args.blur] * string_count,
+                    [args.random_blur] * string_count,
+                    [args.background] * string_count,
+                    [args.distorsion] * string_count,
+                    [args.distorsion_orientation] * string_count,
+                    [args.handwritten] * string_count,
+                    [args.name_format] * string_count,
+                    [-1] * string_count,
+                    [args.prefix] * string_count,
+                    [args.random_crop] * string_count,
+                    [args.debug] * string_count
+                )
+            ), total=args.count):
+        pass
     p.terminate()
-
     if args.name_format == 2:
         # Create file with filename-to-label connections
         with open(os.path.join(args.output_dir, "labels.txt"), 'w', encoding="utf8") as f:
             for i in range(string_count):
                 file_name = str(i) + "." + args.extension
                 f.write("{} {}\n".format(file_name, strings[i]))
-
+    print('Generated', args.count, 'images to', args.output_dir)
 
 if __name__ == '__main__':
     main()

@@ -11,7 +11,8 @@ from bs4 import BeautifulSoup
 from fontTools.ttLib import TTFont
 from fontTools.unicode import Unicode
 from PIL import Image, ImageDraw, ImageFont
-
+from tqdm import tqdm
+import os
 
 def create_strings_from_file(filename, count, max_length):
     """
@@ -19,7 +20,7 @@ def create_strings_from_file(filename, count, max_length):
     """
 
     strings = []
-
+    print("Generating strings from file", filename)
     with open(filename, 'r', encoding="utf8") as f:
         lines = [l.strip()[0:max_length] for l in f.readlines()]
         if len(lines) == 0:
@@ -62,6 +63,7 @@ def create_string_from_dict_with_random_chars(length, allow_variable, count, lan
     """
         Create all strings by picking X random word in the dictionary
     """
+    print("Generating strings by picking X random word in the dictionary")
     pool = ''
     if num:
         pool += "0123456789"
@@ -70,7 +72,7 @@ def create_string_from_dict_with_random_chars(length, allow_variable, count, lan
 
     dict_len = len(lang_dict)
     strings = []
-    for _ in range(0, count):
+    for _ in tqdm(range(0, count)):
         current_string = ""
         for _ in range(0, random.randint(1, length) if allow_variable else length):
             word = lang_dict[random.randrange(dict_len)][:-1]
@@ -132,9 +134,10 @@ def create_strings_from_wikipedia(minimum_length, count, lang, max_lines_per_pag
 
 
 def create_strings_from_fonts(fonts):
+    print("Generating strings from font...")
     strings = []
     font_dicts = {}
-    for font in fonts:
+    for font in tqdm(fonts):
         if (font not in font_dicts):
             ttf = TTFont(font, fontNumber=0)
 
@@ -187,13 +190,9 @@ def check_character_in_fontc2(char, font, height=32):
 
     image_font = ImageFont.truetype(font=font, size=height)
     text_width, text_height = image_font.getsize(char)
-
     txt_img = Image.new('L', (text_width, text_height), 255)
-
     txt_draw = ImageDraw.Draw(txt_img)
-
     txt_draw.text((0, 0), u'{0}'.format(char), fill=0, font=image_font)
-
     txt_img = np.array(txt_img)
     gray = txt_img
     thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)[1]
@@ -216,6 +215,7 @@ def check_character_in_fontc2(char, font, height=32):
 
 
 def random_latin(fonts):
+    print("Generating random latin string for sjnk project ...")
     generated_list = []
     latin_chars = [x[:-1] for x in
                    open("dicts/latin.txt", encoding="utf-8").readlines()]
@@ -223,7 +223,7 @@ def random_latin(fonts):
                                           encoding="utf-8").readlines()]
 
     max_len = 100
-    for font in fonts:
+    for font in tqdm(fonts):
         font = set(font)
         generated = ""
 
@@ -247,6 +247,7 @@ def random_latin(fonts):
 
 
 def random_latin_space(fonts):
+    print("Generating latin string with random space ...")
     generated_list = []
     latin_chars = [x[:-1] for x in
                    open("dicts/latin.txt", encoding="utf-8").readlines()]
@@ -254,7 +255,7 @@ def random_latin_space(fonts):
                                           encoding="utf-8").readlines()]
 
     # max_len = 100
-    for font in fonts:
+    for font in tqdm(fonts):
         font = set(font)
         generated = ""
 
@@ -276,6 +277,7 @@ def random_latin_space(fonts):
 
 
 def gen_check_font(fonts):
+    print ("Generating string with check_font mode ...")
     generated_list = []
     latin_chars = [x[:-1] for x in
                    open("dicts/latin.txt", encoding="utf-8").readlines()]
@@ -283,7 +285,7 @@ def gen_check_font(fonts):
                                           encoding="utf-8").readlines()]
 
     # max_len = 100
-    for font in fonts:
+    for font in tqdm(fonts):
         font = set(font)
 
         latin_chars_in_font = [x for x in latin_chars if x in font]
@@ -297,6 +299,7 @@ def gen_check_font(fonts):
 
 
 def random_space(fonts):
+    print("Generating random space ...")
     generated_list = []
 
     max_len = 75
@@ -322,7 +325,8 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
     font_dicts = {}
     # max_length = 60
 
-    for font in fonts:
+    for font in tqdm(fonts):
+        print("Generating font char maps ...")
         print(font)
         if (font not in font_dicts and font not in pre_font_dics):
             ttf = TTFont(font, fontNumber=0)
@@ -348,11 +352,12 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
             pass
         elif font in pre_font_dics:
             font_dicts[font] = pre_font_dics[font]
-
+        os.system('clear')
     return font_dicts
 
 
 def random_sequences_sjnk(fonts):
+    print("Generating random sequences string from random font for sjnk project ...")
     generated_list = []
     latin_chars = [x[:-1]
                    for x in open("dicts/latin.txt", encoding="utf-8").readlines()]
@@ -361,7 +366,7 @@ def random_sequences_sjnk(fonts):
     japan_chars = [x[:-1]
                    for x in open("dicts/japan.txt", encoding="utf-8").readlines()]
 
-    for font in fonts:
+    for font in tqdm(fonts):
         font = set(font)
         generated = ""
 
@@ -391,7 +396,7 @@ def create_strings_randomly(length, allow_variable, count, let, num, sym, lang):
     """
         Create all strings by randomly sampling from a pool of characters.
     """
-
+    print("Generating strings by randomly sampling from a pool of characters ...")
     # If none specified, use all three
     if True not in (let, num, sym):
         let, num, sym = True, True, True
@@ -433,6 +438,7 @@ def print_text(file, list_):
 
 
 def gen_one_character(font_dicts: {}):
+    print("Generating string with only one character ...")
     fonts_arr = []
     strings = []
 
