@@ -91,7 +91,7 @@ class FakeTextDataGenerator(object):
         cls.generate(*t)
 
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", debug=False):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", random_crop=False, debug=False):
         try:
             max_height = 80.0
 
@@ -126,7 +126,7 @@ class FakeTextDataGenerator(object):
                 image_name = '{}_{}.{}'.format(text, str(index), extension)
             # print(image_name, font)
 
-            image = None
+            img = None
 
             ##########################
             # Create picture of text #
@@ -149,37 +149,37 @@ class FakeTextDataGenerator(object):
             extend_bottom = np.random.choice(3, 1, p=[0.5, 0.3, 0.2])[0] + 2
 
             if is_handwritten:
-                image = HandwrittenTextGenerator.generate(text)
+                img = HandwrittenTextGenerator.generate(text)
             else:
-                image = ComputerTextGenerator.generate(
+                img = ComputerTextGenerator.generate(
                     text, font, text_color, height, text_mode=text_mode, extend_bottom=extend_bottom)
 
-            image = np.array(image)
-            image = image[random.randint(0, 2):, :]
-            image = Image.fromarray(image)
+            img = np.array(img)
+            img = img[random.randint(0, 2):, :]
+            img = Image.fromarray(img)
 
             if debug:
-                image.convert('L').save(
+                img.convert('L').save(
                     os.path.join(out_dir, image_name.replace(".jpg", "_7.jpg")))
 
             if decision(0.6):
                 random_angle = random.uniform(-skewing_angle/4,
                                                 skewing_angle/4)
 
-                rotated_img = image.rotate(
-                    skewing_angle if not random_skew else random_angle, expand=1)  # .resize(image.size)
+                rotated_img = img.rotate(
+                    skewing_angle if not random_skew else random_angle, expand=1)  # .resize(img.size)
             else:
                 random_angle = random.uniform(-skewing_angle,
                                                 skewing_angle)
 
-                rotated_img = image.rotate(
+                rotated_img = img.rotate(
                     skewing_angle if not random_skew else random_angle,
                     expand=1)
 
             # if decision(0.3):
-            # rotated_img = Image.fromarray(scipy.ndimage.rotate(image, random_angle))
+            # rotated_img = Image.fromarray(scipy.ndimage.rotate(img, random_angle))
             # else:
-            # rotated_img = Image.fromarray(imutils.rotate_bound(np.array(image), random_angle))
+            # rotated_img = Image.fromarray(imutils.rotate_bound(np.array(img), random_angle))
             #
             #     white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
             #     rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
@@ -557,12 +557,12 @@ class FakeTextDataGenerator(object):
                             seq.augment_image(np.array(final_image)))
 
             # Random crop
-            # final_image = np.array(final_image)
-            # final_image = final_image[random.randint(3,7):,:]
-            # final_image = Image.fromarray(final_image)
+            if random_crop and decision(0.1):
+                final_image = np.array(final_image)
+                final_image = final_image[random.randint(10,20):,:]
+                final_image = Image.fromarray(final_image)
+
             # Save the image
-            # print(locals())
             final_image.convert('L').save(os.path.join(out_dir, image_name))
         except Exception as ex:
             print(ex)
-            pass

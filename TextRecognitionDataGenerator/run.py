@@ -259,6 +259,20 @@ def parse_arguments():
         help="Define the distorsion's orientation. Only used if -d is specified. 0: Vertical (Up and down), 1: Horizontal (Left and Right), 2: Both",
         default=0
     )
+    parser.add_argument(
+        "-rc",
+        "--random_crop",
+        action="store_true",
+        help="When set, generated images will be randomly crop at the top within 10-20 pixel range",
+        default=False,
+    )
+    parser.add_argument(
+        "-dg",
+        "--debug",
+        action="store_true",
+        help="When set, multiple images will be generated at each step",
+        default=False,
+    )
 
     return parser.parse_args()
 
@@ -314,14 +328,18 @@ def main():
         fonts_arr = fonts
 
     import pickle
+    fonts_dict_path = './fonts/' + args.language + '/font_dict.pkl'
     try:
-        fonts_dict = pickle.load(open("./fonts/en/font_dict.pkl", "rb"))
+        fonts_dict = pickle.load(open(fonts_dict_path, "rb"))
+        print("Loaded fonts dict from", fonts_dict_path)
         font_charsets = [fonts_dict[font] for font in fonts_arr]
     except:
         fonts_dict = {}
-        print("Generating font char maps...")
         fonts_dict = generate_char_map_from_font(fonts, fonts_dict)
-        pickle.dump(fonts_dict, open("./fonts/en/font_dict.pkl", "wb"))
+        if not os.path.isdir('./fonts/' + args.language):
+            os.system('mkdir ./fonts/' + args.language)
+        pickle.dump(fonts_dict, open(fonts_dict_path, "wb"))
+        print("Saved fonts dict to", fonts_dict_path)
         font_charsets = [fonts_dict[font] for font in fonts_arr]
 
     # print(fonts_dict)
@@ -369,7 +387,7 @@ def main():
     string_count = len(strings)
     print("String count", string_count)
 
-    print(strings)
+    # print(strings)
 
     print_text("./logs/src-train.txt", ['{}_{}.{}\n'.format(
         args.prefix, str(index), args.extension) for index in range(string_count)])
@@ -401,6 +419,8 @@ def main():
                     [args.name_format] * string_count,
                     [-1] * string_count,
                     [args.prefix] * string_count,
+                    [args.random_crop] * string_count,
+                    [args.debug] * string_count
                 )
             ), total=args.count):
         pass
