@@ -99,16 +99,3 @@ ENV/
 
 # mypy
 .mypy_cache/
-
-# MacOS
-*.DS_Store
-.DS_Store
-
-# Additional file (images and fonts)
-TextRecognitionDataGenerator/fonts/
-TextRecognitionDataGenerator/images/
-TextRecognitionDataGenerator/pictures/
-TextRecognitionDataGenerator/logs/src-train.txt
-TextRecognitionDataGenerator/logs/tgt-fonts.txt
-TextRecognitionDataGenerator/logs/tgt-train.txt
-.vscode/launch.json
