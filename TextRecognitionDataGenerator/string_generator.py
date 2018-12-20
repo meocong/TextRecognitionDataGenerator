@@ -11,7 +11,8 @@ from bs4 import BeautifulSoup
 from fontTools.ttLib import TTFont
 from fontTools.unicode import Unicode
 from PIL import Image, ImageDraw, ImageFont
-
+from tqdm import tqdm
+import os
 
 def create_strings_from_file(filename, count, max_length):
     """
@@ -187,13 +188,9 @@ def check_character_in_fontc2(char, font, height=32):
 
     image_font = ImageFont.truetype(font=font, size=height)
     text_width, text_height = image_font.getsize(char)
-
     txt_img = Image.new('L', (text_width, text_height), 255)
-
     txt_draw = ImageDraw.Draw(txt_img)
-
     txt_draw.text((0, 0), u'{0}'.format(char), fill=0, font=image_font)
-
     txt_img = np.array(txt_img)
     gray = txt_img
     thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)[1]
@@ -322,7 +319,8 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
     font_dicts = {}
     # max_length = 60
 
-    for font in fonts:
+    for font in tqdm(fonts):
+        print("Generating font char maps...")
         print(font)
         if (font not in font_dicts and font not in pre_font_dics):
             ttf = TTFont(font, fontNumber=0)
@@ -348,7 +346,7 @@ def generate_char_map_from_font(fonts, pre_font_dics={}):
             pass
         elif font in pre_font_dics:
             font_dicts[font] = pre_font_dics[font]
-
+        os.system('clear')
     return font_dicts
 
 
