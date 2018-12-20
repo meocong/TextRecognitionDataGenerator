@@ -1,10 +1,11 @@
-import cv2
+import glob
 import math
 import os
 import random
+
+import cv2
 import numpy as np
-import glob
-from PIL import Image, ImageFont, ImageDraw, ImageFilter
+from PIL import Image
 
 
 class BackgroundGenerator(object):
@@ -62,17 +63,20 @@ class BackgroundGenerator(object):
             Create a background with a picture
         """
         pictures = glob.glob(os.path.join("./pictures", '*.png')) + \
-                   glob.glob(os.path.join("./pictures", '*.jpg')) + \
-                   glob.glob(os.path.join("./pictures", '*.jpeg')) + \
-                   glob.glob(os.path.join("./pictures", '*.tif'))
+            glob.glob(os.path.join("./pictures", '*.jpg')) + \
+            glob.glob(os.path.join("./pictures", '*.jpeg')) + \
+            glob.glob(os.path.join("./pictures", '*.tif'))
         # pictures = os.listdir('./pictures/*.png')
         if len(pictures) > 0:
-            picture = Image.open(pictures[random.randint(0, len(pictures) - 1)])
+            picture = Image.open(
+                pictures[random.randint(0, len(pictures) - 1)])
 
             if picture.size[0] < width:
-                picture = picture.resize([width, int(picture.size[1] * (width / picture.size[0]))], Image.ANTIALIAS)
+                picture = picture.resize(
+                    [width, int(picture.size[1] * (width / picture.size[0]))], Image.ANTIALIAS)
             if picture.size[1] < height:
-                picture = picture.resize([int(picture.size[0] * (height / picture.size[1])), height], Image.ANTIALIAS)
+                picture = picture.resize(
+                    [int(picture.size[0] * (height / picture.size[1])), height], Image.ANTIALIAS)
 
             if (picture.size[0] == width):
                 x = 0
