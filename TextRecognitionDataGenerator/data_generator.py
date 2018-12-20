@@ -93,9 +93,6 @@ class FakeTextDataGenerator(object):
     @classmethod
     def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", debug=False):
         try:
-            print("Calling generate at index:", index, "and text",text)
-            print("background_type:", background_type, "distorsion_type:",
-                distorsion_type, "distorsion_orientation:", distorsion_orientation, "random_skew:", random_skew, "skewing_angle:", skewing_angle, "font:", font)
             max_height = 80.0
 
             albu = A.Compose([
@@ -202,7 +199,7 @@ class FakeTextDataGenerator(object):
                 augmented = albu(image=rotated_img, mask=None, bboxes=[],)
                 rotated_img = Image.fromarray(cv2.cvtColor(
                     augmented['image'], cv2.COLOR_BGR2GRAY))
-            print("I'm at 205")
+
             if decision(0.9):
                 if decision(0.2):
                     if decision(0.5):
@@ -565,10 +562,7 @@ class FakeTextDataGenerator(object):
             # final_image = Image.fromarray(final_image)
             # Save the image
             # print(locals())
-            print(str(index) + ': Saving to' + os.path.join(out_dir, image_name) + '...')
             final_image.convert('L').save(os.path.join(out_dir, image_name))
-            print('Saved text '+ text)
-            print("-----------------------------------------")
         except Exception as ex:
-            print('LOL')
             print(ex)
+            pass
