@@ -99,3 +99,12 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# MacOS
+*.DS_Store
+.DS_Store
+
+# Additional file (images and fonts)
+TextRecognitionDataGenerator/fonts/
+TextRecognitionDataGenerator/images/
+TextRecognitionDataGenerator/pictures/
