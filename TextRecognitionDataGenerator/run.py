@@ -211,7 +211,7 @@ def parse_arguments():
         "-bl",
         "--blur",
         action="store_true",
-        help="Define to apply gaussian blur to the resulting sample or not",
+        help="Apply gaussian blur to the resulting sample or not",
         default=False,
     )
     parser.add_argument(

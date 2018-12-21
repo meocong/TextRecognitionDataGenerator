@@ -53,13 +53,12 @@ Go to `./TextRecognitionDataGenerator`, then run `python3 run.py` with these fol
 | --skew_angle                 | -k          | Define skewing angle of the generated text. In positive degrees                                                                                             | 0       |
 | --random_skew                | -rk         | When set, the skew angle will be randomized between the value set with -k and it's opposite                                                                 | False   |
 | --use_wikipedia              | -wk         | Use Wikipedia as the source text for the generation, using this paremeter ignores -r, -n, -s                                                                | False   |
-| --blur                       | -bl         | Apply gaussian blur to the resulting sample. Should be an integer defining the blur radius                                                                  | 0       |
-| --random_blur                | -rbl        | When set, the blur radius will be randomized between 0 and -bl.                                                                                             | False   |
-| --background                 | -b          | Define what kind of background to use. 0: Gaussian Noise, 1: Plain white, 2: Quasicrystal, 3: Pictures                                                      | 0       |
+| --blur                       | -bl         | Apply gaussian blur to the resulting sample or not                                                                                                          | False   |
+| --background                 | -b          | Define what kind of background to use. **0: Gaussian Noise, 1: Plain white, 2: Quasicrystal, 3: Pictures**                                                      | 0       |
 | --handwritten                | -hw         | Define if the data will be \"handwritten\" by an RNN                                                                                                        |         |
-| --name_format                | -na         | Define how the produced files will be named. 0: [TEXT]_[ID].[EXT], 1: [ID]_[TEXT].[EXT] 2: [ID].[EXT] + one file labels.txt containing id-to-label mappings | 0       |
+| --name_format                | -na         | Define how the produced files will be named. 0: ***[TEXT]_[ID].[EXT], 1: [ID]_[TEXT].[EXT] 2: [ID].[EXT]*** + one file labels.txt containing id-to-label mappings | 0       |
 | --distorsion                 | -d          | Define a distorsion applied to the resulting image. 0: None (Default), 1: Sine wave, 2: Cosine wave, 3: Random                                              | 0       |
-| --distorsion_orientation     | -do         | Define the distorsion's orientation. Only used if -d is specified. 0: Vertical (Up and down), 1: Horizontal (Left and Right), 2: Both                       | 0       |
+| --distorsion_orientation     | -do         | Define the distorsion's orientation. Only used if -d is specified. **0: Vertical (Up and down), 1: Horizontal (Left and Right), 2: Both**                       | 0       |
 | --random_crop                | -rc         | When set, generated images will be randomly crop at the top within 10-20 pixel range                                                                        | False   |
 | --debug                      | -dg         | When set, multiple images will be generated at each step                                                                                                    | False   |
 
