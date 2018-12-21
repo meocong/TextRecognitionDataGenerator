@@ -210,16 +210,8 @@ def parse_arguments():
     parser.add_argument(
         "-bl",
         "--blur",
-        type=int,
-        nargs="?",
-        help="Apply gaussian blur to the resulting sample. Should be an integer defining the blur radius",
-        default=0,
-    )
-    parser.add_argument(
-        "-rbl",
-        "--random_blur",
         action="store_true",
-        help="When set, the blur radius will be randomized between 0 and -bl.",
+        help="Apply gaussian blur to the resulting sample or not",
         default=False,
     )
     parser.add_argument(
@@ -415,7 +407,6 @@ def main():
                     [args.skew_angle] * string_count,
                     [args.random_skew] * string_count,
                     [args.blur] * string_count,
-                    [args.random_blur] * string_count,
                     [args.background] * string_count,
                     [args.distorsion] * string_count,
                     [args.distorsion_orientation] * string_count,

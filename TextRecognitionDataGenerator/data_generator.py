@@ -91,7 +91,7 @@ class FakeTextDataGenerator(object):
         cls.generate(*t)
 
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", random_crop=False, debug=False):
+    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1, prefix="", random_crop=False, debug=False):
         try:
             max_height = 80.0
 
@@ -460,8 +460,11 @@ class FakeTextDataGenerator(object):
                             (int(final_image.size[0]), int(final_image.size[1] * f)), resize_type)
 
             # blur distortion
-            blur_type = np.random.choice(
-                5, 1, p=[0.15, 0.2, 0.25, 0.2, 0.2])[0]
+            if blur:
+                blur_type = np.random.choice(
+                    5, 1, p=[0.15, 0.2, 0.25, 0.2, 0.2])[0]
+            else:
+                blur_type = -1
 
             if decision(0.8) and distorsion_type != 2:
                 if blur_type == 0:
