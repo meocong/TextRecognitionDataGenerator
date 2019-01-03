@@ -112,3 +112,4 @@ TextRecognitionDataGenerator/logs/src-train.txt
 TextRecognitionDataGenerator/logs/tgt-fonts.txt
 TextRecognitionDataGenerator/logs/tgt-train.txt
 .vscode/launch.json
+.vscode/settings.json
