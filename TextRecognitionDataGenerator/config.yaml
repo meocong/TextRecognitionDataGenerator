@@ -1,0 +1,94 @@
+# Output directory
+output_dir: ./images/
+
+# Path to specified text file as source for the text
+input_file: 
+
+# Languague: jp (Japan), fr (French), en (English), es (Spanish), de (German), cn (Chinese)
+language: en
+
+# Number of images to be created
+count: 1000
+
+# Define the height of the produced images
+format: 32
+
+# Define the number of thread to use for image generation
+thread_count: 1
+
+# Define the extension(eg: .jpg, .png) to save the image with
+extension: .jpg
+
+# Define the extension to save the image with
+# For example with prefix = abc, output name will be abc_1.jpg, abc_2.jpg
+prefix: 
+
+# Random skew the generated images
+random_skew: False
+skew_angle: 0
+
+# Use Wikipedia as the source text for the generation
+use_wikipedia: False
+
+# Apply gaussian blur to the resulting sample or not	
+blur: False
+
+# Define what kind of background to use. 
+# 0: Gaussian Noise, 1: Plain white, 2: Quasicrystal, 3: Pictures
+background: 0
+
+# Define if the data will be "handwritten" by an RNN
+handwritten: False
+
+# Define how the produced files will be named. 
+# 0: [TEXT][ID].[EXT], 1: [ID][TEXT].[EXT] 2: [ID].[EXT] + one file labels.txt containing id-to-label mappings
+name_format: 0
+
+# Define a distorsion applied to the resulting image. 
+# 0: None (Default), 1: Sine wave, 2: Cosine wave, 3: Random
+distorsion: 0
+# Define the distorsion's orientation. 
+# 0: Vertical (Up and down), 1: Horizontal (Left and Right), 2: Both
+distorsion_orientation: 0
+
+# When set, generated images will be randomly crop at the top within 10-20 pixel range
+random_crop: False
+
+# When set, multiple images will be generated at each step
+debug: False
+
+# Use random sequences as the source text for the generation. 
+# Set 'include_letters','include_numbers','include_symbols' to use letters/numbers/symbols. 
+# If none specified, using all three.
+random_sequences: False
+include_letters: False
+include_numbers: False
+include_symbols: False
+
+# Use random sequences by characters in random fonts as the source text for the generation.
+random_sequences_from_font: False
+
+# Use random single characters in random fonts as the source text for the generation.
+random_one_character: False
+
+# Generate random sequences string from random font for sjnk project
+random_sequences_sjnk: False
+
+# Generate random latin string from random font for sjnk project
+random_latin_sjnk: False
+
+# Generate random latin string with random space from random font for sjnk project
+random_latin_space: False
+
+# Define how many words should be included in each generated sample.
+# If the text source is Wikipedia, this is the MINIMUM length
+length: 1
+
+# Define if the produced string will have variable word count (with --length being the maximum)
+random: False
+
+# Generate random space images
+random_space: False
+
+# Unknow config
+check_font: False
