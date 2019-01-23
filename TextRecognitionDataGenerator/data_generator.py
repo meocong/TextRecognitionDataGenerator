@@ -177,10 +177,10 @@ class FakeTextDataGenerator(object):
                     expand=1)
 
             # if decision(0.3):
-            # rotated_img = Image.fromarray(scipy.ndimage.rotate(img, random_angle))
+            #     rotated_img = Image.fromarray(scipy.ndimage.rotate(img, random_angle))
             # else:
-            # rotated_img = Image.fromarray(imutils.rotate_bound(np.array(img), random_angle))
-            #
+            #     rotated_img = Image.fromarray(imutils.rotate_bound(np.array(img), random_angle))
+            #     rotated_img = rotated_img.convert("RGBA")
             #     white_mask = Image.new('RGBA', rotated_img.size, (255,) * 4)
             #     rotated_img = Image.composite(rotated_img, white_mask, rotated_img)
 
