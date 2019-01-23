@@ -1,5 +1,0 @@
-python3 run.py -l sjnk -sjnk -pre sjnk3 -na 3 -rk -k 0.5 -rbl -bl 2 -b 0 -f 30 -t 4 -c 100000
-
-python3 run.py -l en -wk -pre sjnk -na 3 -rk -k 0.5 -rbl -bl 2 -b 0 -f 30 -t 5 -c
-
-python3 run.py -l sjnk -sjnk -pre space -na 3 -rk -k 0.5 -rbl -bl 2 -b 0 -f 30 -t 4 -c 20000
